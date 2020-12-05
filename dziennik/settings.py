@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_admin_logs',
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dziennik.wsgi.application'
 
+# Log (Rejestr zdarzeń) - django-admin-logs
+DJANGO_ADMIN_LOGS_DELETABLE = False
+DJANGO_ADMIN_LOGS_ENABLED = True
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -80,6 +84,17 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'NAME': 'dziennik',
+#         'USER': 'dziennik',
+#         'PASSWORD': 'Marik1234',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation
