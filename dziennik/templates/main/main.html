@@ -2,6 +2,9 @@
 <html>
 	<head>
 		<title>Dziennik | Jan Kowalski</title>
+		{% if user.username == '' %}
+			<meta http-equiv="refresh" content="0; URL=/login/" />
+		{% endif %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="../img/favicon.ico"  type="image/icon type">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -12,6 +15,7 @@
 		<link href="main.css" rel="stylesheet">   
 	</head>
 	<body>
+		{{ user.username }}
 		<div class="container">
 			<div class="row">
 				<div class="col-md-5 mx-auto">
@@ -38,16 +42,16 @@
 							</div>
 						</nav>
 						<div class="btn-group btn-group-toggle" data-toggle="buttons">
-  <label class="btn btn-primary active">
-    <input type="radio" name="options" id="option1" autocomplete="off"> Dzień
-  </label>
-  <label class="btn btn-primary">
-    <input type="radio" name="options" id="option2" autocomplete="off"> Tydzień
-  </label>
-  <label class="btn btn-primary">
-    <input type="radio" name="options" id="option3" autocomplete="off" checked> Miesiąc
-  </label>
-</div>
+							<label class="btn btn-primary active">
+								<input type="radio" name="options" id="option1" autocomplete="off"> Dzień
+							</label>
+							<label class="btn btn-primary">
+								<input type="radio" name="options" id="option2" autocomplete="off"> Tydzień
+							</label>
+							<label class="btn btn-primary">
+								<input type="radio" name="options" id="option3" autocomplete="off" checked> Miesiąc
+							</label>
+						</div>
 						<div class="plan">
 							<div class="calendar">
 							  <div class="month"><a href="#" class="nav"><i class="fa fa-angle-left fa-2x"></i></a><div>Grudzień <span class="year">2020</span></div><a href="#" class="nav"><i class="fa fa-angle-right fa-2x"></i></a></div>
