@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
+{% block content %} 
 	{% if user.username != '' %}
 		<meta http-equiv="refresh" content="0; URL=/" />
 	{% endif %}
+	<head>
+		<title>Dziennik | Logowanie {{ user.username }}</title>      
+	</head>
+	
 	<div class="myform form shadow-lg">
 		<div class="logo mb-3">
 			<div class="col-md-12 text-center">
@@ -14,8 +18,8 @@
 			</div>
 		</div>
 		<div id="login-panel">
-		   <form method="post" action="{%url 'login'%}" name="login">
-		   	  {% csrf_token %}
+			<form method="post" action="{%url 'login'%}" name="login">
+				{% csrf_token %}
 				<div class="form-group">
 					<label for="exampleInputEmail1">Adres Email</label>
 					<input type="text" name="username"  class="form-control" id="email" aria-describedby="emailHelp" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" placeholder="Wpisz login">
