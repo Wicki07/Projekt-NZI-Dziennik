@@ -1,38 +1,66 @@
 {% extends 'base.html' %}
-{% block content %}
+{% load static %}
+{% block content %} 
+	{% if user.username != '' %}
+		<meta http-equiv="refresh" content="0; URL=/" />
+	{% endif %}
+	<head>
+		<title>Dziennik | Rejestracja</title>      
+	</head>
+	
 	<div class="myform form shadow-lg">
 		<div class="logo mb-3">
 			<div class="col-md-12 text-center">
-				<img id="logo" class="card-img-top img-responsive" src="../img/icon.svg" alt="dziennik">
-				<div class="card-body">
-					<h1 class="card-text">DZIENNIK</h1>
-				</div>
+				<img id="logo" class="card-img-top img-responsive" src="{% static 'img/icon.svg' %}" alt="dziennik">
 			</div>
 		</div>
 		<div id="singup-panel">
-			<form action="../main/main.html" name="registration">
+			<form action="/" name="singup" method="post">
+        	  {% csrf_token %}
 				<div class="form-group">
 					<label for="exampleInputEmail1">Imię</label>
-					<input type="text"  name="firstname" class="form-control" id="firstname" aria-describedby="emailHelp" placeholder="Podaj imię">
+					<input type="text"  name="firstname" class="form-control" id="firstname" aria-describedby="emailHelp" placeholder="Podaj imię" required>
 				</div>
 				<div class="form-group">
 					<label for="exampleInputEmail1">Nazwisko</label>
-					<input type="text"  name="lastname" class="form-control" id="lastname" aria-describedby="emailHelp" placeholder="Podaj nazwisko">
+					<input type="text"  name="lastname" class="form-control" id="lastname" aria-describedby="emailHelp" placeholder="Podaj nazwisko" required>
 				</div>
 				<div class="form-group">
 					<label for="exampleInputEmail1">Adres Email</label>
-					<input type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Podaj email">
+					<input type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Podaj email" required>
 				</div>
 				<div class="form-group">
 					<label for="exampleInputEmail1">Hasło</label>
-					<input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Podaj hasło">
+					<input type="password" name="password1" id="password1"  class="form-control" aria-describedby="emailHelp" placeholder="Podaj hasło" required>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">Powtórz Hasło</label>
+					<input type="password" name="password2" id="password2"  class="form-control" aria-describedby="emailHelp" placeholder="Podaj ponownie hasło" required>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">Numer telefonu</label>
+					<input type="tel" name="telephone" class="form-control" id="telephone" aria-describedby="emailHelp" placeholder="Podaj numer telefonu" required>
 				</div>
 				<div class="col-md-12 text-center mb-3">
 					<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
 				</div>
 				<div class="col-md-12 ">
+					{% if form.errors %}
+						<p>Your username and password didn't match. Please try again.</p>
+					{% endif %}
+
+					{% if next %}
+						{% if user.is_authenticated %}
+						<p>Your account doesn't have access to this page. To proceed,
+						please login with an account that has access.</p>
+						{% else %}
+						<p>Please login to see this page.</p>
+						{% endif %}
+					{% endif %}
+				</div>
+				<div class="col-md-12 ">
 					<div class="form-group">
-						<p class="text-center"><a href="#" id="signin">Masz już konto?</a></p>
+						<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
 					</div>
 				</div>
 			</form>

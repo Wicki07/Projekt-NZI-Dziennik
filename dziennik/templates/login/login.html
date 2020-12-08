@@ -5,7 +5,7 @@
 		<meta http-equiv="refresh" content="0; URL=/" />
 	{% endif %}
 	<head>
-		<title>Dziennik | Logowanie {{ user.username }}</title>      
+		<title>Dziennik | Logowanie</title>      
 	</head>
 	
 	<div class="myform form shadow-lg">
@@ -13,7 +13,7 @@
 			<div class="col-md-12 text-center">
 				<img id="logo" class="card-img-top img-responsive" src="{% static 'img/icon.svg' %}" alt="dziennik">
 				<div class="card-body">
-					<h1 class="card-text">DZIENNIK</h1>
+					<h1 class="card-text"><br></h1>
 				</div>
 			</div>
 		</div>
@@ -22,11 +22,11 @@
 				{% csrf_token %}
 				<div class="form-group">
 					<label for="exampleInputEmail1">Adres Email</label>
-					<input type="text" name="username"  class="form-control" id="email" aria-describedby="emailHelp" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" placeholder="Wpisz login">
+					<input type="email" name="login" class="form-control" aria-describedby="emailHelp" autofocus="" autocapitalize="none" autocomplete="email" required="" id="id_login" placeholder="Wpisz login">
 				</div>
 				<div class="form-group">
 					<label for="exampleInputEmail1">Hasło</label>
-					<input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Wpisz hasło">
+					<input type="password" name="password" id="id_password"  class="form-control" aria-describedby="emailHelp" placeholder="Wpisz hasło">
 				</div>
 				<div class="form-group">
 					<p class="text-center">Rejestrując się akceptujesz nasze <a href="#">Warunki użytkowania</a>.</p>
@@ -63,7 +63,7 @@
 					</p>
 				</div>
 				<div class="form-group">
-					<p class="text-center">Nie posiadasz konta? <a href="#" id="signup">Zarejestruj się</a>.</p>
+					<p class="text-center">Nie posiadasz konta? <a href="{%url 'singup'%}" id="signup">Zarejestruj się</a>.</p>
 				</div>
 				<input type="hidden" name="next" value="{{ next }}" />
 			</form>

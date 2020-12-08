@@ -22,9 +22,10 @@ a{
 	border-radius: 2rem !important;
 	outline: 0;
 		max-width: 480px;
-		max-height: 768px;
+		max-height: 848px;
 		min-width: 480px;
-		min-height: 768px;
+		min-height: 848px;
+	overflow: hidden;
 }
 .tx-tfm{
 	text-transform:uppercase;
@@ -81,7 +82,4 @@ a{
 }
 form .error {
 	color: #ff0000;
-}
-#singup-panel{
-	display:none;
 }

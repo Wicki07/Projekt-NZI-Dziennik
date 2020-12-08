@@ -25,9 +25,9 @@ a{
 	border-radius: 1.1rem;
 	outline: 0;
 		max-width: 480px;
-		max-height: 768px;
+		max-height: 848px;
 		min-width: 480px;
-		min-height: 768px;
+		min-height: 848px;
 	overflow: hidden;
 }
 .panel{

@@ -5,7 +5,7 @@
 		<meta http-equiv="refresh" content="0; URL=/login/" />
 	{% endif %}
 	<head>
-		<title>Dziennik | {{ user.username }}</title>
+		<title>Dziennik | {{ user.first_name }} {{ user.last_name }}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="{% static 'lib/jquery/jquery.js' %}"></script>
 		<script src="{% static 'lib/jquery/jquery.slim.js' %}"></script>
@@ -18,7 +18,7 @@
 				<li class="nav-item avatar">
 					<a class="nav-link p-0" href="#">
 						<img src="{% static 'img/man.svg' %}" class="rounded-circle z-depth-0 bg-profile float-left" alt="avatar image" width="15%">
-						<span class="align-bottom" style="line-height: 0;"><font class="font-weight-bold pl-2" color="black" size="4">{{ user.username }}</font></br><font class="text-silver pl-2"  size="2">{{ user.email }}</font></span>
+						<span class="align-bottom" style="line-height: 0;"><font class="font-weight-bold pl-2" color="black" size="4">{{ user.first_name }} {{ user.last_name }}</font></br><font class="text-silver pl-2"  size="2">{{ user.email }}</font></span>
 					</a>
 				</li>
 			</ul>	
