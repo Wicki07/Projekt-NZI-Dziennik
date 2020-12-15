@@ -3,7 +3,7 @@ from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .forms import RegisterForm
+from .forms import RegisterForm, CreationForm
 from django.contrib.auth import authenticate, login, get_user_model
 from django.views.generic import CreateView, FormView
 from django.http import HttpResponse
@@ -26,11 +26,6 @@ import datetime
 def main(request):
     return render(request, 'main/main.html')
 
-class RegisterView(CreateView):
-    form_class = RegisterForm
-    template_name = 'signup/signup.html'
-    success_url = '/'
-
 User = get_user_model() 
 def signup(request):
     if request.method == 'POST':
@@ -38,6 +33,7 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.active = False
+            user.role = 'User'
             user.save()
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
@@ -56,6 +52,33 @@ def signup(request):
     else:
         form = RegisterForm()
     return render(request, 'signup/signup.html', {'form': form})
+
+def newinstitution(request):
+    if request.method == 'POST':
+        form = CreationForm(request.POST or None)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.active = False
+            user.role = 'Institution'
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your blog account.'
+            message = render_to_string('email/acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                'token':account_activation_token.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            email.send()
+            return HttpResponse('Please confirm your email address to complete the registration')
+    else:
+        form = RegisterForm()
+    return render(request, 'newinstitution/newinstitution.html', {'form': form})
+
 
 def activate(request, uidb64, token):
     try:

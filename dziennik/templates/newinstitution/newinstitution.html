@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+	{% if user.username != '' %}
+		<meta http-equiv="refresh" content="0; URL=/" />
+	{% endif %}
+	<head>
+		<title>Dziennik | Rejestracja</title>      
+	</head>
+	
+	<div class="myform form shadow-lg">
+		<div class="logo mb-3">
+			<div class="col-md-12 text-center">
+				<a href="{%url 'signup'%}" id="signup"><img class="accTypeIcon"  src="{% static 'img/person.svg' %}"></a>
+				<img class="accTypeIcon-active" src="{% static 'img/institution.svg' %}">
+			</div>
+		</div>
+		<form  name="singup" method="post">
+			{% csrf_token %}
+			<div class="form-group">
+				<label for="exampleInputEmail1">Nazwa</label>
+				<p><input type="text" name="first_name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj imię" required></p>
+			</div>
+			<div class="form-group">
+				<p><input type="text" name="last_name" maxlength="30" id="id_last_name" class="form-control" value="" hidden></p>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Email</label>
+				<p><input type="email" name="email" maxlength="254"  id="id_email" class="form-control" placeholder="Podaj email" required></p>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Hasło</label>
+				<p><input type="password" name="password1" autocomplete="new-password"  id="id_password1" class="form-control" placeholder="Podaj hasło" required></p>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Potwierdź hasło</label>
+				<p><input type="password" name="password2" autocomplete="new-password" id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" required></p>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Nr Kontaktowy</label>
+				<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj ponownie hasło" required></p>
+			</div>
+			<div class="form-group">
+ 				 <label for="sel1">Wybierz kategorię:</label>
+ 				 <select class="form-control" name="kategoria" id="kat" required>
+   					<option disabled selected hidden>Wybierz z listy...</option>
+					<option value="Szkoła języków obych">Szkoła języków obych</option>
+					<option value="Klub sportowy">Klub sportowy</option>
+					<option value="Korepetycje">Korepetycje</option>
+					<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
+				</select>	
+				<p><input type="text" name="kategoria-profil" autocomplete="new-password"  id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+			</div>
+			<div class="col-md-12 ">
+					{% if form.errors %}			
+						{%for x in form.errors%}
+						{% if x == email %}
+						<p>Nie prawidłowy: </p>
+						{% else  %}
+						<p> {{x}}</p>
+						{% endif %}
+						{% endfor %}
+					{% endif %}
+
+					{% if next %}
+						{% if user.is_authenticated %}
+						<p>Your account doesn't have access to this page. To proceed,
+						please login with an account that has access.</p>
+						{% else %}
+						<p>Please login to see this page.</p>
+						{% endif %}
+					{% endif %}
+			</div>
+			<div class="form-group">
+				<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
+			</div>
+			<div class="form-group">
+					<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
+			</div>
+		</form>
+		</div>
+	</div>
+{% endblock %}

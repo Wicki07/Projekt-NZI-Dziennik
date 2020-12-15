@@ -35,24 +35,24 @@
 			</div>
 		</nav>
 		<div class="btn-group btn-group-toggle" data-toggle="buttons">
-			<label class="btn btn-primary active">
+			<label class="btn btn-primary">
 				<input type="radio" name="options" id="option1" autocomplete="off"> Dzień
 			</label>
-			<label class="btn btn-primary">
-				<input type="radio" name="options" id="option2" autocomplete="off"><a href ="#">Tydzień</a> 
+			<label class="btn btn-primary active">
+				<a href ="{% url 'week_list' %}" style="color:white;"><input type="radio" name="options" id="option2" autocomplete="off" checked>Tydzień</a> 
 			</label>
 			<label class="btn btn-primary">
-				<input type="radio" name="options" id="option3" autocomplete="off" checked> Miesiąc
+				<a href ="{% url 'main' %}" style="color:white;"><input type="radio" name="options" id="option3" autocomplete="off"> Miesiąc</a> 
 			</label>
 		</div>
         <div class="days">
-			<span>Pn</span>
-			<span>Wt</span>
-			<span>Śr</span>
-			<span>Cz</span>
-			<span>Pt</span>
-			<span class="weekend">Sb</span>
-			<span class="weekend">Nd</span>
+			<span class="weekDayDisplay" style="grid-column-start: 1; grid-row-start: 1;">Pn</span>
+			<span class="weekDayDisplay" style="grid-column-start: 1; grid-row-start: 2;">Wt</span>
+			<span class="weekDayDisplay" style="grid-column-start: 1; grid-row-start: 3;">Śr</span>
+			<span class="weekDayDisplay" style="grid-column-start: 1; grid-row-start: 4;">Cz</span>
+			<span class="weekDayDisplay" style="grid-column-start: 1; grid-row-start: 5;">Pt</span>
+			<span class="weekDayDisplayWeekend" style="grid-column-start: 1; grid-row-start: 6;" class="weekend">Sb</span>
+			<span class="weekDayDisplayWeekend" style="grid-column-start: 1; grid-row-start: 7;" class="weekend">Nd</span>
 			<!--<span>
 				{% for podgl in podglad%}
 					<span>{{podgl.data_rozpoczecia}}</span>
@@ -71,76 +71,58 @@
 				var pt=2;
 				var sob=2;
 				var nd=2;
-				function wyswietl (podglad,x,dzien){
+				function wyswietl(podglad,x,dzien){
 					console.log(podglad);
 					var days = document.querySelector(".days");
 					var spanik = document.createElement("span");
-					spanik.style.gridColumnStart = dzien+1;
+					spanik.style.gridRowStart = dzien+1;
 					if(dzien==0){
-						spanik.style.gridRowStart = pn;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						pn++;
+						spanik.style.gridColumnStart = pn;
+						pn+=3;
 					}
 					if(dzien==1){
-						spanik.style.gridRowStart = wt;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						wt++;
+						spanik.style.gridColumnStart = wt;
+						wt+=3;
 					}
 					if(dzien==2){
-						spanik.style.gridRowStart = sr;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						sr++;
+						spanik.style.gridColumnStart = sr;
+						sr+=3;
 					}
 					if(dzien==3){
-						spanik.style.gridRowStart = cz;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						cz++;
+						spanik.style.gridColumnStart = cz;
+						cz+=3;
 					}
 					if(dzien==4){
-						spanik.style.gridRowStart = pt;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						pt++;
+						spanik.style.gridColumnStart = pt;
+						pt+=3;
 					}
 					if(dzien==5){
-						spanik.style.gridRowStart = sob;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						sob++;
+						spanik.style.gridColumnStart = sob;
+						sob+=3;
 					}
 					if(dzien==6){
-						spanik.style.gridRowStart = nd;
-						var myJavaScriptVariable = podglad;
-						spanik.innerHTML = myJavaScriptVariable+"<br/>";
-						nd++;
+						spanik.style.gridColumnStart = nd;
+						nd+=3;
 					}
-					if(x%5==0){
-						spanik.style.setProperty('border','solid')
-						spanik.style.setProperty('border-top-width','0px')
-						spanik.style.setProperty('border-bottom-width','2px')
-						spanik.style.setProperty('border-left-width','0px')
-						spanik.style.setProperty('border-right-width','0px')
+					spanik.style.gridColumnEnd = parseInt(spanik.style.gridColumnStart) + 3;
+					spanik.style.width = "calc(100% - 1rem)";
+					spanik.style.backgroundColor = "rgba(0, 123, 255,1)";
+					spanik.style.borderRadius =  "1rem";
+					spanik.style.margin =  "0.5rem";
+					spanik.style.padding =  "1rem";
+					spanik.style.color =  "white";
+					for(let informacja in podglad){
+						var myJavaScriptVariable = podglad[informacja];
+						spanik.innerHTML += myJavaScriptVariable;
 					}
 					days.appendChild(spanik);
 					console.log(myJavaScriptVariable);
+					x++;
 				}
 			</script>
 			{% for podgla in filtr %}
 				<script type="text/javascript">
-					x++;
-					wyswietl("{{podgla.nazwa}}",x,{{podgla.day}})
-					x++;
-					wyswietl("{{podgla.prowadzacy}}",x,{{podgla.day}})
-					x++;
-					wyswietl("{{podgla.data_rozpoczecia}}",x,{{podgla.day}})
-					x++;
-					wyswietl("{{podgla.godzina_rozpoczecia}}",x,{{podgla.day}})
-					x++;
-					wyswietl("{{podgla.godzina_zakonczenia}}",x,{{podgla.day}})
+					wyswietl(["<font size='4'>{{podgla.nazwa}}</font><br/>", "<font size='2'>od</font> {{podgla.godzina_rozpoczecia}}", " <font size='2'>do</font> {{podgla.godzina_zakonczenia}}"],x,{{podgla.day}})
 				</script>
 			{% endfor %}
 		</div>

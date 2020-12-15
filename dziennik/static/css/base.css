@@ -83,3 +83,37 @@ a{
 form .error {
 	color: #ff0000;
 }
+
+
+
+
+
+
+.accTypeIcon{
+	width: 50%;
+	padding: 1rem;
+	display: inline;
+	float: left;
+	margin-top:-3rem;
+	filter: invert(33%) sepia(26%) saturate(7477%) hue-rotate(199deg) brightness(102%) contrast(107%);
+}
+.accTypeIcon-active{
+	width: 50%;
+	padding: 1rem;
+	display: inline;
+	float: left;
+	margin-top:-3rem;
+	border: solid black 0.25rem;
+	border-radius: 5rem;
+	filter: invert(33%) sepia(26%) saturate(7477%) hue-rotate(199deg) brightness(102%) contrast(107%);
+}
+
+.weekDayDisplay{
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+}
+.weekDayDisplayWeekend{
+	color:#b44545;
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+}

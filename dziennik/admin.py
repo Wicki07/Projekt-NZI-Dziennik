@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import UserAdminCreationForm, UserAdminChangeForm
 from .models import User
+from dziennik.models import Institution
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -14,11 +15,11 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'admin','first_name','last_name','phone','active')
+    list_display = ('email', 'admin','first_name','last_name','phone','role','active')
     list_filter = ('admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name','last_name','phone')}),
+        ('Personal info', {'fields': ('first_name','last_name','phone',)}),
         ('Permissions', {'fields': ('admin',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -26,7 +27,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2','first_name','last_name','phone','active')}
+            'fields': ('email', 'password1', 'password2','first_name','last_name','phone','role','active')}
         ),
     )
     search_fields = ('email',)
@@ -35,6 +36,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Institution)
 
 
 
