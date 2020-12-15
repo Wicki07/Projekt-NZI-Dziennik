@@ -43,7 +43,7 @@ class CreationForm(forms.ModelForm):
     
     class Meta:
         model = User
-        fields = ('email','password1','password2','first_name','phone',)
+        fields = ('email','password1','password2','first_name','phone')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -61,8 +61,7 @@ class CreationForm(forms.ModelForm):
         return password2
     def save(self, commit=True):
         # Save the provided password in hashed format
-        user = super(RegisterForm, self).save(commit=False)
-        Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=self.cleaned_data.get('kategoria'),profil=self.cleaned_data.get('profil'))
+        user = super(CreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         user.active = False # send confirmation email
         if commit:

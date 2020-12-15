@@ -22,9 +22,6 @@
 				<p><input type="text" name="first_name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj imię" required></p>
 			</div>
 			<div class="form-group">
-				<p><input type="text" name="last_name" maxlength="30" id="id_last_name" class="form-control" value="" hidden></p>
-			</div>
-			<div class="form-group">
 				<label for="exampleInputEmail1">Email</label>
 				<p><input type="email" name="email" maxlength="254"  id="id_email" class="form-control" placeholder="Podaj email" required></p>
 			</div>
@@ -38,7 +35,7 @@
 			</div>
 			<div class="form-group">
 				<label for="exampleInputEmail1">Nr Kontaktowy</label>
-				<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj ponownie hasło" required></p>
+				<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj kontakt" required></p>
 			</div>
 			<div class="form-group">
  				 <label for="sel1">Wybierz kategorię:</label>
@@ -49,7 +46,7 @@
 					<option value="Korepetycje">Korepetycje</option>
 					<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
 				</select>	
-				<p><input type="text" name="kategoria-profil" autocomplete="new-password"  id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+				<p><input type="text" name="profil" autocomplete="new-password"  id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
 			</div>
 			<div class="col-md-12 ">
 					{% if form.errors %}			
@@ -75,7 +72,7 @@
 				<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
 			</div>
 			<div class="form-group">
-					<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
+				<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
 			</div>
 		</form>
 		</div>

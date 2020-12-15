@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Podglad
+from .models import Podglad, Institution
 from django.utils import timezone
 from datetime import timedelta
 import datetime
@@ -60,6 +60,7 @@ def newinstitution(request):
             user = form.save(commit=False)
             user.active = False
             user.role = 'Institution'
+            Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
             user.save()
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
@@ -76,7 +77,7 @@ def newinstitution(request):
             email.send()
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
-        form = RegisterForm()
+        form = CreationForm()
     return render(request, 'newinstitution/newinstitution.html', {'form': form})
 
 
