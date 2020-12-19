@@ -39,10 +39,10 @@
 				<input type="radio" name="options" id="option1" autocomplete="off"> Dzień
 			</label>
 			<label class="btn btn-primary">
-				<input type="radio" name="options" id="option2" autocomplete="off"><a href ="{% url 'week_list' %}">Tydzień</a> 
+				<a href ="{% url 'week_list' %}" style="color:white;"><input type="radio" name="options" id="option2" autocomplete="off">Tydzień</a> 
 			</label>
 			<label class="btn btn-primary">
-				<input type="radio" name="options" id="option3" autocomplete="off" checked> Miesiąc
+				<a href ="{% url 'main' %}" style="color:white;"><input type="radio" name="options" id="option3" autocomplete="off" checked> Miesiąc</a> 
 			</label>
 		</div>
 		<div class="plan">
@@ -82,7 +82,7 @@
 					<button>
 					<time>8</time>
 					</button>
-					<button class="today">
+					<button>
 					<time>9</time>
 					</button>
 					<button>
@@ -103,7 +103,7 @@
 					<button>
 					<time>15</time>
 					</button>
-					<button>
+					<button class="today">
 					<time>16</time>
 					</button>
 					<button>

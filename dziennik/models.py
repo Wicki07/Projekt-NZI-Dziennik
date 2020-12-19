@@ -2,10 +2,9 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
-from phone_field import PhoneField
+from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from phone_field import PhoneField
 from django.utils import timezone
 
 
@@ -65,7 +64,9 @@ class User(AbstractBaseUser):
     admin = models.BooleanField(default=False) # a superuser
     first_name = models.CharField(max_length = 20,default=True)
     last_name = models.CharField(max_length = 20,default=True)
-    phone = PhoneField(blank=True, help_text='Contact phone number')
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list
+    role = models.CharField(max_length = 20,default='None')
     # notice the absence of a "Password field", that is built in.
 
     USERNAME_FIELD = 'email'
@@ -107,12 +108,27 @@ class User(AbstractBaseUser):
         "Is the user active?"
         return self.active
 
+#   python manage.py shell
+#   from dziennik.models import Podglad
+#   Podglad.objects.create(nazwa='test', data_rozpoczecia='2020-12-17', godzina_rozpoczecia='21:00',godzina_zakonczenia='21:30', prowadzacy='test')
 class Podglad(models.Model):
     nazwa = models.CharField(max_length=200)
     data_rozpoczecia = models.DateField(blank=True, default=timezone.now)
     godzina_rozpoczecia = models.TimeField(blank=True, default=timezone.now)
     godzina_zakonczenia = models.TimeField(blank=True, default=timezone.now)
     prowadzacy = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.nazwa
+
+    def publish(self):
+        self.save()
+
+class Institution(models.Model):
+    email = models.CharField(max_length=200)
+    nazwa = models.CharField(max_length=200)
+    kategoria = models.CharField(max_length=200)
+    profil = models.CharField(max_length=200)
 
     def __str__(self):
         return self.nazwa

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'phonenumber_field',
     'django_admin_logs',
-    
+        
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

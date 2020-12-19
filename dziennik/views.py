@@ -3,7 +3,7 @@ from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .forms import RegisterForm
+from .forms import RegisterForm, CreationForm
 from django.contrib.auth import authenticate, login, get_user_model
 from django.views.generic import CreateView, FormView
 from django.http import HttpResponse
@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Podglad
+from .models import Podglad, Institution
 from django.utils import timezone
 from datetime import timedelta
 import datetime
@@ -26,11 +26,6 @@ import datetime
 def main(request):
     return render(request, 'main/main.html')
 
-class RegisterView(CreateView):
-    form_class = RegisterForm
-    template_name = 'signup/signup.html'
-    success_url = '/'
-
 User = get_user_model() 
 def signup(request):
     if request.method == 'POST':
@@ -38,6 +33,7 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.active = False
+            user.role = 'User'
             user.save()
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
@@ -56,6 +52,35 @@ def signup(request):
     else:
         form = RegisterForm()
     return render(request, 'signup/signup.html', {'form': form})
+
+def newinstitution(request):
+    if request.method == 'POST':
+        form = CreationForm(request.POST or None)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.active = False
+            user.role = 'Institution'
+            user.phone=form.data['phone']
+            Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your blog account.'
+            message = render_to_string('email/acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                'token':account_activation_token.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            email.send()
+            return HttpResponse('Please confirm your email address to complete the registration')
+    else:
+        form = CreationForm()
+    return render(request, 'newinstitution/newinstitution.html', {'form': form})
+
 
 def activate(request, uidb64, token):
     try:

@@ -7,6 +7,7 @@ a{
 	text-decoration:none !important;
 }
 
+
 .myform{
 	
 	overflow-y: scroll;
@@ -65,9 +66,11 @@ form .error {
   justify-content:center;
   align-items:center;
   background:#fff;
-  padding:20px;
+  padding-top:1rem;
+  margin-left:-1rem;
+  margin-right:-1rem;
   border-radius:5px;
-  width:100%;
+  width:calc(100% + 2rem);
 }
   .month{
     display:flex;
