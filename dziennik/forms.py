@@ -2,7 +2,10 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth import authenticate, login, get_user_model
 from .models import User, Institution
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5c0a469d5021eea2bd154a657818a74dd31685fe
 User = get_user_model()
 
 class RegisterForm(forms.ModelForm):

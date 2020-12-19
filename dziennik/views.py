@@ -60,7 +60,10 @@ def newinstitution(request):
             user = form.save(commit=False)
             user.active = False
             user.role = 'Institution'
+<<<<<<< HEAD
             user.phone=form.data['phone']
+=======
+>>>>>>> 5c0a469d5021eea2bd154a657818a74dd31685fe
             Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
             user.save()
             current_site = get_current_site(request)

@@ -64,8 +64,12 @@ class User(AbstractBaseUser):
     admin = models.BooleanField(default=False) # a superuser
     first_name = models.CharField(max_length = 20,default=True)
     last_name = models.CharField(max_length = 20,default=True)
+<<<<<<< HEAD
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list
+=======
+    phone = PhoneField(blank=True, help_text='Contact phone number')
+>>>>>>> 5c0a469d5021eea2bd154a657818a74dd31685fe
     role = models.CharField(max_length = 20,default='None')
     # notice the absence of a "Password field", that is built in.
 

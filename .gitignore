@@ -128,4 +128,10 @@ myvenv/
 dmypy.json
 
 # Pyre type checker
+<<<<<<< HEAD
 .pyre/
+=======
+.pyre/
+
+myvenv/
+>>>>>>> 5c0a469d5021eea2bd154a657818a74dd31685fe
