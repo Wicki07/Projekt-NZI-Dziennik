@@ -3,7 +3,7 @@ from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .forms import RegisterForm, CreationForm
+from .forms import RegisterForm, CreationForm ,RegisterCreation
 from django.contrib.auth import authenticate, login, get_user_model
 from django.views.generic import CreateView, FormView
 from django.http import HttpResponse
@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Podglad, Institution
+from .models import Podglad, Institution, Employee
 from django.utils import timezone
 from datetime import timedelta
 import datetime
@@ -60,10 +60,7 @@ def newinstitution(request):
             user = form.save(commit=False)
             user.active = False
             user.role = 'Institution'
-<<<<<<< HEAD
             user.phone=form.data['phone']
-=======
->>>>>>> 5c0a469d5021eea2bd154a657818a74dd31685fe
             Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
             user.save()
             current_site = get_current_site(request)
@@ -83,7 +80,34 @@ def newinstitution(request):
     else:
         form = CreationForm()
     return render(request, 'newinstitution/newinstitution.html', {'form': form})
+def newemployee(request):
+    if request.method == 'POST':
+        form = RegisterCreation(request.POST or None)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.active = False
+            user.role = 'Employee'
+            user.phone=form.data['phone']
 
+            Employee.objects.create(first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'])
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your blog account.'
+            message = render_to_string('email/acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                'token':account_activation_token.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            email.send()
+            return HttpResponse('Please confirm your email address to complete the registration')
+    else:
+        form = CreationForm()
+    return render(request, 'newemployee/newemployee.html', {'form': form})
 
 def activate(request, uidb64, token):
     try:
