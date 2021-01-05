@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import UserAdminCreationForm, UserAdminChangeForm
 from .models import User
-from dziennik.models import Institution ,Employee
+from dziennik.models import Institution ,Employee, Activity,Podglad
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -15,11 +15,11 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'admin','first_name','last_name','phone','role','active')
+    list_display = ('id','email', 'admin','first_name','last_name','phone','role','active')
     list_filter = ('admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name','last_name','phone',)}),
+        ('Personal info', {'fields': ('first_name','last_name','phone','active')}),
         ('Permissions', {'fields': ('admin',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -38,6 +38,8 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(Institution)
 admin.site.register(Employee)
+admin.site.register(Activity)
+admin.site.register(Podglad)
 
 
 

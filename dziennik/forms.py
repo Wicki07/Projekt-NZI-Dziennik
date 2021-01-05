@@ -69,7 +69,7 @@ class CreationForm(forms.ModelForm):
             user.save()
         return user
 
-class RegisterCreation(forms.ModelForm):
+class RegisterCreation(forms.ModelForm): #tworzenie pracownika
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 

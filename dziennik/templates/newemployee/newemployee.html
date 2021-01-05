@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %} 
 	<head>
-		<title>Dziennik | Rejestracja</title>      
+		<title>Dziennik | Dodawanie pracownika</title>      
 	</head>
 	
 	<div class="myform form shadow-lg">
@@ -55,12 +55,19 @@
 					{% endif %}
 			</div>
 			<div class="form-group">
-				<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
+				<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dodaj pracownika</button>
 			</div>
 			<div class="form-group">
-				<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
+				<p class="text-center"><a href="{%url 'main'%}" id="signin">Wróć</a></p>
 			</div>
 		</form>
-		</div>
+		{% if message %}
+			<div class="message-background">
+				<div class="message">
+					{{message}}<br><br>
+					<a href="{%url 'main'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 {% endblock %}

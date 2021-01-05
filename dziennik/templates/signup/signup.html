@@ -68,6 +68,14 @@
 					<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
 			</div>
 		</form>
-		</div>
+		
+		{% if message %}
+			<div class="message-background">
+				<div class="message">
+					{{message}}<br><br>
+					<a href="{%url 'main'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 {% endblock %}

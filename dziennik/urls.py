@@ -15,6 +15,7 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('newinstitution/', views.newinstitution, name='newinstitution'),
     path('newemployee/', views.newemployee, name='newemployee'),
+    path('newactivity/', views.newactivity, name='newactivity'),
     #path('signup/', RegisterView.as_view(), name='signup'),
     path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),  

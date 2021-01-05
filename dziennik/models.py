@@ -6,7 +6,9 @@ from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django_mysql.models import JSONField, Model
 
+import jsonfield
 
 
 
@@ -125,6 +127,7 @@ class Podglad(models.Model):
         self.save()
 
 class Institution(models.Model):
+    userid = models.IntegerField()
     email = models.CharField(max_length=200)
     nazwa = models.CharField(max_length=200)
     kategoria = models.CharField(max_length=200)
@@ -137,6 +140,7 @@ class Institution(models.Model):
         self.save()
         
 class Employee(models.Model):
+    institutionid = models.IntegerField(null=True)
     email = models.CharField(max_length=200)
     specjalization = models.CharField(max_length = 20,default=True)
     active = models.BooleanField(default=True)
@@ -146,9 +150,26 @@ class Employee(models.Model):
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) 
     role = models.CharField(max_length = 20,default='None')
 
-
     def __str__(self):
         return self.first_name
+
+    def publish(self):
+        self.save()
+
+#python manage.py shell
+#from dziennik.models import Activity
+#Activity.objects.create(instytucja='inst', nazwa='test', data_rozpoczecia='2020-12-17', godzina_rozpoczecia='21:00', godzina_zakonczenia='21:30', prowadzacy='test', uczniowie={'key1':'value1','key2':'value2'} ) 
+class Activity(models.Model):
+    nazwa = models.CharField(max_length=200)
+    instytucja = models.CharField(blank=True, max_length=200) 
+    data_rozpoczecia = models.DateField(blank=True, default=timezone.now)
+    godzina_rozpoczecia = models.TimeField(blank=True, default=timezone.now)
+    godzina_zakonczenia = models.TimeField(blank=True, default=timezone.now)
+    prowadzacy = models.CharField(null=True,blank=True, max_length=200)
+    uczniowie = jsonfield.JSONField(null=True)
+
+    def __str__(self):
+        return self.nazwa
 
     def publish(self):
         self.save()

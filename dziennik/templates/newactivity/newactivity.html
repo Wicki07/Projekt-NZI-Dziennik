@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+	<head>
+		<title>Dziennik | Tworzenie zajęć</title>    
+		<script src="{% static 'js/datepicker.js' %}"></script>
+	</head>
+	<script>
+		$(function(){
+			$('.date-withicon').datepicker({
+				format: 'yyyy-mm-dd'
+			});
+		});
+	</script>
+	<div class="myform form shadow-lg">
+		<form  name="singup" method="post">
+			{% csrf_token %}
+ 			<input type="number" name="instytucja" value={{user.pk}} required hidden>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Nazwa zajęć</label>
+				<p><input type="text" name="name" maxlength="30" required id="id_name" class="form-control" placeholder="Podaj nazwę zajęć" required></p>
+			</div>
+			<div class="imput-group date">
+				<label for="exampleInputEmail1">Data zajęć</label>
+				<p><input type="text" name="data_rozpoczecia" maxlength="30" required id="data_rozpoczecia" class="form-control date-withicon" placeholder="RRRR-MM-DD" required></p>
+				<div class="input-group-addon">
+					<span class="glyphicon glyphicon-th"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Godzina rozpoczecia</label>
+				<p><input type="text" name="godzina_rozpoczecia" maxlength="30" required id="godzina_rozpoczecia" class="form-control" placeholder="HH:MM" required></p>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Godzina zakonczenia</label>
+				<p><input type="text" name="godzina_zakonczenia" maxlength="30" required id="godzina_zakonczenia" class="form-control" placeholder="HH:MM" required></p>
+			</div>
+			<div class="form-group">
+ 				 <label for="exampleInputEmail1">Wybierz pracownika:</label>
+ 				 <select class="form-control" name="prowadzacy" id="prowadzacy"required>
+   					<option disabled selected hidden>Nie wybrano...</option>
+					<option value="0">Brak</option>
+				</select>	
+			</div>
+			<div class="form-group">
+ 				 <label for="exampleInputEmail1">Wybierz podopiecznych:</label>
+ 				 <select class="form-control" name="uczniowie" id="uczniowie"  size="1" required multiple>
+   					<option disabled selected hidden>Nie wybrano...</option>
+					<option value="0">Brak</option>
+					<option value="1">Test</option>
+					<option value="2">Inny</option>
+				</select>	
+			</div>
+			<div class="col-md-12 ">
+			</div>
+			<div class="form-group">
+				<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dodaj zajęcia</button>
+			</div>
+			<div class="form-group">
+				<p class="text-center"><a href="{%url 'main'%}" id="signin">Wróć</a></p>
+			</div>
+		</form>
+		{% if instytucja %}
+			<div class="message-background">
+				<div class="message">
+					<b>Nazwa zajęć:</b> {{nazwa}}<br>
+					<b>Data zajęć:</b> {{data_rozpoczecia}}<br>
+					<b>Godzina rozpoczecia zajęć:</b> {{godzina_rozpoczecia}}<br>
+					<b>Godzina zakonczenia zajęć:</b> {{godzina_zakonczenia}}<br>
+					<b>Prowadzący:</b> {{prowadzacy}}<br>
+					<b>Uczniowie:</b> {{uczniowie}}<br><br>
+					<a href="{%url 'main'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'phonenumber_field',
     'django_admin_logs',
-        
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -94,6 +94,16 @@ DATABASES = {
     }
 }
 
+'''DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql', 
+        'NAME': 'dziennik',
+        'USER': 'dziennik',
+        'PASSWORD': 'Marik1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+ }'''
 ## Zewnętrzna baza mysql
 '''
 DATABASES = {

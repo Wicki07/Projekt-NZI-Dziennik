@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Podglad, Institution, Employee
+from .models import Podglad, Institution, Employee,Activity
 from django.utils import timezone
 from datetime import timedelta
 import datetime
@@ -48,7 +48,8 @@ def signup(request):
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            #return HttpResponse('Please confirm your email address to complete the registration')
+            return render(request, 'signup/signup.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
     else:
         form = RegisterForm()
     return render(request, 'signup/signup.html', {'form': form})
@@ -61,8 +62,8 @@ def newinstitution(request):
             user.active = False
             user.role = 'Institution'
             user.phone=form.data['phone']
-            Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
             user.save()
+            Institution.objects.create(userid=user.pk,email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('email/acc_active_email.html', {
@@ -76,10 +77,12 @@ def newinstitution(request):
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            #return HttpResponse('Please confirm your email address to complete the registration')
+            return render(request, 'newinstitution/newinstitution.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
     else:
         form = CreationForm()
     return render(request, 'newinstitution/newinstitution.html', {'form': form})
+
 def newemployee(request):
     if request.method == 'POST':
         form = RegisterCreation(request.POST or None)
@@ -88,9 +91,9 @@ def newemployee(request):
             user.active = False
             user.role = 'Employee'
             user.phone=form.data['phone']
-
-            Employee.objects.create(first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'])
             user.save()
+            #zamienic user na instytucje
+            Employee.objects.create(institutionid=user.pk,first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'])
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('email/acc_active_email.html', {
@@ -104,10 +107,29 @@ def newemployee(request):
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            #return HttpResponse('Please confirm your email address to complete the registration')
+            return render(request, 'newemployee/newemployee.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
     else:
         form = CreationForm()
     return render(request, 'newemployee/newemployee.html', {'form': form})
+
+def newactivity(request):
+    if request.method == 'POST':
+        #if form.is_valid():
+            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
+            
+        dane = request.POST.dict()
+        instytucja = dane.get('instytucja')
+        nazwa = dane.get('name')
+        data_rozpoczecia = dane.get('data_rozpoczecia')
+        godzina_rozpoczecia = dane.get('godzina_rozpoczecia')
+        godzina_zakonczenia = dane.get('godzina_zakonczenia')
+        prowadzacy = dane.get('prowadzacy')
+        uczniowie = dane.get('uczniowie')
+        Activity.objects.create(instytucja=instytucja, nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, godzina_rozpoczecia=godzina_rozpoczecia, godzina_zakonczenia=godzina_zakonczenia, prowadzacy=prowadzacy, uczniowie=uczniowie ) 
+        return render(request, 'newactivity/newactivity.html', {'instytucja': instytucja,'nazwa':nazwa,'data_rozpoczecia':data_rozpoczecia,'godzina_rozpoczecia':godzina_rozpoczecia,'godzina_zakonczenia':godzina_zakonczenia,'prowadzacy':prowadzacy,'uczniowie':uczniowie})
+
+    return render(request, 'newactivity/newactivity.html', {})
 
 def activate(request, uidb64, token):
     try:
