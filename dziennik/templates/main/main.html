@@ -31,6 +31,9 @@
 							<a class="dropdown-item" href="{% url 'newactivity' %}" id="newactivity">Stwórz zajęcia</a>
 							<a class="dropdown-item" href="{% url 'newemployee' %}" id="newemployee">Dodaj pracownika</a>
 							{% endif %}
+							{% if user.role == 'User' %}
+							<a class="dropdown-item" href="{% url 'newchild' %}" id="newchild">Stwórz profil dziecka</a>
+							{% endif %}
 							<a class="dropdown-item" href="#">Ustawienia</a>
 							<a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a>
 						</div>

@@ -12,6 +12,7 @@
 				<label for="exampleInputEmail1">Imię</label>
 				<p><input type="text" name="first_name" maxlength="30" required id="id_first_name" class="form-control" placeholder="Podaj imię" required></p>
 			</div>
+ 			<input type="number" name="instytucja" value={{user.pk}} required hidden>
 			<div class="form-group">
 				<label for="exampleInputEmail1">Nazwisko</label>
 				<p><input type="text" name="last_name" maxlength="30" required id="id_last_name" class="form-control" placeholder="Podaj nazwisko" required></p>
@@ -35,14 +36,13 @@
 				<p><input type="text" name="phone" autocomplete="new-password" required maxlength="9" id="id_phone" class="form-control" placeholder="Podaj ponownie hasło" required></p>
 			</div>
 			<div class="col-md-12 ">
-					{% if form.errors %}			
-						{%for x in form.errors%}
-						{% if x == email %}
-						<p>Nie prawidłowy: </p>
-						{% else  %}
-						<p> {{x}}</p>
-						{% endif %}
-						{% endfor %}
+					{% if form.errors %}	
+						<font color="red">
+							<p>Nie prawidłowy: </p>		
+							{%for x in form.errors%}
+								<p><li>{{x}}</li></p>
+							{% endfor %}
+						</font>
 					{% endif %}
 
 					{% if next %}

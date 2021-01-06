@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Podglad, Institution, Employee,Activity
+from .models import Podglad, Institution, Employee,Activity,Child
 from django.utils import timezone
 from datetime import timedelta
 import datetime
@@ -93,7 +93,9 @@ def newemployee(request):
             user.phone=form.data['phone']
             user.save()
             #zamienic user na instytucje
-            Employee.objects.create(institutionid=user.pk,first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'])
+            dane = request.POST.dict()
+            instytucja = dane.get('instytucja')
+            Employee.objects.create(institutionid=instytucja,userid=user.pk,first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'])
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('email/acc_active_email.html', {
@@ -129,7 +131,25 @@ def newactivity(request):
         Activity.objects.create(instytucja=instytucja, nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, godzina_rozpoczecia=godzina_rozpoczecia, godzina_zakonczenia=godzina_zakonczenia, prowadzacy=prowadzacy, uczniowie=uczniowie ) 
         return render(request, 'newactivity/newactivity.html', {'instytucja': instytucja,'nazwa':nazwa,'data_rozpoczecia':data_rozpoczecia,'godzina_rozpoczecia':godzina_rozpoczecia,'godzina_zakonczenia':godzina_zakonczenia,'prowadzacy':prowadzacy,'uczniowie':uczniowie})
 
-    return render(request, 'newactivity/newactivity.html', {})
+    pracownicy = Employee.objects.filter(institutionid=request.user.pk)
+    #print(pracownicy)
+    return render(request, 'newactivity/newactivity.html', {'pracownicy':pracownicy})
+
+def newchild(request):
+    if request.method == 'POST':
+        #if form.is_valid():
+            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
+            
+        dane = request.POST.dict()
+        parentid = dane.get('rodzic')
+        first_name = dane.get('first_name')
+        last_name = dane.get('last_name')
+        age = dane.get('age')
+        
+        Child.objects.create(parentid=parentid, first_name=first_name, last_name=last_name, age=age) 
+        return render(request, 'newchild/newchild.html', {'parentid': parentid,'first_name':first_name,'last_name':last_name,'age':age})
+
+    return render(request, 'newchild/newchild.html', {})
 
 def activate(request, uidb64, token):
     try:

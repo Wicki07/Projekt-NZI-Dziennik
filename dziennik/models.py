@@ -141,6 +141,7 @@ class Institution(models.Model):
         
 class Employee(models.Model):
     institutionid = models.IntegerField(null=True)
+    userid = models.IntegerField(null=True)
     email = models.CharField(max_length=200)
     specjalization = models.CharField(max_length = 20,default=True)
     active = models.BooleanField(default=True)
@@ -151,7 +152,7 @@ class Employee(models.Model):
     role = models.CharField(max_length = 20,default='None')
 
     def __str__(self):
-        return self.first_name
+        return self.first_name +" "+ self.last_name
 
     def publish(self):
         self.save()
@@ -165,11 +166,24 @@ class Activity(models.Model):
     data_rozpoczecia = models.DateField(blank=True, default=timezone.now)
     godzina_rozpoczecia = models.TimeField(blank=True, default=timezone.now)
     godzina_zakonczenia = models.TimeField(blank=True, default=timezone.now)
+    cyklicznosc = models.IntegerField(null=True)
     prowadzacy = models.CharField(null=True,blank=True, max_length=200)
     uczniowie = jsonfield.JSONField(null=True)
 
     def __str__(self):
         return self.nazwa
+
+    def publish(self):
+        self.save()
+
+class Child(models.Model):
+    parentid = models.IntegerField(null=True)
+    first_name = models.CharField(max_length = 20,default=True)
+    last_name = models.CharField(max_length = 20,default=True)
+    age = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.first_name +" "+ self.last_name
 
     def publish(self):
         self.save()
