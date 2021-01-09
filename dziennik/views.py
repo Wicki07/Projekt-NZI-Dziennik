@@ -20,7 +20,7 @@ from .models import Podglad, Institution, Employee,Activity,Child
 from django.utils import timezone
 from datetime import timedelta
 import datetime
-
+import random
 
 
 def main(request):
@@ -99,6 +99,7 @@ def newemployee(request):
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('email/acc_active_email.html', {
+                'pass': form.data['password1'],
                 'user': user,
                 'domain': current_site.domain,
                 'uid':urlsafe_base64_encode(force_bytes(user.pk)),
@@ -112,8 +113,48 @@ def newemployee(request):
             #return HttpResponse('Please confirm your email address to complete the registration')
             return render(request, 'newemployee/newemployee.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
     else:
+
         form = CreationForm()
-    return render(request, 'newemployee/newemployee.html', {'form': form})
+    
+
+    wyghaslo = random.random(2.5, 20.0)   
+    return render(request, 'newemployee/newemployee.html', {'form': form , 'wyghaslo': wyghaslo})
+
+def newactivity(request):
+    if request.method == 'POST':
+        #if form.is_valid():
+            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
+            
+        dane = request.POST.dict()
+        instytucja = dane.get('instytucja')
+        nazwa = dane.get('name')
+        data_rozpoczecia = dane.get('data_rozpoczecia')
+        godzina_rozpoczecia = dane.get('godzina_rozpoczecia')
+        godzina_zakonczenia = dane.get('godzina_zakonczenia')
+        prowadzacy = dane.get('prowadzacy')
+        uczniowie = dane.get('uczniowie')
+        Activity.objects.create(instytucja=instytucja, nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, godzina_rozpoczecia=godzina_rozpoczecia, godzina_zakonczenia=godzina_zakonczenia, prowadzacy=prowadzacy, uczniowie=uczniowie ) 
+        return render(request, 'newactivity/newactivity.html', {'instytucja': instytucja,'nazwa':nazwa,'data_rozpoczecia':data_rozpoczecia,'godzina_rozpoczecia':godzina_rozpoczecia,'godzina_zakonczenia':godzina_zakonczenia,'prowadzacy':prowadzacy,'uczniowie':uczniowie})
+
+    pracownicy = Employee.objects.filter(institutionid=request.user.pk)
+    #print(pracownicy)
+    return render(request, 'newactivity/newactivity.html', {'pracownicy':pracownicy})
+
+def newchild(request):
+    if request.method == 'POST':
+        #if form.is_valid():
+            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
+            
+        dane = request.POST.dict()
+        parentid = dane.get('rodzic')
+        first_name = dane.get('first_name')
+        last_name = dane.get('last_name')
+        age = dane.get('age')
+        
+        Child.objects.create(parentid=parentid, first_name=first_name, last_name=last_name, age=age) 
+        return render(request, 'newchild/newchild.html', {'parentid': parentid,'first_name':first_name,'last_name':last_name,'age':age})
+
+    return render(request, 'newchild/newchild.html', {})
 
 def newactivity(request):
     if request.method == 'POST':
