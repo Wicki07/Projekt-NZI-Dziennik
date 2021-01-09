@@ -117,7 +117,7 @@ def newemployee(request):
         form = CreationForm()
     
 
-    wyghaslo = random.random(2.5, 20.0)   
+    wyghaslo = random.random()   
     return render(request, 'newemployee/newemployee.html', {'form': form , 'wyghaslo': wyghaslo})
 
 def newactivity(request):
