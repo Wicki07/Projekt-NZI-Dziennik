@@ -26,10 +26,10 @@
 				<p><input type="email" name="email" maxlength="254" required id="id_email" class="form-control" placeholder="Podaj email" required></p>
 			</div>
 			<div class="form-group">
-				<p><input type="password" name="password1" autocomplete="new-password" required id="id_password1" class="form-control" placeholder="Podaj hasło" required hidden value="sss"></p>
+				<p><input type="password" name="password1" autocomplete="new-password" required id="id_password1" class="form-control" placeholder="Podaj hasło" required hidden value={% if wyghaslo %}{{ wyghaslo }}{% endif %}></p>
 			</div>
 			<div class="form-group">
-				<p><input type="password" name="password2" autocomplete="new-password" required id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" required hidden value="sss"></p>
+				<p><input type="password" name="password2" autocomplete="new-password" required id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" required hidden value={% if wyghaslo %}{{ wyghaslo }}{% endif %}></p>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputEmail1">Nr Telefonu</label>
