@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from allauth.account import views as allauth_views
 from . import views
+from django.template.loader import render_to_string
 from django.contrib.auth import views as auth_view
 urlpatterns = [
     path('', views.main, name='main'),
@@ -43,3 +44,76 @@ mARCIN123@#
     {{form.phone}}
 
 '''
+
+
+#Timer
+import time
+import datetime
+import pytz
+from threading import Thread, Lock
+from .models import User, Employee, Activity,Child
+from django.core.mail import EmailMessage
+
+def tick():
+    # usuwanie pracownika po 24h nieaktwowanego konta
+    time=pytz.timezone('Europe/Warsaw')
+    pracownicy = Employee.objects.filter(active=False)
+    for pr in pracownicy:
+        if (pr.creation_date + datetime.timedelta(days=1)) < time.localize(datetime.datetime.now()):
+            print("Employee: "+ pr.first_name +" "+ pr.last_name  + " was deleted! - UserID: " + str(pr.userid))
+            Employee.objects.filter(id=pr.pk).delete()
+            User.objects.filter(id=pr.userid).delete()
+    
+    # powiadomienia o zajęciach
+    zajecia = Activity.objects.all()
+    for zaj in zajecia:
+        # sprawdzenie daty
+        start_zajec = datetime.datetime.strptime(str(zaj.data_rozpoczecia) + " " + str(zaj.godzina_rozpoczecia), '%Y-%m-%d %H:%M:%S')
+        #print("zajecia: " + str(start_zajec - datetime.timedelta(days=1)))
+        #print("teraz:   " + str(datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')))
+        if (start_zajec - datetime.timedelta(days=1) == datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')):
+            print("----------/ Powiadomienie o zajęciach /----------")
+            print("Nazwa: "+str(zaj))
+            # powiadomienie pracownika
+            pracownik = Employee.objects.get(id=zaj.prowadzacy)  
+            print("Prowadzący: "+str(pracownik))
+            mail_subject = "Przypomnienie o zajeciach."
+            message = render_to_string('email/powiadomienie_o_zajeciach.html', {
+                'zajecia': zajecia,
+                'user': pracownik,
+            })
+            to_email = pracownik.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            '''email.send()'''
+            # powiadomienie podopiecznych
+            podopieczni = Child.objects.filter(id=int(zaj.uczniowie)) 
+            
+            print("Podopieczni: "+str(podopieczni))
+            for ucz in podopieczni:
+                rodzic = User.objects.get(id=ucz.parentid)
+                print("Wysłane do: "+str(rodzic))
+                mail_subject = "Przypomnienie o zajeciach."
+                message = render_to_string('email/powiadomienie_o_zajeciach.html', {
+                    'zajecia': zajecia,
+                    'user': rodzic,
+                })
+                to_email = rodzic.email
+                email = EmailMessage(
+                    mail_subject, message, to=[to_email]
+                )
+                '''email.send()'''
+            print("-------------------------------------------------")
+
+def timer():
+    while True:
+        tick()
+        time.sleep(60) # w sekundach (60 = 1 na minute)
+
+t = Thread(target=timer, args=(), kwargs={})
+t.setDaemon(True)
+t.start()
+
+#2021-01-12 12:41:09+00:00
+#2021-01-11 13:54:22.916489

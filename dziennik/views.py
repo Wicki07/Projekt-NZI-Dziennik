@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Podglad, Institution, Employee,Activity,Child
+from .models import Institution, Employee,Activity,Child
 from django.utils import timezone
 from datetime import timedelta
 import datetime
@@ -95,7 +95,7 @@ def newemployee(request):
             #zamienic user na instytucje
             dane = request.POST.dict()
             instytucja = dane.get('instytucja')
-            Employee.objects.create(institutionid=instytucja,userid=user.pk,first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'])
+            Employee.objects.create(institutionid=instytucja,userid=user.pk,first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'],creation_date=datetime.datetime.now())
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('email/acc_active_email.html', {
@@ -209,7 +209,7 @@ def activate(request, uidb64, token):
 
 def week_list(request):
     #lte=Less than or equal to
-    podglad = Podglad.objects.all()
+    podglad = Activity.objects.filter(uczniowie=request.user.pk)
     some_day_last_week = timezone.now().date()
     monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
     monday_of_this_week = monday_of_last_week + timedelta(days=7)

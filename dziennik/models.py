@@ -6,11 +6,10 @@ from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+import datetime
 from django_mysql.models import JSONField, Model
 
 import jsonfield
-
-
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -113,7 +112,7 @@ class User(AbstractBaseUser):
 #   python manage.py shell
 #   from dziennik.models import Podglad
 #   Podglad.objects.create(nazwa='test', data_rozpoczecia='2020-12-17', godzina_rozpoczecia='21:00',godzina_zakonczenia='21:30', prowadzacy='test')
-class Podglad(models.Model):
+'''class Podglad(models.Model):
     nazwa = models.CharField(max_length=200)
     data_rozpoczecia = models.DateField(blank=True, default=timezone.now)
     godzina_rozpoczecia = models.TimeField(blank=True, default=timezone.now)
@@ -125,6 +124,7 @@ class Podglad(models.Model):
 
     def publish(self):
         self.save()
+'''
 
 class Institution(models.Model):
     userid = models.IntegerField()
@@ -144,12 +144,13 @@ class Employee(models.Model):
     userid = models.IntegerField(null=True)
     email = models.CharField(max_length=200)
     specjalization = models.CharField(max_length = 20,default=True)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
     first_name = models.CharField(max_length = 20,default=True)
     last_name = models.CharField(max_length = 20,default=True)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) 
     role = models.CharField(max_length = 20,default='None')
+    creation_date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return self.first_name +" "+ self.last_name

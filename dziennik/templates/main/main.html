@@ -27,6 +27,9 @@
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="navbar-toggler-icon"></span></a>
 						<div class="dropdown-menu  dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink-333">
+							{% if user.admin %}
+							<a class="dropdown-item" href="panel/admin/" id="panelAdmin">Panel Administracyjny</a>
+							{% endif %}
 							{% if user.role == 'Institution' %}
 							<a class="dropdown-item" href="{% url 'newactivity' %}" id="newactivity">Stwórz zajęcia</a>
 							<a class="dropdown-item" href="{% url 'newemployee' %}" id="newemployee">Dodaj pracownika</a>
