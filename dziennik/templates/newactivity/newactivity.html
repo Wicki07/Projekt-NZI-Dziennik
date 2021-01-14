@@ -3,15 +3,15 @@
 {% block content %} 
 	<head>
 		<title>Dziennik | Tworzenie zajęć</title>    
-		<script src="{% static 'js/datepicker.js' %}"></script>
+		<!--<script src="{% static 'js/datepicker.js' %}"></script>-->
 	</head>
-	<script>
+	<!--<script>
 		$(function(){
 			$('.date-withicon').datepicker({
-				format: 'yyyy-mm-dd'
+				format: 'yy-mm-dd'
 			});
 		});
-	</script>
+	</script>-->
 	<div class="myform form shadow-lg">
 		<form  name="singup" method="post">
 			{% csrf_token %}

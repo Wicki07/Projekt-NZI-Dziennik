@@ -139,6 +139,9 @@ class Institution(models.Model):
     def publish(self):
         self.save()
         
+    class Meta:
+        ordering = ('nazwa',)
+
 class Employee(models.Model):
     institutionid = models.IntegerField(null=True)
     userid = models.IntegerField(null=True)
@@ -167,7 +170,7 @@ class Activity(models.Model):
     data_rozpoczecia = models.DateField(blank=True, default=timezone.now)
     godzina_rozpoczecia = models.TimeField(blank=True, default=timezone.now)
     godzina_zakonczenia = models.TimeField(blank=True, default=timezone.now)
-    cyklicznosc = models.IntegerField(null=True)
+    cyklicznosc = models.IntegerField(null=True, default=0)
     prowadzacy = models.CharField(null=True,blank=True, max_length=200)
     uczniowie = jsonfield.JSONField(null=True)
 
@@ -188,3 +191,18 @@ class Child(models.Model):
 
     def publish(self):
         self.save()
+
+class Zgloszenie(models.Model):
+    childid = models.IntegerField(null=True)
+    idinstytucji = models.IntegerField(null=True)
+    opis = models.CharField(max_length = 300,default=True)
+
+    def __str__(self):
+        return str(self.id)
+
+    def publish(self):
+        self.save()
+
+    class Meta:
+        verbose_name_plural = "Zgloszenia"
+        

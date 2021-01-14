@@ -21,7 +21,9 @@ urlpatterns = [
     #path('signup/', RegisterView.as_view(), name='signup'),
     path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),  
-    path('week/',views.week_list, name='week_list') ,
+    path('week/',views.week_list, name='week_list'),
+    path('listpupils/',views.list_pupils, name='listpupils') ,
+    path('assingchildtoinstitution/',views.find_institution, name='assingchildtoinstitution')
 
     #path('reset_password/', auth_views.PasswordResetView.as_view(template_name = "reset_password.html"), name ='reset_password'),
     #path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(template_name = "password_reset_sent.html"), name ='password_reset_done'),
@@ -79,31 +81,33 @@ def tick():
             print("Prowadzący: "+str(pracownik))
             mail_subject = "Przypomnienie o zajeciach."
             message = render_to_string('email/powiadomienie_o_zajeciach.html', {
-                'zajecia': zajecia,
+                'zajecia': zaj,
                 'user': pracownik,
             })
             to_email = pracownik.email
             email = EmailMessage(
                 mail_subject, message, to=[to_email]
             )
-            '''email.send()'''
+            email.send()
             # powiadomienie podopiecznych
             podopieczni = Child.objects.filter(id=int(zaj.uczniowie)) 
-            
-            print("Podopieczni: "+str(podopieczni))
+            print("Podopieczni: ")
+            for ucz in podopieczni:
+                print(str(ucz))
             for ucz in podopieczni:
                 rodzic = User.objects.get(id=ucz.parentid)
                 print("Wysłane do: "+str(rodzic))
                 mail_subject = "Przypomnienie o zajeciach."
                 message = render_to_string('email/powiadomienie_o_zajeciach.html', {
-                    'zajecia': zajecia,
+                    'dziecko': str(ucz),
+                    'zajecia': zaj,
                     'user': rodzic,
                 })
                 to_email = rodzic.email
                 email = EmailMessage(
                     mail_subject, message, to=[to_email]
                 )
-                '''email.send()'''
+                email.send()
             print("-------------------------------------------------")
 
 def timer():

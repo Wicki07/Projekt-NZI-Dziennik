@@ -139,7 +139,31 @@ form .error {
       border-radius:50px;
       margin:2px;
       transition-duration:.2s;
-	}
+  }
+  
+  h5 button{
+    width: auto;
+  }
+
+ .card-body button{
+    width: auto!important;
+  }
+  .card-body button a{
+    color:black;
+  }
+
+  .overwriteButton{
+    width: auto;
+  }
+  .overwriteButton button{
+    width: auto!important;
+  }
+
+  .card-body{
+    padding: 1.25rem 0 1.25rem 0;
+    display: flex!important;
+    justify-content: center!important;
+  }
       .today{
         box-shadow:inset 0px 0px 0px 2px #007bff;
       }
@@ -182,4 +206,21 @@ form .error {
 	border: 1px solid rgba(0,0,0,.2);
 	border-radius: 1.1rem;
 	z-index:998;
+}
+
+/*Search Bar*/
+.search.input-group {
+  width: auto;
+}
+
+.search.input-group input,
+.search.input-group .search.form-notch,
+.search.input-group .search.form-notch-trailing {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.search.input-group button {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
 }
