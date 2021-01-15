@@ -65,7 +65,7 @@ class User(AbstractBaseUser):
     admin = models.BooleanField(default=False) # a superuser
     first_name = models.CharField(max_length = 20,default=True)
     last_name = models.CharField(max_length = 20,default=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Telefon musi być podany w formacie: '999999999'.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list
     role = models.CharField(max_length = 20,default='None')
     # notice the absence of a "Password field", that is built in.
@@ -147,7 +147,7 @@ class Employee(models.Model):
     active = models.BooleanField(default=False)
     first_name = models.CharField(max_length = 20,default=True)
     last_name = models.CharField(max_length = 20,default=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Telefon musi być podany w formacie: '999999999'.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) 
     role = models.CharField(max_length = 20,default='None')
     creation_date = models.DateTimeField(default=timezone.now())
@@ -167,7 +167,7 @@ class Activity(models.Model):
     data_rozpoczecia = models.DateField(blank=True, default=timezone.now)
     godzina_rozpoczecia = models.TimeField(blank=True, default=timezone.now)
     godzina_zakonczenia = models.TimeField(blank=True, default=timezone.now)
-    cyklicznosc = models.IntegerField(null=True)
+    cyklicznosc = models.IntegerField(null=True, default=0)
     prowadzacy = models.CharField(null=True,blank=True, max_length=200)
     uczniowie = jsonfield.JSONField(null=True)
 

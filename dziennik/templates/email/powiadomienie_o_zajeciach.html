@@ -1,7 +1,10 @@
 {% autoescape off %}
-Witaj {{ user.first_name }} {{user.last_name}}},
+Witaj {{ user.first_name }} {{user.last_name}},
 
-{{zajecia.nazwa}} {{zajecia.data_rozpoczecia}} 
-od {{zajecia.godzina_rozpoczecia}} do {{zajecia.godzina_zakonczenia}}
+Dziecko: {{dziecko}}
+
+Zajęcia: {{zajecia.nazwa}} 
+Data: {{zajecia.data_rozpoczecia}} 
+Od {{zajecia.godzina_rozpoczecia}} do {{zajecia.godzina_zakonczenia}}
 
 {% endautoescape %}

@@ -196,11 +196,15 @@ def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
+        employee = Employee.objects.get(userid=user.pk)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
+        employee = None
     if user is not None and account_activation_token.check_token(user, token):
         user.active = True
+        employee.active=True
         user.save()
+        employee.save()
         
         # return redirect('home')
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
@@ -209,7 +213,12 @@ def activate(request, uidb64, token):
 
 def week_list(request):
     #lte=Less than or equal to
-    podglad = Activity.objects.filter(uczniowie=request.user.pk)
+    #podglad = Activity.objects.filter(uczniowie=request.user.pk) # zamienić na dziecko
+    podglad = Activity.objects.none()
+    dzieci = Child.objects.filter(parentid=request.user.pk)
+    for dziecko in dzieci:
+        podglad |= Activity.objects.filter(uczniowie=dziecko.pk)
+
     some_day_last_week = timezone.now().date()
     monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
     monday_of_this_week = monday_of_last_week + timedelta(days=7)
@@ -219,4 +228,7 @@ def week_list(request):
         day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
         da = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
         setattr(podgla,'day',da)
+        child = Child.objects.get(parentid=request.user.pk,id=podgla.uczniowie)
+        if child:
+            setattr(podgla,'child',child)
     return render(request, 'week/week.html',{'filtr':filtr})

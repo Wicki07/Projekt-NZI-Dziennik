@@ -19,23 +19,28 @@
 			{% csrf_token %}
 			<div class="form-group">
 				<label for="exampleInputEmail1">Nazwa</label>
-				<p><input type="text" name="first_name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj imię" required></p>
+				<p><input type="text" name="first_name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="[a-zA-Z]{3,}$" required></p>
+				<span class="error"></span>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputEmail1">Email</label>
-				<p><input type="email" name="email" maxlength="254"  id="id_email" class="form-control" placeholder="Podaj email" required></p>
+				<p><input type="email" name="email" maxlength="254"  id="id_email" class="form-control" placeholder="Podaj email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></p>
+				<span class="error"></span>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputEmail1">Hasło</label>
-				<p><input type="password" name="password1" autocomplete="new-password"  id="id_password1" class="form-control" placeholder="Podaj hasło" required></p>
+				<p><input type="password" name="password1" autocomplete="new-password"  id="id_password1" class="form-control" placeholder="Podaj hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
+				<span class="error"></span>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputEmail1">Potwierdź hasło</label>
-				<p><input type="password" name="password2" autocomplete="new-password" id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" required></p>
+				<p><input type="password" name="password2" autocomplete="new-password" id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
+				<span class="error"></span>
 			</div>
 			<div class="form-group">
-				<label for="exampleInputEmail1">Nr Kontaktowy</label>
-				<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj kontakt" required></p>
+				<label for="exampleInputEmail1">Nr kontaktowy</label>
+				<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$" required></p>
+				<span class="error"></span>
 			</div>
 			<div class="form-group">
  				 <label for="sel1">Wybierz kategorię:</label>
@@ -45,8 +50,13 @@
 					<option value="Klub sportowy">Klub sportowy</option>
 					<option value="Korepetycje">Korepetycje</option>
 					<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
-				</select>	
-				<p><input type="text" name="profil" autocomplete="new-password"  id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+				</select>
+				<span class="error"></span>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Podaj profil</label>
+				<p><input type="text" name="profil" autocomplete="new-password" pattern="[a-zA-Z]{3,}$" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+				<span class="error"></span>
 			</div>
 			<div class="col-md-12 ">
 					{% if form.errors %}			
@@ -69,7 +79,7 @@
 					{% endif %}
 			</div>
 			<div class="form-group">
-				<button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
+				<button type="submit" onclick="instytutionValidation()" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
 			</div>
 			<div class="form-group">
 				<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>

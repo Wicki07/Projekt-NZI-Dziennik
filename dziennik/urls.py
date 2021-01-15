@@ -79,31 +79,33 @@ def tick():
             print("Prowadzący: "+str(pracownik))
             mail_subject = "Przypomnienie o zajeciach."
             message = render_to_string('email/powiadomienie_o_zajeciach.html', {
-                'zajecia': zajecia,
+                'zajecia': zaj,
                 'user': pracownik,
             })
             to_email = pracownik.email
             email = EmailMessage(
                 mail_subject, message, to=[to_email]
             )
-            '''email.send()'''
+            email.send()
             # powiadomienie podopiecznych
             podopieczni = Child.objects.filter(id=int(zaj.uczniowie)) 
-            
-            print("Podopieczni: "+str(podopieczni))
+            print("Podopieczni: ")
+            for ucz in podopieczni:
+                print(str(ucz))
             for ucz in podopieczni:
                 rodzic = User.objects.get(id=ucz.parentid)
                 print("Wysłane do: "+str(rodzic))
                 mail_subject = "Przypomnienie o zajeciach."
                 message = render_to_string('email/powiadomienie_o_zajeciach.html', {
-                    'zajecia': zajecia,
+                    'dziecko': str(ucz),
+                    'zajecia': zaj,
                     'user': rodzic,
                 })
                 to_email = rodzic.email
                 email = EmailMessage(
                     mail_subject, message, to=[to_email]
                 )
-                '''email.send()'''
+                email.send()
             print("-------------------------------------------------")
 
 def timer():
