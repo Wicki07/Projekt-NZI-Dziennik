@@ -21,7 +21,9 @@ urlpatterns = [
     #path('signup/', RegisterView.as_view(), name='signup'),
     path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),  
-    path('week/',views.week_list, name='week_list') ,
+    path('week/',views.week_list, name='week_list'),
+    path('listpupils/',views.list_pupils, name='listpupils') ,
+    path('assingchildtoinstitution/',views.find_institution, name='assingchildtoinstitution')
 
     #path('reset_password/', auth_views.PasswordResetView.as_view(template_name = "reset_password.html"), name ='reset_password'),
     #path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(template_name = "password_reset_sent.html"), name ='password_reset_done'),

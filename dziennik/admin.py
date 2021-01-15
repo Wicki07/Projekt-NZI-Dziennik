@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import UserAdminCreationForm, UserAdminChangeForm
 from .models import User
-from dziennik.models import Institution, Employee, Activity, Child
+from dziennik.models import Institution, Employee, Activity, Child, Zgloszenie
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -41,6 +41,7 @@ admin.site.register(Employee)
 admin.site.register(Activity)
 #admin.site.register(Podglad)
 admin.site.register(Child)
+admin.site.register(Zgloszenie)
 
 
 

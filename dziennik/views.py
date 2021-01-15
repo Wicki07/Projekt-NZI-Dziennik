@@ -1,3 +1,4 @@
+from django.db.models.functions.text import Length
 from django.utils import timezone
 from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -16,11 +17,15 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Institution, Employee,Activity,Child
+from .models import Institution, Employee,Activity,Child, Zgloszenie
 from django.utils import timezone
 from datetime import timedelta
 import datetime
 import random
+from django.db.models import Q 
+#A Q object (django.db.models.Q) is an object 
+#used to encapsulate a collection of keyword arguments. These keyword arguments are specified as in “Field lookups” above.
+from django.db.models.functions import Lower
 
 
 def main(request):
@@ -196,15 +201,30 @@ def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
+<<<<<<< HEAD
         employee = Employee.objects.get(userid=user.pk)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         employee = None
+=======
+        if user.role == "Employee":
+          employee = Employee.objects.get(userid=user.pk)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+        if user.role == "Employee":
+          employee = None
+>>>>>>> 1cc4eb9342449654428e01475b79e19ccdd7e9a9
     if user is not None and account_activation_token.check_token(user, token):
         user.active = True
         employee.active=True
         user.save()
+<<<<<<< HEAD
         employee.save()
+=======
+        if user.role == "Employee":
+          employee.active=True
+          employee.save()
+>>>>>>> 1cc4eb9342449654428e01475b79e19ccdd7e9a9
         
         # return redirect('home')
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
@@ -232,3 +252,29 @@ def week_list(request):
         if child:
             setattr(podgla,'child',child)
     return render(request, 'week/week.html',{'filtr':filtr})
+
+def list_pupils(request):
+    dzieci = Child.objects.filter(parentid=request.user.pk)
+    return render(request, 'list_pupils/list_pupils.html', {'dzieci': dzieci})
+
+def find_institution(request):
+    tempChildid = 0
+    institutionid = 0
+    if request.method == 'POST':
+        dane = request.POST.dict()#Dane z frontu do backendu w psotaci slownika
+        tempChildid = int(dane.get('ukrytyPatryk'))#Odczytanie danych po etykiecie(name) z formularza który jest ukryty
+        if dane.get('listaInstytucji'):
+            institutionid = dane.get('listaInstytucji')
+            Zgloszenie.objects.create(childid = tempChildid, idinstytucji = institutionid, opis = "Zgloszenie")
+
+    if request.method =='GET':
+        query = str(request.GET.get('searchBar'))
+        dane = request.GET.dict()#Dane z frontu do backendu w psotaci slownika
+        tempChildid = int(dane.get('ukrytyPatryk2'))#Odczytanie danych po etykiecie(name) z formularza który jest ukryty
+        object_list = Institution.objects.filter(
+            Q(nazwa__icontains=query)
+        )
+        return render(request,'find_institution/find_institution.html',{'object_list':object_list,'childid':tempChildid})
+
+    institution = Institution.objects.all()
+    return render(request, 'find_institution/find_institution.html',{'childid':tempChildid,'institution':institution})

@@ -139,6 +139,9 @@ class Institution(models.Model):
     def publish(self):
         self.save()
         
+    class Meta:
+        ordering = ('nazwa',)
+
 class Employee(models.Model):
     institutionid = models.IntegerField(null=True)
     userid = models.IntegerField(null=True)
@@ -188,3 +191,18 @@ class Child(models.Model):
 
     def publish(self):
         self.save()
+
+class Zgloszenie(models.Model):
+    childid = models.IntegerField(null=True)
+    idinstytucji = models.IntegerField(null=True)
+    opis = models.CharField(max_length = 300,default=True)
+
+    def __str__(self):
+        return str(self.id)
+
+    def publish(self):
+        self.save()
+
+    class Meta:
+        verbose_name_plural = "Zgloszenia"
+        
