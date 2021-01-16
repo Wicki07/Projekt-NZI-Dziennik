@@ -50,7 +50,11 @@
 				<input type="radio" name="options" id="option1" autocomplete="off"> Dzień
 			</label>
 			<label class="btn btn-primary">
-				<a href ="{% url 'week_list' %}" style="color:white;"><input type="radio" name="options" id="option2" autocomplete="off">Tydzień</a> 
+			{% if user.role == "Employee" %}
+				<a href ="{% url 'week_list_employe' %}" style="color:white;"><input type="radio" name="options" id="option2" autocomplete="off" checked>Tydzień</a> 			
+			{% else  %}
+				<a href ="{% url 'week_list' %}" style="color:white;"><input type="radio" name="options" id="option2" autocomplete="off" checked>Tydzień</a> 		
+			{% endif %}
 			</label>
 			<label class="btn btn-primary">
 				<a href ="{% url 'main' %}" style="color:white;"><input type="radio" name="options" id="option3" autocomplete="off" checked> Miesiąc</a> 

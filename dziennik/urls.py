@@ -22,6 +22,8 @@ urlpatterns = [
     path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),  
     path('week/',views.week_list, name='week_list'),
+    path('week_empl/',views.week_list_employe, name='week_list_employe'),
+    path('notification',views.notification, name='notification'),
     path('listpupils/',views.list_pupils, name='listpupils') ,
     path('assingchildtoinstitution/',views.find_institution, name='assingchildtoinstitution')
 

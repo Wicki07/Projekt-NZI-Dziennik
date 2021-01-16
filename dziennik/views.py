@@ -201,30 +201,29 @@ def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-<<<<<<< HEAD
+
         employee = Employee.objects.get(userid=user.pk)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         employee = None
-=======
+
         if user.role == "Employee":
           employee = Employee.objects.get(userid=user.pk)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         if user.role == "Employee":
           employee = None
->>>>>>> 1cc4eb9342449654428e01475b79e19ccdd7e9a9
+
     if user is not None and account_activation_token.check_token(user, token):
         user.active = True
         employee.active=True
         user.save()
-<<<<<<< HEAD
         employee.save()
-=======
+
         if user.role == "Employee":
           employee.active=True
           employee.save()
->>>>>>> 1cc4eb9342449654428e01475b79e19ccdd7e9a9
+
         
         # return redirect('home')
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
@@ -253,9 +252,33 @@ def week_list(request):
             setattr(podgla,'child',child)
     return render(request, 'week/week.html',{'filtr':filtr})
 
+def week_list_employe(request):
+    #lte=Less than or equal to
+    #podglad = Activity.objects.filter(uczniowie=request.user.pk) # zamienić na dziecko
+    podglad = Activity.objects.none()
+    employe = Employee.objects.filter(userid=request.user.pk)
+    for employee in employe:
+        podglad |= Activity.objects.filter(prowadzacy=employee.pk)
+
+    some_day_last_week = timezone.now().date()
+    monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
+    monday_of_this_week = monday_of_last_week + timedelta(days=7)
+    filtr = podglad.filter(data_rozpoczecia__gte=monday_of_last_week, data_rozpoczecia__lt=monday_of_this_week)
+
+    for podgla in filtr:
+        date= str(podgla.data_rozpoczecia)  
+        day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+        da = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
+        setattr(podgla,'day',da)
+        emploje = Employee.objects.get(userid=request.user.pk,id=podgla.prowadzacy)
+        if emploje:
+            setattr(podgla,'emploje',emploje)    
+    return render(request, 'week/week.html',{'filtr':filtr})
+
 def list_pupils(request):
     dzieci = Child.objects.filter(parentid=request.user.pk)
     return render(request, 'list_pupils/list_pupils.html', {'dzieci': dzieci})
+
 
 def find_institution(request):
     tempChildid = 0
@@ -278,3 +301,17 @@ def find_institution(request):
 
     institution = Institution.objects.all()
     return render(request, 'find_institution/find_institution.html',{'childid':tempChildid,'institution':institution})
+def notification(request):
+    zgloszenia = Zgloszenie.objects.filter(idinstytucji=request.user.pk) 
+    t=[]
+    t2=[]
+    for zgloszenie in zgloszenia:
+        dziecko = Child.objects.get(id=int(zgloszenie.childid))
+        rodzic = User.objects.get(id=int(dziecko.parentid))
+        t=dziecko
+        t2=rodzic
+        print('dziecko')
+        print(t)
+        print('rodzic')
+        print(t2)
+    return render(request, 'notification/notification.html',{'zgloszenie':zgloszenia})
