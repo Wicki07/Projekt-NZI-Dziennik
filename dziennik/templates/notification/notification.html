@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-	{% if user.username == '' %}
-		<meta http-equiv="refresh" content="0; URL=/login/" />
-	{% endif %}
 	<head>
 		<title>Dziennik | {{ user.first_name }}{% if user.role == 'User' %} {{ user.last_name }}{% endif %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">

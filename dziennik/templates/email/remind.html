@@ -1,0 +1,10 @@
+{% autoescape off %}
+Witaj {{ user.first_name }} {{user.last_name}},
+
+Dziecko: {{child}}
+
+Zajęcia: {{activity.name}} 
+Data: {{activity.date}} 
+Od {{activity.start_time}} do {{activity.end_time}}
+
+{% endautoescape %}

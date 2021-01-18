@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+	<head>
+		<title>Dziennik | Lista dzieci</title>
+	</head>
+	{% include 'header.html' %}
+	<main>
+		<div class="main-shadow"></div>
+		<div class="container-fluid pt-5">
+			<div class="row">
+				<div class="col-md-6 mx-auto">
+					<div id="accordion">
+						{% for child in children %}
+							<div class="card mt-5">
+								<div class="card-header" id="headingOne">
+									<h5 class="mb-0">
+										<button class="btn btn-link btn-child" data-toggle="collapse" data-target="#collapseOne{{child.id}}" aria-expanded="true" aria-controls="collapseOne{{child.id}}">
+											{{ child }}
+										</button>
+									</h5>
+								</div>
+							</div>
+							<div id="collapseOne{{child.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion ">
+								<div class="card-body card-child">
+									{% for key, value in institution_list.items %} 
+										{% if key == child.id %}
+											{% for inner_key, inner_value in value.items %} 
+												<span class="card-institution">{{inner_value}}</span>
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+									<form method="POST" action="{% url 'assign_child'%}">
+										{% csrf_token %}
+										<input value="{{child.id}}" hidden name="hiddenChildID" type="number">
+										<button type="submit" class="btn btn-primary mt-3 round">✚ Przypisz do instytucji</button>
+									</form>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+					<script src="{% static 'js/main.js' %}%"></script>  
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}

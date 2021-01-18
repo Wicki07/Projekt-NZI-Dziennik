@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+	<head>
+		<title>Dziennik | {{ user }}</title>
+	</head>
+	{% include 'header.html' %}
+	
+	{% if assignment %}
+		<div class="popup-background">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<b>Dziecko:</b> {{assignment.child_id}}<br>
+						<b>Instytucja:</b> {{assignment.institution_id}}<br><br>
+						<a href="{%url 'assign_child'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	<main>
+		<div class="main-shadow"></div>
+		<div class="container-fluid pt-5">
+			<div class="row">
+				<div class="col-md-6 mx-auto">
+					<input class="form-control mr-sm-2" type="text" oninput="search(this)"  placeholder="Sukaj instytucji..." aria-label="Sukaj instytucji..." name="searchBar">
+					<script>
+						function search(e){
+							let searchText = e.value;
+							let institution_list = document.getElementById("institution_list");
+							let institutions = institution_list.childNodes;
+							institutions.forEach(i => {
+								let text = i.innerText;
+								if(text){
+									if(text!=""){
+										i.hidden = 'true';
+										text = text.toLowerCase()
+										if(text.match((searchText).toLowerCase())){
+											i.removeAttribute("hidden")
+										}
+									}else{
+										i.removeAttribute("hidden")
+									}
+								}
+							});
+						}
+					</script>
+					<form name="Dodaj" class= "overwriteButton" method ="POST" action="{% url 'assign_child'%}">{% csrf_token %}
+						<input value="{{childID}}" hidden name="hiddenChildID" type="number">
+						<select id="institution_list" name="listaInstytucji" size={{institutions.count}}>
+							{% for i in institutions %}
+								<option value="{{i.pk}}">{{i}}</option>
+							{% endfor %}
+							{% for name in object_list %}
+								<option value="{{name.pk}}">{{name.nazwa}}</option>
+							{% endfor %}
+						</select>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
+					<script src="{% static 'js/main.js' %}%"></script>  
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}

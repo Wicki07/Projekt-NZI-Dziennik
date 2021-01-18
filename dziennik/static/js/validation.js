@@ -541,11 +541,17 @@ function activityValidation() {
                     input[i].reportValidity();
                     error[i].innerHTML = '<p>Nie podano godziny zakończenia</p>'
                 }
-                else if(input[i].value != input[i-1].value)
+                else if(validityState_object.patternMismatch)
                 {
                     input[i].setCustomValidity('');
                     input[i].reportValidity();
                     error[i].innerHTML = '<p>Podano niewłaściwy format godziny</p>'
+                }
+                else if(input[i].value > input[i-1].value)
+                {
+                    input[i].setCustomValidity('');
+                    input[i].reportValidity();
+                    error[i].innerHTML = '<p>Podano złą godzinę</p>'
                 }
                 else{
 

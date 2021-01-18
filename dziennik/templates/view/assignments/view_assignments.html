@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+	<head>
+		<title>Dziennik | Lista sgłoszeń</title>
+	</head>
+	{% include 'header.html' %}
+	<main>
+		<div class="main-shadow"></div>
+		<div class="container-fluid pt-5">
+			<div class="row">
+				<div class="col-md-6 mx-auto">
+					<div id="accordion">
+						{% for assignment in assignments %}
+							<div class="card mt-5">
+								<div class="card-header" id="headingOne">
+                                    <span class="float-left">
+									    <b>{{assignment.parent}}</b></br><i class="fa fa-angle-right fa-x"></i> <i><small class="align-text-top">{{assignment.child_id}}</small></i>
+                                    </span>
+                                    <form method="POST" action="{% url 'view_assignments'%}" class="float-right">
+                                        {% csrf_token %}
+                                        <input value="{{assignment.id}}" hidden name="hiddenAssigmentID" type="number">
+                                        <button type="submit" name="refuse" value="1" class="btn btn-danger round m-1"><i class="fas fa-times"></i></button>
+                                        <button type="submit" name="accept" value="1" class="btn btn-success round px-4 m-1"><i class="fas fa-check"></i></button>
+                                    </form>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+					<script src="{% static 'js/main.js' %}%"></script>  
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}

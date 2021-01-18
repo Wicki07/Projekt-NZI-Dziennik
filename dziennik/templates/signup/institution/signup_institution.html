@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+	{% if user.username != '' %}
+		<meta http-equiv="refresh" content="0; URL=/" />
+	{% endif %}
+	<head>
+		<title>Dziennik | Rejestracja</title>
+	</head>
+	{% if message %}
+		<div class="popup-background">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						{{message}}<br><br>
+						<a href="{%url 'main'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-md-6 mx-auto">
+				<div id="login-panel">
+					<form  name="singup" method="post">
+						{% csrf_token %}
+						<div class="form-group row m-auto">
+							<div class="float-right w-50 text-center">
+								<a href="{%url 'signup'%}">
+									<img class="float-right image-recolor w-50 mr-4" src="{% static 'img/person.svg' %}">
+								</a>
+							</div>
+							<div class="float-left w-50">
+								<a href="{%url 'signup_institution'%}">
+									<img class="float-left image-recolor w-50 actual ml-4" src="{% static 'img/institution.svg' %}">
+								</a>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Nazwa</label>
+							<p><input type="text" name="first_name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="{2,}$" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Email</label>
+							<p><input type="email" name="email" maxlength="254"  id="id_email" class="form-control" placeholder="Podaj email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Hasło</label>
+							<p><input type="password" name="password1" autocomplete="new-password"  id="id_password1" class="form-control" placeholder="Podaj hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Potwierdź hasło</label>
+							<p><input type="password" name="password2" autocomplete="new-password" id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Nr kontaktowy</label>
+							<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="sel1">Wybierz kategorię:</label>
+							<select class="form-control" name="category" id="kat" required>
+								<option disabled selected hidden>Wybierz z listy...</option>
+								<option value="Szkoła języków obych">Szkoła języków obych</option>
+								<option value="Klub sportowy">Klub sportowy</option>
+								<option value="Korepetycje">Korepetycje</option>
+								<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
+							</select>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Podaj profil</label>
+							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="col-md-12 ">
+								{% if form.errors %}			
+									{%for x in form.errors%}
+									{% if x == email %}
+									<p>Nie prawidłowy: </p>
+									{% else  %}
+									<p> {{x}}</p>
+									{% endif %}
+									{% endfor %}
+								{% endif %}
+
+								{% if next %}
+									{% if user.is_authenticated %}
+									<p>Your account doesn't have access to this page. To proceed,
+									please login with an account that has access.</p>
+									{% else %}
+									<p>Please login to see this page.</p>
+									{% endif %}
+								{% endif %}
+						</div>
+						<div class="form-group">
+							<button type="submit" onclick="instytutionValidation()" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
+						</div>
+						<div class="form-group">
+							<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

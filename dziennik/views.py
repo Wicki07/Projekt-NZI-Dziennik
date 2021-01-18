@@ -11,20 +11,18 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.utils.http import is_safe_url
 from django.http import HttpResponse
+from django.shortcuts import HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
-from .models import Institution, Employee,Activity,Child, Zgloszenie
+from .models import Institution, Employee, Activity, Child, Assignment, Attendance
 from django.utils import timezone
 from datetime import timedelta
 import datetime
 import random
-from django.db.models import Q 
-#A Q object (django.db.models.Q) is an object 
-#used to encapsulate a collection of keyword arguments. These keyword arguments are specified as in “Field lookups” above.
 from django.db.models.functions import Lower
 
 
@@ -42,7 +40,7 @@ def signup(request):
             user.save()
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
-            message = render_to_string('email/acc_active_email.html', {
+            message = render_to_string('email/activation_email.html.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid':urlsafe_base64_encode(force_bytes(user.pk)),
@@ -53,25 +51,31 @@ def signup(request):
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            #return HttpResponse('Please confirm your email address to complete the registration')
-            return render(request, 'signup/signup.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
+
+            return render(request, 'signup/person/signup_person.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
     else:
         form = RegisterForm()
-    return render(request, 'signup/signup.html', {'form': form})
+    return render(request, 'signup/person/signup_person.html', {'form': form})
 
-def newinstitution(request):
+def signup_institution(request):
     if request.method == 'POST':
         form = CreationForm(request.POST or None)
         if form.is_valid():
+            # Tworzenie konta instytucji
             user = form.save(commit=False)
             user.active = False
             user.role = 'Institution'
+            user.last_name = '-'
             user.phone=form.data['phone']
             user.save()
-            Institution.objects.create(userid=user.pk,email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
+
+            # Tworzenie profilu instytucji
+            Institution.objects.create(user_id=user,email=user.email,name=user.first_name,category=form.data['category'],profile=form.data['profile'])
+
+            # Wysyłanie wiadomości aktywującej konto
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
-            message = render_to_string('email/acc_active_email.html', {
+            mail_subject = 'Aktywacja konta w serwisie Dziennik.'
+            message = render_to_string('email/activation_email.html.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid':urlsafe_base64_encode(force_bytes(user.pk)),
@@ -79,31 +83,36 @@ def newinstitution(request):
             })
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(
-                        mail_subject, message, to=[to_email]
+                mail_subject, message, to=[to_email]
             )
             email.send()
-            #return HttpResponse('Please confirm your email address to complete the registration')
-            return render(request, 'newinstitution/newinstitution.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
+
+            return render(request, 'signup/institution/signup_institution.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
     else:
         form = CreationForm()
-    return render(request, 'newinstitution/newinstitution.html', {'form': form})
+    return render(request, 'signup/institution/signup_institution.html', {'form': form})
 
-def newemployee(request):
+def create_employee(request):
+    institution = Institution.objects.get(user_id=request.user)
     if request.method == 'POST':
         form = RegisterCreation(request.POST or None)
         if form.is_valid():
+            # Tworzenie konta pracownika
             user = form.save(commit=False)
             user.active = False
             user.role = 'Employee'
             user.phone=form.data['phone']
             user.save()
-            #zamienic user na instytucje
-            dane = request.POST.dict()
-            instytucja = dane.get('instytucja')
-            Employee.objects.create(institutionid=instytucja,userid=user.pk,first_name=user.first_name,last_name=user.last_name,specjalization=form.data['specjalization'],email=user.email,phone=form.data['phone'],creation_date=datetime.datetime.now())
+            
+            # Tworzenie profilu pracownika
+            specialization=form.data['specjalization']
+            phone=form.data['phone']
+            Employee.objects.create(institution_id=institution,user_id=user,first_name=user.first_name,last_name=user.last_name,specialization=specialization,email=user.email,phone=phone,creation_date=datetime.datetime.now())
+            
+            # Wysyłanie wiadomości aktywującej konto
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
-            message = render_to_string('email/acc_active_email.html', {
+            mail_subject = 'Aktywacja konta w serwisie Dziennik.'
+            message = render_to_string('email/activation_email.html', {
                 'pass': form.data['password1'],
                 'user': user,
                 'domain': current_site.domain,
@@ -115,100 +124,80 @@ def newemployee(request):
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            #return HttpResponse('Please confirm your email address to complete the registration')
-            return render(request, 'newemployee/newemployee.html', {'form': form, 'message': 'Please confirm your email address to complete the registration'})
+            
+            return render(request, 'create/employee/create_employee.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
     else:
 
         form = CreationForm()
     
 
     wyghaslo = random.randrange(10000, 1000000)   
-    return render(request, 'newemployee/newemployee.html', {'form': form , 'wyghaslo': wyghaslo})
+    return render(request, 'create/employee/create_employee.html', {'form': form , 'wyghaslo': wyghaslo})
 
-def newactivity(request):
+def create_activity(request):
+    institution = Institution.objects.get(user_id=request.user)
     if request.method == 'POST':
-        #if form.is_valid():
-            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
-            
-        dane = request.POST.dict()
-        instytucja = dane.get('instytucja')
-        nazwa = dane.get('name')
-        data_rozpoczecia = dane.get('data_rozpoczecia')
-        godzina_rozpoczecia = dane.get('godzina_rozpoczecia')
-        godzina_zakonczenia = dane.get('godzina_zakonczenia')
-        prowadzacy = dane.get('prowadzacy')
-        uczniowie = dane.get('uczniowie')
-        Activity.objects.create(instytucja=instytucja, nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, godzina_rozpoczecia=godzina_rozpoczecia, godzina_zakonczenia=godzina_zakonczenia, prowadzacy=prowadzacy, uczniowie=uczniowie ) 
-        return render(request, 'newactivity/newactivity.html', {'instytucja': instytucja,'nazwa':nazwa,'data_rozpoczecia':data_rozpoczecia,'godzina_rozpoczecia':godzina_rozpoczecia,'godzina_zakonczenia':godzina_zakonczenia,'prowadzacy':prowadzacy,'uczniowie':uczniowie})
+        # Dane z formularza
+        data = request.POST.dict()
+        employee_id = data.get('employee')
+        name = data.get('name')
+        date = data.get('date')
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
+        periodicity = data.get('periodicity')
 
-    pracownicy = Employee.objects.filter(institutionid=request.user.pk)
-    #print(pracownicy)
-    return render(request, 'newactivity/newactivity.html', {'pracownicy':pracownicy})
-
-def newchild(request):
-    if request.method == 'POST':
-        #if form.is_valid():
-            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
-            
-        dane = request.POST.dict()
-        parentid = dane.get('rodzic')
-        first_name = dane.get('first_name')
-        last_name = dane.get('last_name')
-        age = dane.get('age')
+        employee = Employee.objects.get(id=employee_id)
         
-        Child.objects.create(parentid=parentid, first_name=first_name, last_name=last_name, age=age) 
-        return render(request, 'newchild/newchild.html', {'parentid': parentid,'first_name':first_name,'last_name':last_name,'age':age})
-
-    return render(request, 'newchild/newchild.html', {})
-
-def newactivity(request):
-    if request.method == 'POST':
-        #if form.is_valid():
-            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
-            
-        dane = request.POST.dict()
-        instytucja = dane.get('instytucja')
-        nazwa = dane.get('name')
-        data_rozpoczecia = dane.get('data_rozpoczecia')
-        godzina_rozpoczecia = dane.get('godzina_rozpoczecia')
-        godzina_zakonczenia = dane.get('godzina_zakonczenia')
-        prowadzacy = dane.get('prowadzacy')
-        uczniowie = dane.get('uczniowie')
-        Activity.objects.create(instytucja=instytucja, nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, godzina_rozpoczecia=godzina_rozpoczecia, godzina_zakonczenia=godzina_zakonczenia, prowadzacy=prowadzacy, uczniowie=uczniowie ) 
-        return render(request, 'newactivity/newactivity.html', {'instytucja': instytucja,'nazwa':nazwa,'data_rozpoczecia':data_rozpoczecia,'godzina_rozpoczecia':godzina_rozpoczecia,'godzina_zakonczenia':godzina_zakonczenia,'prowadzacy':prowadzacy,'uczniowie':uczniowie})
-
-    pracownicy = Employee.objects.filter(institutionid=request.user.pk)
-    #print(pracownicy)
-    return render(request, 'newactivity/newactivity.html', {'pracownicy':pracownicy})
-
-def newchild(request):
-    if request.method == 'POST':
-        #if form.is_valid():
-            #Institution.objects.create(email=user.email,nazwa=user.first_name,kategoria=form.data['kategoria'],profil=form.data['profil'])
-            
-        dane = request.POST.dict()
-        parentid = dane.get('rodzic')
-        first_name = dane.get('first_name')
-        last_name = dane.get('last_name')
-        age = dane.get('age')
+        # Tworzenie nowego objektu Activity
+        activity = Activity.objects.create(isntitution_id=institution, name=name, date=date, start_time=start_time, end_time=end_time, employee_id=employee,periodicity=periodicity ) 
         
-        Child.objects.create(parentid=parentid, first_name=first_name, last_name=last_name, age=age) 
-        return render(request, 'newchild/newchild.html', {'parentid': parentid,'first_name':first_name,'last_name':last_name,'age':age})
+        # Dopisywanie przypisania wybranych dzieci
+        children = request.POST.getlist('children')
+        print(children)
+        for child in children:
+            __child = Child.objects.get(id=child)
+            print(__child)
+            Attendance.objects.create(child_id=__child,activity_id=activity)
 
-    return render(request, 'newchild/newchild.html', {})
+
+        return render(request, 'create/activity/create_activity.html', {'activity':activity})
+
+    employees = Employee.objects.filter(institution_id=institution)
+    assigned_children = Child.objects.none()
+    institution = Institution.objects.get(user_id=request.user)
+    assigements = Assignment.objects.filter(status="Accepted", institution_id=institution)
+    for assigement in assigements:
+        assigned_children |= Child.objects.filter(id=assigement.child_id.pk)
+    
+    return render(request, 'create/activity/create_activity.html', {'employees':employees,'children':assigned_children})
+
+def create_child(request):
+    if request.method == 'POST':
+        data = request.POST.dict()
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        age = data.get('age')
+        parent = request.user
+        
+        # Tworzenie nowego profilu dziecka
+        child = Child.objects.create(parent_id=parent, first_name=first_name, last_name=last_name, age=age) 
+        
+        return render(request, 'create/child/create_child.html', {'parent': parent,'child':child})
+
+    return render(request, 'create/child/create_child.html', {})
 
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
 
-        employee = Employee.objects.get(userid=user.pk)
+        employee = Employee.objects.get(user_id=user)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         employee = None
 
         if user.role == "Employee":
-          employee = Employee.objects.get(userid=user.pk)
+          employee = Employee.objects.get(user_id=user)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         if user.role == "Employee":
@@ -226,92 +215,165 @@ def activate(request, uidb64, token):
 
         
         # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        return render(request, 'account/activate.html', {'title':"Dziękujemy za potwierdzenie emaila",'activation_message':" Twoje konto zostało aktywowane."})
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request, 'account/activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywazyjny jest nieprawidłowy lub został już użyty!"})
 
-def week_list(request):
-    #lte=Less than or equal to
-    #podglad = Activity.objects.filter(uczniowie=request.user.pk) # zamienić na dziecko
-    podglad = Activity.objects.none()
-    dzieci = Child.objects.filter(parentid=request.user.pk)
-    for dziecko in dzieci:
-        podglad |= Activity.objects.filter(uczniowie=dziecko.pk)
+def schedule_week(request):
+    # Przekazanie imion dzieci do danych zajęć (lista) w Dict
+    children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
+    remind = {} # [!] Jest tutaj bo musi byc widoczne
 
+    # Przechwycenie formularzy
+    data = request.POST.dict()
+
+    # Ustalanie ram danego tygodnia
     some_day_last_week = timezone.now().date()
     monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
     monday_of_this_week = monday_of_last_week + timedelta(days=7)
-    filtr = podglad.filter(data_rozpoczecia__gte=monday_of_last_week, data_rozpoczecia__lt=monday_of_this_week)
-    for podgla in filtr:
-        date= str(podgla.data_rozpoczecia)
-        day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
-        da = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
-        setattr(podgla,'day',da)
-        child = Child.objects.get(parentid=request.user.pk,id=podgla.uczniowie)
-        if child:
-            setattr(podgla,'child',child)
-    return render(request, 'week/week.html',{'filtr':filtr})
 
-def week_list_employe(request):
-    #lte=Less than or equal to
-    #podglad = Activity.objects.filter(uczniowie=request.user.pk) # zamienić na dziecko
-    podglad = Activity.objects.none()
-    employe = Employee.objects.filter(userid=request.user.pk)
-    for employee in employe:
-        podglad |= Activity.objects.filter(prowadzacy=employee.pk)
+    # Przygotowanie tablicy z numerami dnia
+    week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+    this_week_days_numbers = []
+    iterator = 0
+    for day_number in week_days:
+        __day_number = (monday_of_last_week + timedelta(days=iterator)).day
+        iterator += 1
+        this_week_days_numbers.append(__day_number)
 
-    some_day_last_week = timezone.now().date()
-    monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
-    monday_of_this_week = monday_of_last_week + timedelta(days=7)
-    filtr = podglad.filter(data_rozpoczecia__gte=monday_of_last_week, data_rozpoczecia__lt=monday_of_this_week)
+    # Pobieranie zajęć
+    activities = Activity.objects.none()
+    # Dla pracownika
+    if request.user.role == "Employee":
+        employe = Employee.objects.filter(user_id=request.user)
+        for employee in employe:
+            activities |= Activity.objects.filter(employee_id=employee)
 
-    for podgla in filtr:
-        date= str(podgla.data_rozpoczecia)  
-        day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
-        da = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
-        setattr(podgla,'day',da)
-        emploje = Employee.objects.get(userid=request.user.pk,id=podgla.prowadzacy)
-        if emploje:
-            setattr(podgla,'emploje',emploje)    
-    return render(request, 'week/week.html',{'filtr':filtr})
+        activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
 
-def list_pupils(request):
-    dzieci = Child.objects.filter(parentid=request.user.pk)
-    return render(request, 'list_pupils/list_pupils.html', {'dzieci': dzieci})
+        for activity in activities:
+            date = str(activity.date)  
+            day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+            week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
+            setattr(activity,'day',week_day) 
+    
+    # Reszra użytkowników
+    else:
+        #activities = []
+        setattr(activities,'child',Child.objects.none())
+        children = Child.objects.filter(parent_id=request.user.pk)
+
+        # Interakcja z zajęciami (ustawienie przypomnień i wysylanie wiadomości)
+        change_remind_activity = data.get('changeRemindActivity')
+        send_mesage = data.get('sendMesage') 
+        activityId = data.get('hiddenActivityId')
+        message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
+
+        
+        if change_remind_activity != 0:
+            for child in children:
+                attendances = Attendance.objects.filter(child_id=child,activity_id=activityId)
+                for attendance in attendances:
+                    if change_remind_activity == '1':
+                        attendance.remind_parent = False
+                        attendance.save()
+                    if change_remind_activity == '-1':
+                        attendance.remind_parent = True
+                        attendance.save()
+
+        if send_mesage:
+            activity = Activity.objects.get(id=activityId)
+            # wysyłanie emaila
+            mail_subject = "Powiadomienie od "+str(request.user)+" w sprawie zajęć "+str(activity.name)
+            message = render_to_string('email/announcement.html', {
+                'activity': activity,
+                'employee': activity.employee_id,
+                'message': message,
+            })
+            to_email = activity.employee_id.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+
+        for child in children:
+            # Pobranie zajęć do jakich jest przypisane dane dziecko
+            attendances = Attendance.objects.filter(child_id=child)
+            for attendance in attendances:
+                remind[attendance.activity_id.pk] = False
+                if attendance.remind_parent:
+                    remind[attendance.activity_id.pk] = attendance.remind_parent
+
+                # Dodanie zajęć do wyświetlenia
+                    # Filtrowanie zajęć po dacie
+                    # date_gte - Date Greater Than or Equal
+                    # date_lt  - Date Less Than
+                __activities = Activity.objects.filter(id=attendance.activity_id.id,date__gte=monday_of_last_week, date__lt=monday_of_this_week)
+                #setattr(__activity,'child',child)
+                #activities.extend(__activity)
+                activities |= __activities
+                
+                for __activity in __activities:
+                    children_in_activity[(__activity.id,child.id)] = str(child)
+
+        for activity in activities:
+            date= str(activity.date)
+            day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+            week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
+            setattr(activity,'day',week_day)
+
+    return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind})
+
+def view_children(request):
+    children = Child.objects.filter(parent_id=request.user)
+
+    institution_list = {}
+    # Lista instytucji do których dziecko jest przypisane
+    for child in children:
+        assigments = Assignment.objects.filter(child_id=child)
+        child_institution_list = {}
+        for assigment in assigments:
+            child_institution_list[assigment.id] = str(assigment.institution_id)
+        institution_list[child.pk] = child_institution_list
+
+    return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list})
 
 
-def find_institution(request):
-    tempChildid = 0
-    institutionid = 0
+def assign_child(request):
+    institutions = Institution.objects.all()
+    __child_id = 0
+    institution_id = 0
+    institution = Institution.objects.none()
+    assignment = Assignment.objects.none()
+    
     if request.method == 'POST':
-        dane = request.POST.dict()#Dane z frontu do backendu w psotaci slownika
-        tempChildid = int(dane.get('ukrytyPatryk'))#Odczytanie danych po etykiecie(name) z formularza który jest ukryty
-        if dane.get('listaInstytucji'):
-            institutionid = dane.get('listaInstytucji')
-            Zgloszenie.objects.create(childid = tempChildid, idinstytucji = institutionid, opis = "Zgloszenie")
+        data = request.POST.dict() # Dane z frontu do backendu w psotaci slownika
+        __child_id = data.get('hiddenChildID') # Odczytanie danych po etykiecie(name) z formularza który jest ukryty 'hiddenChildID'
 
-    if request.method =='GET':
-        query = str(request.GET.get('searchBar'))
-        dane = request.GET.dict()#Dane z frontu do backendu w psotaci slownika
-        tempChildid = int(dane.get('ukrytyPatryk2'))#Odczytanie danych po etykiecie(name) z formularza który jest ukryty
-        object_list = Institution.objects.filter(
-            Q(nazwa__icontains=query)
-        )
-        return render(request,'find_institution/find_institution.html',{'object_list':object_list,'childid':tempChildid})
+        child = Child.objects.get(id=__child_id)
+        if data.get('listaInstytucji'):
+            institution_id = data.get('listaInstytucji')
+            institution = Institution.objects.get(id=institution_id)
+            assignment = Assignment.objects.create(child_id = child, institution_id = institution)
 
-    institution = Institution.objects.all()
-    return render(request, 'find_institution/find_institution.html',{'childid':tempChildid,'institution':institution})
-def notification(request):
-    zgloszenia = Zgloszenie.objects.filter(idinstytucji=request.user.pk) 
-    t=[]
-    t2=[]
-    for zgloszenie in zgloszenia:
-        dziecko = Child.objects.get(id=int(zgloszenie.childid))
-        rodzic = User.objects.get(id=int(dziecko.parentid))
-        t=dziecko
-        t2=rodzic
-        print('dziecko')
-        print(t)
-        print('rodzic')
-        print(t2)
-    return render(request, 'notification/notification.html',{'zgloszenie':zgloszenia})
+    return render(request, 'assign/child/assign_child.html',{'childID':__child_id,'institutions':institutions,'assignment':assignment})
+
+def view_assignments(request):
+    if request.method == 'POST':
+        data = request.POST.dict()
+        accept = data.get('accept')
+        refuse = data.get('refuse')
+        assignmentId = data.get('hiddenAssigmentID')
+        assignment = Assignment.objects.get(id=assignmentId)
+        if accept:
+            assignment.status = "Accepted"
+            assignment.save()
+        if refuse:
+            assignment.delete()
+    
+    institution = Institution.objects.get(user_id=request.user)
+    assignments = Assignment.objects.filter(institution_id=institution,status="Pending") 
+    for assignment in assignments:
+        setattr(assignment,'parent',assignment.child_id.parent_id)
+
+    return render(request, 'view/assignments/view_assignments.html',{'assignments':assignments})
