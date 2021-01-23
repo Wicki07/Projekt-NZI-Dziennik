@@ -112,6 +112,8 @@ function userValidation() {
                 }
                 else if(input[i].value != input[i-1].value)
                 {
+                    input[i].value = '';
+                    input[i-1].value = '';
                     input[i].setCustomValidity('');
                     input[i].reportValidity();
                     error[i].innerHTML = '<p>Podane hasła się nie zgdzają</p>'

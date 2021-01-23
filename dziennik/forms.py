@@ -20,15 +20,6 @@ class RegisterForm(forms.ModelForm):
         if qs.exists():
             raise forms.ValidationError("Email jest już zajęty")
         return email
-
-    def clean_password2(self):
-        # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Hasła nie są identyczne")
-        return password2
-        
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super(RegisterForm, self).save(commit=False)
@@ -37,6 +28,16 @@ class RegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+    """def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Hasła nie są identyczne")
+        return password2"""
+        
+
 
 class CreationForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput)
@@ -53,22 +54,24 @@ class CreationForm(forms.ModelForm):
         if qs.exists():
             raise forms.ValidationError("Email jest już zajęty")
         return email
-
-    def clean_password2(self):
-        # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Hasła nie są identyczne")
-        return password2
     def save(self, commit=True):
-        # Save the provided password in hashed format
+            # Save the provided password in hashed format
         user = super(CreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         user.active = False # send confirmation email
         if commit:
             user.save()
         return user
+'''
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Hasła nie są identyczne")
+        return password2'''
+
+
 
 class RegisterCreation(forms.ModelForm): #tworzenie pracownika
     password1 = forms.CharField(widget=forms.PasswordInput)
@@ -85,8 +88,15 @@ class RegisterCreation(forms.ModelForm): #tworzenie pracownika
         if qs.exists():
             raise forms.ValidationError("Email jest już zajęty")
         return email
-
-    def clean_password2(self):
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(RegisterCreation, self).save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        user.active = False # send confirmation email
+        if commit:
+            user.save()
+        return user
+    """def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -100,7 +110,7 @@ class RegisterCreation(forms.ModelForm): #tworzenie pracownika
         user.active = False # send confirmation email
         if commit:
             user.save()
-        return user
+        return user"""
 class UserAdminCreationForm(forms.ModelForm):
     """
     A form for creating new users. Includes all the required
@@ -112,15 +122,6 @@ class UserAdminCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email',)
-
-    def clean_password2(self):
-        # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Hasła nie są identyczne")
-        return password2
-
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super(UserAdminCreationForm, self).save(commit=False)
@@ -128,6 +129,16 @@ class UserAdminCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+    """def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Hasła nie są identyczne")
+        return password2"""
+
+
 
 
 class UserAdminChangeForm(forms.ModelForm):

@@ -34,16 +34,17 @@ from threading import Thread, Lock
 from .models import User, Employee, Activity, Child, Attendance
 from django.core.mail import EmailMessage
 
-def removeInactiveEmployees():
+
+def removeInactiveUsers():
     # usuwanie pracownika po 24h nieaktwowanego konta
     time=pytz.timezone('Europe/Warsaw')
-    pracownicy = Employee.objects.filter(active=False)
-    for pr in pracownicy:
-        if (pr.creation_date + datetime.timedelta(days=1)) < time.localize(datetime.datetime.now()):
-            print("Employee: "+ pr.first_name +" "+ pr.last_name  + " was deleted! - UserID: " + str(pr.user_id))
-            Employee.objects.filter(id=pr.pk).delete()
+    users = User.objects.filter(active=False)
+    for us in users:
+        if (us.creation_date + datetime.timedelta(days=1)) < time.localize(datetime.datetime.now()):
+            print("User: "+ us.first_name +" "+ us.last_name  + " was deleted! - UserID: " + str(us.id))
+            User.objects.filter(id=us.pk).delete()
             ##User.objects.filter(id=pr.user_id).delete()
-    
+
 def remindEmployee():
     # powiadomienia o pracownika zajęciach
     activities = Activity.objects.filter(finished=False,remind_employee=True)
@@ -75,7 +76,7 @@ def remindParent():
     for activity in activities: 
         attendances = Attendance.objects.filter(remind_parent=True,activity_id=activity)
         for attendance in attendances:
-            child = Child.objects.get(id=attendance.child_id)
+            child = Child.objects.get(id=attendance.child_id.pk)
             parent = child.parent_id # Objekt rodzica
             activity_start_time = datetime.datetime.strptime(str(activity.date) + " " + str(activity.start_time), '%Y-%m-%d %H:%M:%S')
             if (activity_start_time - datetime.timedelta(days=1) == datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')):
@@ -136,17 +137,18 @@ def refreshPeriodicity():
 def timeFormater(seconds):
     return str(datetime.time(seconds // 3600, (seconds % 3600) // 60, seconds % 60))
 
-def removeInactiveEmployeesTimer():
+
+def removeInactiveUsersTimer():
     time_span = 3600 # w sekundach (60 = 1 na minute)
-    print("Uruchomiono sprawdzanie kont pracowników (usuwanie nieaktywych po 24h), Freq: "+ timeFormater(time_span))
+    print("Uruchomiono sprawdzanie kont urzytkownków (usuwanie nieaktywych po 24h), Freq: "+ timeFormater(time_span))
     while True:
-        print("Usuwanie nieaktywnych kont pracowników które istnieja ponad 24h...")
-        removeInactiveEmployees()
+        print("Usuwanie nieaktywnych kont urzytkownków które istnieja ponad 24h...")
+        removeInactiveUsers()
         time.sleep(time_span) 
 
-t1 = Thread(target=removeInactiveEmployeesTimer, args=(), kwargs={})
-t1.setDaemon(True)
-t1.start()
+t2 = Thread(target=removeInactiveUsersTimer, args=(), kwargs={})
+t2.setDaemon(True)
+t2.start()
 
 def remindEmployeeTimer():
     time_span = 60 # w sekundach (60 = 1 na minute)
@@ -156,8 +158,8 @@ def remindEmployeeTimer():
         remindEmployee()
         time.sleep(time_span) 
 
-t2 = Thread(target=remindEmployeeTimer, args=(), kwargs={})
-t2.setDaemon(True)
+t3 = Thread(target=remindEmployeeTimer, args=(), kwargs={})
+t3.setDaemon(True)
 # t2.start()
 
 def remindParentTimer():
@@ -168,9 +170,9 @@ def remindParentTimer():
         remindParent()
         time.sleep(time_span) 
 
-t3 = Thread(target=remindParentTimer, args=(), kwargs={})
-t3.setDaemon(True)
-t3.start()
+t4 = Thread(target=remindParentTimer, args=(), kwargs={})
+t4.setDaemon(True)
+t4.start()
 
 
 def refreshPeriodicityTimer():
@@ -181,6 +183,6 @@ def refreshPeriodicityTimer():
         refreshPeriodicity()
         time.sleep(time_span) 
 
-t4 = Thread(target=refreshPeriodicityTimer, args=(), kwargs={})
-t4.setDaemon(True)
-t4.start()
+t5 = Thread(target=refreshPeriodicityTimer, args=(), kwargs={})
+t5.setDaemon(True)
+t5.start()

@@ -23,6 +23,7 @@ from django.utils import timezone
 from datetime import timedelta
 import datetime
 import random
+import string
 from django.db.models.functions import Lower
 
 
@@ -37,10 +38,11 @@ def signup(request):
             user = form.save(commit=False)
             user.active = False
             user.role = 'User'
+            user.creation_date = datetime.datetime.now()
             user.save()
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
-            message = render_to_string('email/activation_email.html.html', {
+            message = render_to_string('email/activation_email.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid':urlsafe_base64_encode(force_bytes(user.pk)),
@@ -75,7 +77,7 @@ def signup_institution(request):
             # Wysyłanie wiadomości aktywującej konto
             current_site = get_current_site(request)
             mail_subject = 'Aktywacja konta w serwisie Dziennik.'
-            message = render_to_string('email/activation_email.html.html', {
+            message = render_to_string('email/activation_email.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid':urlsafe_base64_encode(force_bytes(user.pk)),
@@ -130,9 +132,11 @@ def create_employee(request):
 
         form = CreationForm()
     
+    generated_password_size = 8
+    generated_password_chars = string.ascii_uppercase + string.digits
+    generated_password = ''.join(random.choice(generated_password_chars) for _ in range(generated_password_size))
 
-    wyghaslo = random.randrange(10000, 1000000)   
-    return render(request, 'create/employee/create_employee.html', {'form': form , 'wyghaslo': wyghaslo})
+    return render(request, 'create/employee/create_employee.html', {'form': form , 'generated_password': generated_password})
 
 def create_activity(request):
     institution = Institution.objects.get(user_id=request.user)
@@ -187,11 +191,12 @@ def create_child(request):
     return render(request, 'create/child/create_child.html', {})
 
 def activate(request, uidb64, token):
+    
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-
-        employee = Employee.objects.get(user_id=user)
+        if user.role == "Employee":
+            employee = Employee.objects.get(user_id=user)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         employee = None
@@ -205,9 +210,11 @@ def activate(request, uidb64, token):
 
     if user is not None and account_activation_token.check_token(user, token):
         user.active = True
-        employee.active=True
+        if user.role == "Employee":
+            employee.active=True
+            employee.save()
         user.save()
-        employee.save()
+
 
         if user.role == "Employee":
           employee.active=True

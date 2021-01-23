@@ -25,9 +25,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'create_employee' %}">Dodaj pracownika</a>
                 </li>
-                <!--<li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'view_assignments' %}">Lista zgłoszeń</a>
-                </li>-->
+                </li>
             {% endif %}
             {% if user.role == 'User' %}
                 <li class="nav-item">

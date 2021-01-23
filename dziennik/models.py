@@ -62,6 +62,7 @@ class User(AbstractBaseUser):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Telefon musi być podany w formacie: '999999999'.") # Sprawdza format numeru telefonu
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     role = models.CharField(max_length = 20, default=True)
+    creation_date = models.DateTimeField(default=timezone.now())
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [] # Pola email i hasło są ustawione jak wymagane domyslne
@@ -115,6 +116,7 @@ class Institution(models.Model):
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=200)
     profile = models.CharField(max_length=200)
+    creation_date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return self.name
