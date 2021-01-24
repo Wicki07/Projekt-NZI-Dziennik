@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %} 
-	{% if user.username != '' %}
-		<meta http-equiv="refresh" content="0; URL=/" />
-	{% endif %}
+	{% include 'redirect/is_logged.html' %}
 	<head>
 		<title>Dziennik | Rejestracja</title>
 	</head>

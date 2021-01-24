@@ -1,0 +1,4 @@
+{% load static %}
+{% if user.role != 'Institution' %}
+    <meta http-equiv="refresh" content="0; URL=/" />
+{% endif %}

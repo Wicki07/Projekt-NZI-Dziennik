@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+
+{% block branding %}
+    {% if user.username == '' %}
+        <meta http-equiv="refresh" content="0; URL=/login/" />
+    {% elif user.is_staff == "true" %}
+        <meta http-equiv="refresh" content="0; URL=/" />
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
