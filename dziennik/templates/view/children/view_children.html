@@ -6,6 +6,26 @@
 	</head>
 	{% include 'header.html' %}
 	{% include 'redirect/no_parent.html' %}
+	<div class="popup-background" id="childDeleteMenu" style="display:none;">
+		<div class="container popup-center">
+			<div class="row">
+				<div class="col-md-6 mx-auto popup">
+					<div>
+						<form method="POST" action="{% url 'view_children'%}">
+							{% csrf_token %}
+							<input hidden id="toDeleteHiddenChildID" name="toDeleteHiddenChildID" type="number">
+							<span class="w-100 float-left px-3 text-center h5">Czy jesteś pewny/a że chcesz usunąc profil dziecka?</span>
+							<span class="w-100 float-left px-3 text-center h4 mt-4" id="displayChildName"><b>Imię Dziecka</b></span>
+							<div>
+								<button type="button" id="closeView" class="btn btn-link mt-3 w-50 text-left mt-5"><i class="fas fa-times"></i> Anuluj</button>
+								<button type="submit" name="deleteChild" value="1"class="btn btn-link mt-3 w-50 float-right text-right mt-5"><i class="fa fa-check" aria-hidden="true"></i> Tak, usuń</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<main>
 		<div class="main-shadow"></div>
 		<div class="container-fluid pt-5">
@@ -31,16 +51,17 @@
 											{% endfor %}
 										{% endif %}
 									{% endfor %}
-									<form method="POST" action="{% url 'assign_child'%}">
+									<form method="POST" action="{% url 'assign_child'%}" >
 										{% csrf_token %}
 										<input value="{{child.id}}" hidden name="hiddenChildID" type="number">
-										<button type="submit" class="btn btn-primary mt-3 round">✚ Przypisz do instytucji</button>
+										<button type="submit" class="btn btn-primary mt-3 round mw-50 w-auto"><i class="fa fa-plus" aria-hidden="true"></i> Przypisz do instytucji</button>
+										<button type="button" value="{{child.id}}" childName="{{child}}" class="btn btn-danger mt-3 round float-right mw-50 w-auto position-static deleteChildOpenMenu"><i class="fa fa-trash" aria-hidden="true"></i> Usuń profil dziecka</button>
 									</form>
 								</div>
 							</div>
 						{% endfor %}
-					</div>
-					<script src="{% static 'js/main.js' %}%"></script>  
+					</div> 
+					<script src="{% static 'js/child.js' %}"></script>  
 				</div>
 			</div>
 		</div>

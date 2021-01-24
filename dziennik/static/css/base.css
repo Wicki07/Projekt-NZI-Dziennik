@@ -40,6 +40,10 @@ a{
 	text-decoration: none !important;
 }
 /* additonal */
+.mw-50{
+	max-width: 50%;
+	overflow: hidden;
+}
 .btn-child{
 	color:black !important;
 	text-decoration: none !important;

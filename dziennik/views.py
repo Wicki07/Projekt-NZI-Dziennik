@@ -379,6 +379,13 @@ def view_children(request):
     if request.user != "": # Czy zalogowany
         children = Child.objects.filter(parent_id=request.user)
 
+        data = request.POST.dict() # Dane z frontu do backendu w psotaci slownika
+        childDelete = data.get('deleteChild') # Odczytanie czy chcemy usunąć dziecko
+        childId = data.get('toDeleteHiddenChildID') # Odczytanie danych po etykiecie(name) z formularza który jest ukryty 'hiddenChildID'
+        
+        if childDelete:
+            Child.objects.filter(id=childId).delete()
+
         institution_list = {}
         # Lista instytucji do których dziecko jest przypisane
         for child in children:
@@ -387,8 +394,7 @@ def view_children(request):
             for assigment in assigments:
                 child_institution_list[assigment.id] = str(assigment.institution_id)
             institution_list[child.pk] = child_institution_list
-
-        return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list})
+        return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list,'childDelete':childDelete})
     return render(request, 'view/children/view_children.html', {})
 
 
