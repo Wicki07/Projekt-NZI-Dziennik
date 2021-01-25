@@ -280,19 +280,25 @@ def schedule_week(request):
                         activity.save()
 
             if send_mesage:
-                '''activity = Activity.objects.get(id=activityId)
-                # wysyłanie emaila
-                mail_subject = "Powiadomienie od "+str(request.user)+" w sprawie zajęć "+str(activity.name)
-                message = render_to_string('email/announcement.html', {
-                    'activity': activity,
-                    'employee': activity.employee_id,
-                    'message': message,
-                })
-                to_email = activity.employee_id.email
-                email = EmailMessage(
-                    mail_subject, message, to=[to_email]
-                )
-                email.send()'''
+                activity = Activity.objects.get(id=activityId)
+                # wysyłanie emaili
+                attendances = Attendance.objects.filter(activity_id=activity)
+                for attendance in attendances:
+                    parent = User.objects.get(id=attendance.child_id.parent_id.pk)
+                    mail_subject = "Powiadomienie od "+str(request.user)+" w sprawie zajęć "+str(activity.name)
+                    message = render_to_string('email/announcement.html', {
+                        'activity': activity,
+                        'targetUser': parent,
+                        'message': message,
+                    })
+                    to_email = parent.email
+                    email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    
+                activity.finished=True
+                activity.save()
 
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
             for activity in activities:
@@ -334,7 +340,7 @@ def schedule_week(request):
                 mail_subject = "Powiadomienie od "+str(request.user)+" w sprawie zajęć "+str(activity.name)
                 message = render_to_string('email/announcement.html', {
                     'activity': activity,
-                    'employee': activity.employee_id,
+                    'targetUser': activity.employee_id,
                     'message': message,
                 })
                 to_email = activity.employee_id.email
