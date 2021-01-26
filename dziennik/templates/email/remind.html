@@ -1,7 +1,9 @@
 {% autoescape off %}
 Witaj {{ user.first_name }} {{user.last_name}},
 
+{%if child%}
 Dziecko: {{child}}
+{%endif%}
 
 Zajęcia: {{activity.name}} 
 Data: {{activity.date}} 

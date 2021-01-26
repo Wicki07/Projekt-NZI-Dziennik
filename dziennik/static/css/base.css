@@ -65,7 +65,15 @@ a{
     border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
 }
-  
+/* fix */
+.select-institution{
+	border: none !important;
+	outline: none;
+	background: none;
+}
+.option-institution{
+	outline: none;
+}
 
 /* LOGIN */
 

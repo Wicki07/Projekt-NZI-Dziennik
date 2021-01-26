@@ -57,7 +57,7 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nr kontaktowy</label>
-							<p><input type="text" name="phone" autocomplete="new-password"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$" required></p>
+							<p><input type="text" name="phone" autocomplete="phone"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$"></p>
 							<span class="error"></span>
 						</div>
 						<div class="form-group">
@@ -76,14 +76,21 @@
 							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
 							<span class="error"></span>
 						</div>
-						<div class="col-md-12 ">
-								{% if form.errors %}			
-									{%for x in form.errors%}
-									{% if x == email %}
-									<p>Nie prawidłowy: </p>
-									{% else  %}
-									<p> {{x}}</p>
-									{% endif %}
+						<div class="col-md-12 " id="demo">
+								{% if form.errors %}
+									{% for field in form %}
+										{% for error in field.errors %}
+											<div class="alert alert-danger">
+												<strong>{{ error|escape }}</strong>
+												<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
+											</div>
+										{% endfor %}
+									{% endfor %}
+									{% for error in form.non_field_errors %}
+										<div class="alert alert-danger">
+											<strong>{{ error|escape }}</strong>
+											<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
+										</div>
 									{% endfor %}
 								{% endif %}
 

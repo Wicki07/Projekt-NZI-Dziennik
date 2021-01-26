@@ -3,12 +3,14 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from allauth.account import views as allauth_views
 from . import views
+from django.conf.urls import url 
 from django.template.loader import render_to_string
 from django.contrib.auth import views as auth_view
 import dziennik.timers
 urlpatterns = [
     path('', views.main, name='main'),
     #path('', include('django.contrib.auth.urls')),
+    path('panel/admin/', include('smuggler.urls')),
     path('panel/admin/', admin.site.urls, name='panel_admin'),
     path('accounts/', include('allauth.urls')),
     path('login/',allauth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
@@ -22,6 +24,10 @@ urlpatterns = [
     path('schedule/week/',views.schedule_week, name='schedule_week'),
     path('view/children/',views.view_children, name='view_children') ,
     path('assign/child/',views.assign_child, name='assign_child'),
+<<<<<<< HEAD
+    path('view/assignments/',views.view_assignments, name='view_assignments'),
+=======
 
     path('view/assignments/',views.view_assignments, name='view_assignments')
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
 ]

@@ -62,7 +62,7 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nr Telefonu</label>
-							<p><input type="text" name="phone" required  id="id_phone" class="form-control" placeholder="Podaj nr telefonu" pattern="[0-9]{9,15}$" required></p>
+							<p><input type="text" name="phone"  id="id_phone" class="form-control" placeholder="Podaj nr telefonu" pattern="[0-9]{9,15}$"></p>
 							<span class="error"></span>
 						</div>
 						<div class="col-md-12 " id="demo">
@@ -71,12 +71,14 @@
 										{% for error in field.errors %}
 											<div class="alert alert-danger">
 												<strong>{{ error|escape }}</strong>
+												<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
 											</div>
 										{% endfor %}
 									{% endfor %}
 									{% for error in form.non_field_errors %}
 										<div class="alert alert-danger">
 											<strong>{{ error|escape }}</strong>
+											<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
 										</div>
 									{% endfor %}
 								{% endif %}

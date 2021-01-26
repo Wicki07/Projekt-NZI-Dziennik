@@ -1,0 +1,12 @@
+{% extends 'admin/change_list.html' %}
+
+{% block object-tools %}
+    <div>
+        <form action="./dump" method="GET">
+            {% csrf_token %}
+            <button type="submit" class="button" title="Wykonaj wybraną akcję" name="index" value="0" style="padding:0.5rem;">Pobierz kopię talicy</button>
+        </form>
+    </div>
+    <br />
+    {{ block.super }}
+{% endblock %}

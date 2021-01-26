@@ -6,6 +6,10 @@ import pytz
 from threading import Thread, Lock
 from .models import User, Employee, Activity, Child, Attendance
 from django.core.mail import EmailMessage
+<<<<<<< HEAD
+from django.template.loader import render_to_string
+=======
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
 
 
 def removeInactiveUsers():
@@ -29,7 +33,11 @@ def remindEmployee():
             print("Nazwa: "+str(activity))
 
             # wysyłanie emaila
+<<<<<<< HEAD
+            employee =activity.employee_id
+=======
             employee = Employee.objects.get(id=activity.employee_id)  
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
             print("Prowadzący: "+str(employee))
             mail_subject = "Przypomnienie o zajeciach."
             message = render_to_string('email/remind.html', {
@@ -48,11 +56,19 @@ def remindParent():
     activities = Activity.objects.filter(finished=False)
     for activity in activities: 
         attendances = Attendance.objects.filter(remind_parent=True,activity_id=activity)
+<<<<<<< HEAD
+            child = attendance.child_id
+            parent = child.parent_id # Objekt rodzica
+            activity_start_time = datetime.datetime.strptime(str(activity.date) + " " + str(activity.start_time), '%Y-%m-%d %H:%M:%S')
+            if (activity_start_time - datetime.timedelta(days=1) == datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')):
+                print("----------/ Powiadomienie o zajęciach /----------")
+=======
         for attendance in attendances:
             child = Child.objects.get(id=attendance.child_id.pk)
             parent = child.parent_id # Objekt rodzica
             activity_start_time = datetime.datetime.strptime(str(activity.date) + " " + str(activity.start_time), '%Y-%m-%d %H:%M:%S')
             if (activity_start_time - datetime.timedelta(days=1) == datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')):
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
                 print("Wysłane do: "+str(parent))
                 mail_subject = "Przypomnienie o zajeciach."
                 message = render_to_string('email/remind.html', {
@@ -101,7 +117,11 @@ def refreshPeriodicity():
                         Attendance.objects.create(
                             activity_id = activity,
                             child_id = attendance.child_id,
+<<<<<<< HEAD
+                            remind_parent = attendance.remind_parent
+=======
                             remind = attendance.remind
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
                         )
             
 
@@ -133,7 +153,11 @@ def remindEmployeeTimer():
 
 t3 = Thread(target=remindEmployeeTimer, args=(), kwargs={})
 t3.setDaemon(True)
+<<<<<<< HEAD
+t3.start()
+=======
 # t2.start()
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
 
 def remindParentTimer():
     time_span = 60 # w sekundach (60 = 1 na minute)

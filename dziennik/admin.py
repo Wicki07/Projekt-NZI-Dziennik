@@ -34,6 +34,8 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('id',)
     filter_horizontal = ()
 
+class ExampleAdmin(admin.ModelAdmin):
+    change_list_template = 'smuggler/change_list.html'
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Institution)

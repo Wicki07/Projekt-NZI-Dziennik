@@ -1,12 +1,8 @@
 function userValidation() {
     const input = document.getElementsByClassName("form-control");
     const error = document.getElementsByClassName("error");
-    var validityState_object = input[0].validity;
-    console.log(input)
-    console.log(validityState_object.valueMissing)
     for(i=0; i < input.length; i++){
         let validityState_object = input[i].validity;
-        console.log(validityState_object)
         switch (i) {
             case 0:
                 if (validityState_object.valueMissing)
@@ -53,7 +49,6 @@ function userValidation() {
                   });
               break;
               case 2:
-                console.log(validityState_object.typeMismatch)
                 if (validityState_object.valueMissing)
                 {
                  input[i].setCustomValidity('');
@@ -128,14 +123,7 @@ function userValidation() {
                   });
               break;
               case 5:
-                console.log(i)
-                if (validityState_object.valueMissing)
-                {
-                 input[i].setCustomValidity('');
-                 input[i].reportValidity();
-                 error[i].innerHTML = '<p>Nie podano telefonu</p>'
-                }
-                else if(validityState_object.patternMismatch)
+                if(validityState_object.patternMismatch)
                 {
                     input[i].setCustomValidity('');
                     input[i].reportValidity();
@@ -157,12 +145,8 @@ function userValidation() {
 function instytutionValidation() {
     const input = document.getElementsByClassName("form-control");
     const error = document.getElementsByClassName("error");
-    var validityState_object = input[0].validity;
-    console.log(input)
-    console.log(validityState_object.valueMissing)
     for(i=0; i < input.length; i++){
         let validityState_object = input[i].validity;
-        console.log(validityState_object)
         switch (i) {
             case 0:
                 if (validityState_object.valueMissing)
@@ -187,7 +171,6 @@ function instytutionValidation() {
                     });
                 break;
             case 1:
-                console.log(validityState_object.typeMismatch)
                 if (validityState_object.valueMissing)
                 {
                     input[i].setCustomValidity('');
@@ -260,14 +243,7 @@ function instytutionValidation() {
                     });
                 break;
             case 4:
-                console.log(i)
-                if (validityState_object.valueMissing)
-                {
-                    input[i].setCustomValidity('');
-                    input[i].reportValidity();
-                    error[i].innerHTML = '<p>Nie podano telefonu</p>'
-                }
-                else if(validityState_object.patternMismatch)
+                if(validityState_object.patternMismatch)
                 {
                     input[i].setCustomValidity('');
                     input[i].reportValidity();
@@ -283,7 +259,6 @@ function instytutionValidation() {
                     });
                 break;
             case 6:
-                console.log(i)
                 if (validityState_object.valueMissing)
                 {
                     input[i].setCustomValidity('');
@@ -306,7 +281,6 @@ function instytutionValidation() {
                     });
                 break;
             case 5:
-                console.log(i)
                 if (validityState_object.valid)
                 {
                     input[i].setCustomValidity('');
@@ -329,12 +303,8 @@ function instytutionValidation() {
 function employeeValidation() {
     const input = document.getElementsByClassName("form-control");
     const error = document.getElementsByClassName("error");
-    var validityState_object = input[0].validity;
-    console.log(error)
-    console.log(validityState_object.valueMissing)
     for(i=0; i < input.length; i++){
         let validityState_object = input[i].validity;
-        console.log(validityState_object)
         switch (i) {
             case 0:
                 if (validityState_object.valueMissing)
@@ -403,7 +373,6 @@ function employeeValidation() {
                     });
                 break;
             case 3:
-                console.log(validityState_object.typeMismatch)
                 if (validityState_object.valueMissing)
                 {
                     input[i].setCustomValidity('');
@@ -432,14 +401,7 @@ function employeeValidation() {
                     });
                 break;
             case 6:
-                console.log(i)
-                if (validityState_object.valueMissing)
-                {
-                    input[i].setCustomValidity('');
-                    input[i].reportValidity();
-                    error[4].innerHTML = '<p>Nie podano telefonu</p>'
-                }
-                else if(validityState_object.patternMismatch)
+                if(validityState_object.patternMismatch)
                 {
                     input[i].setCustomValidity('');
                     input[i].reportValidity();
@@ -462,12 +424,8 @@ function employeeValidation() {
 function activityValidation() {
     const input = document.getElementsByClassName("form-control");
     const error = document.getElementsByClassName("error");
-    var validityState_object = input[0].validity;
-    console.log(input)
-    console.log(validityState_object.valueMissing)
     for(i=0; i < input.length; i++){
         let validityState_object = input[i].validity;
-        console.log(validityState_object)
         switch (i) {
             case 0:
                 if (validityState_object.valueMissing)
@@ -492,7 +450,6 @@ function activityValidation() {
                     });
                 break;
             case 1:
-                console.log(validityState_object.typeMismatch)
                 if (validityState_object.valueMissing)
                 {
                     input[i].setCustomValidity('');
@@ -500,6 +457,12 @@ function activityValidation() {
                     error[i].innerHTML = '<p>Nie podano daty zajęć</p>'
                 }
                 else if(validityState_object.patternMismatch)
+                {
+                    input[i].setCustomValidity('');
+                    input[i].reportValidity();
+                    error[i].innerHTML = '<p>Podana data jest nieprawidłowa</p>'
+                }
+                else if(Date.parse((input[i].value)) < Date.now())
                 {
                     input[i].setCustomValidity('');
                     input[i].reportValidity();
@@ -565,7 +528,6 @@ function activityValidation() {
                     });
                 break;
             case 4:
-                console.log(i)
                 if (validityState_object.valid)
                 {
                     input[i].setCustomValidity('');
@@ -582,7 +544,6 @@ function activityValidation() {
                     });
                 break;
             case 5:
-                console.log(i)
                 if (validityState_object.valid)
                 {
                     input[i].setCustomValidity('');
@@ -599,7 +560,6 @@ function activityValidation() {
                     });
                 break;
             case 6:
-                console.log(i)
                 if (validityState_object.valid)
                 {
                     input[i].setCustomValidity('');
@@ -622,12 +582,8 @@ function activityValidation() {
 function childValidation() {
     const input = document.getElementsByClassName("form-control");
     const error = document.getElementsByClassName("error");
-    var validityState_object = input[0].validity;
-    console.log(input)
-    console.log(validityState_object.valueMissing)
     for(i=0; i < input.length; i++){
         let validityState_object = input[i].validity;
-        console.log(validityState_object)
         switch (i) {
             case 0:
                 if (validityState_object.valueMissing)
@@ -652,7 +608,6 @@ function childValidation() {
                     });
                 break;
             case 1:
-                console.log(validityState_object.typeMismatch)
                 if (validityState_object.valueMissing)
                 {
                     input[i].setCustomValidity('');

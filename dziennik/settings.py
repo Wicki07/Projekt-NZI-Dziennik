@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'phonenumber_field',
     'django_admin_logs',
+    'smuggler',
 
     'allauth',
     'allauth.account',

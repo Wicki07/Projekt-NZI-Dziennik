@@ -130,10 +130,16 @@ def create_employee(request):
                 
                 return render(request, 'create/employee/create_employee.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
         else:
+<<<<<<< HEAD
+
+            form = CreationForm()
+
+=======
 
             form = CreationForm()
 
     return render(request, 'create/employee/create_employee.html', {})
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
     
     generated_password_size = 8
     generated_password_chars = string.ascii_uppercase + string.digits
@@ -237,6 +243,7 @@ def schedule_week(request):
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
         remind = {} # [!] Jest tutaj bo musi byc widoczne
+<<<<<<< HEAD
 
         # Przechwycenie formularzy
         data = request.POST.dict()
@@ -269,6 +276,40 @@ def schedule_week(request):
             activityId = data.get('hiddenActivityId')
             message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
 
+=======
+
+        # Przechwycenie formularzy
+        data = request.POST.dict()
+
+        # Ustalanie ram danego tygodnia
+        some_day_last_week = timezone.now().date()
+        monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
+        monday_of_this_week = monday_of_last_week + timedelta(days=7)
+
+        # Przygotowanie tablicy z numerami dnia
+        week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+        this_week_days_numbers = []
+        iterator = 0
+        for day_number in week_days:
+            __day_number = (monday_of_last_week + timedelta(days=iterator)).day
+            iterator += 1
+            this_week_days_numbers.append(__day_number)
+
+
+        # Pobieranie zajęć
+        activities = Activity.objects.none()
+        # Dla pracownika
+        if request.user.role == "Employee":
+            employee = Employee.objects.get(user_id=request.user)
+            activities = Activity.objects.filter(employee_id=employee)
+
+             # Interakcja z zajęciami (ustawienie przypomnień i wysylanie wiadomości)
+            change_remind_activity = data.get('changeRemindActivity')
+            send_mesage = data.get('sendMesage') 
+            activityId = data.get('hiddenActivityId')
+            message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
+
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
             
             if change_remind_activity != 0:
                 for activity in activities:
@@ -299,7 +340,12 @@ def schedule_week(request):
                     
                 activity.finished=True
                 activity.save()
+<<<<<<< HEAD
+            print(monday_of_last_week)
+            print(monday_of_this_week)
+=======
 
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
             for activity in activities:
                 remind[activity.pk] = activity.remind_employee
@@ -361,22 +407,35 @@ def schedule_week(request):
                         # Filtrowanie zajęć po dacie
                         # date_gte - Date Greater Than or Equal
                         # date_lt  - Date Less Than
+<<<<<<< HEAD
+                    __activities = Activity.objects.filter(id=attendance.activity_id.pk)
+=======
                     __activities = Activity.objects.filter(id=attendance.activity_id.id,date__gte=monday_of_last_week, date__lt=monday_of_this_week)
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
                     #setattr(__activity,'child',child)
                     #activities.extend(__activity)
                     activities |= __activities
                     
                     for __activity in __activities:
                         children_in_activity[(__activity.id,child.id)] = str(child)
+<<<<<<< HEAD
+            
 
+            activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
+=======
+
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
             for activity in activities:
                 date= str(activity.date)
                 day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
                 setattr(activity,'day',week_day)
 
+<<<<<<< HEAD
+=======
         print(activities)
 
+>>>>>>> 702244926881adb11fa223591a15cde16f3003c8
         return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind})
 
     return render(request, 'schedule/week/week.html',{})

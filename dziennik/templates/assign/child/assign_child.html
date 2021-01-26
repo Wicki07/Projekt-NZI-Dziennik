@@ -48,15 +48,15 @@
 					</script>
 					<form name="Dodaj" class= "overwriteButton" method ="POST" action="{% url 'assign_child'%}">{% csrf_token %}
 						<input value="{{childID}}" hidden name="hiddenChildID" type="number">
-						<select id="institution_list" name="listaInstytucji" size={{institutions.count}}>
+						<select id="institution_list" class="w-100 h-100 my-2 select-institution" name="listaInstytucji" size={{institutions.count}}>
 							{% for i in institutions %}
-								<option value="{{i.pk}}">{{i}}</option>
+								<option class="w-100 p-2 select-institution" value="{{i.pk}}">{{i}}</option>
 							{% endfor %}
 							{% for name in object_list %}
-								<option value="{{name.pk}}">{{name.nazwa}}</option>
+								<option class="w-100 p-2 select-institution" value="{{name.pk}}">{{name.nazwa}}</option>
 							{% endfor %}
-						</select>
-						<button type="submit" class="btn btn-primary">Submit</button>
+						</select><br/>
+						<button type="submit" class="btn btn-primary float-right">Wyślij zgłoszenie</button>
 					</form>
 					<script src="{% static 'js/main.js' %}%"></script>  
 				</div>

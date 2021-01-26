@@ -1,0 +1,16 @@
+{% extends 'admin/index.html' %}
+
+{% block content %}
+    <div>
+        <form action="./dump" method="GET" style="float:left;">
+            {% csrf_token %}
+            <button type="submit" class="button" title="Wykonaj wybraną akcję" name="index" value="0" style="float:left;padding:0.5rem;">Pobierz kopię bazy danych</button>
+        </form>
+        <form action="{% url 'load-data' %}"" method="GET" style="margin-left:0.25rem;float:left;">
+            {% csrf_token %}
+            <button type="submit" class="button" title="Wykonaj wybraną akcję" name="index" value="0" style="float:left;padding:0.5rem;">Załaduj plik zapasowy</button>
+        </form><br/><br/>
+    </div>
+    <br />
+    {{ block.super }}
+{% endblock %}
