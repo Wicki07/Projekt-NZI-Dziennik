@@ -47,7 +47,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-# Definiowanie na nowo noewgo Modelu Użytkownika (Custom)
+# Definiowanie na nowo nowego Modelu Użytkownika (Custom)
 class User(AbstractBaseUser):
     email = models.EmailField(
         verbose_name='Email address',
@@ -218,4 +218,18 @@ class Attendance(models.Model):
 
     class Meta:
         verbose_name_plural = "Attendances"
-        
+class EmailChange(models.Model):
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    change_date = models.DateTimeField(default=timezone.now())
+    old_email = models.CharField(max_length=200)
+    new_email = models.CharField(max_length=200)
+    def __str__(self):
+        return str(self.user_id)+" -> "+str(self.change_date)+" ["+str(self.old_email)+"]"+" ["+str(self.new_email)+"]"
+
+
+    def publish(self):
+        self.save()
+
+    class Meta:
+        verbose_name_plural = "EmailChange"
+

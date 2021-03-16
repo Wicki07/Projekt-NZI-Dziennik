@@ -1,6 +1,8 @@
+from allauth import account
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth import authenticate, login, get_user_model
+from django.forms import fields
 from .models import User, Institution
 
 User = get_user_model()
@@ -157,4 +159,32 @@ class UserAdminChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
+
+# Formularz do zmiany kurwa maila
+class MailUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('email',)
+
+    def save(self, commit=True):
+        account = super(MailUpdateForm, self).save(commit=False)
+        if commit:
+            account.save()
+        return account
+
+# Formularz zmiany imienia i nazwiska
+class NameAndSurnameChangeForm(forms.ModelForm):
+    
+    class Meta:
+        model = User
+        fields = ('first_name','last_name')
+
+    def save(self, commit=True):
+        account = super(NameAndSurnameChangeForm, self).save(commit=False)
+        if commit:
+            account.save()
+        return account
+
+
 

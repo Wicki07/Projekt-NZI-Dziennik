@@ -24,10 +24,12 @@ urlpatterns = [
     path('schedule/week/',views.schedule_week, name='schedule_week'),
     path('view/children/',views.view_children, name='view_children') ,
     path('assign/child/',views.assign_child, name='assign_child'),
-<<<<<<< HEAD
     path('view/assignments/',views.view_assignments, name='view_assignments'),
-=======
-
-    path('view/assignments/',views.view_assignments, name='view_assignments')
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
+    path('view/settings/',views.view_settings, name='view_settings'),
+    path('view/settings/change_email/',views.change_email, name='change_email'),
+    path('view/settings/change_password/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',views.change_password, name='change_password'),
+    path('view/settings/change_personal_data',views.name_surname_change, name='name_surname_change'),
+    path('view/settings/change_institution_data',views.institution_change_about_us, name='institution_change_about_us'),
+    path('confirmed_change_email/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',views.confirmed_change_email,name='confirmed_change_email'),
+    path('view/settings/confirmed_change_password',views.confirmed_change_password,name='confirmed_change_password')
 ]

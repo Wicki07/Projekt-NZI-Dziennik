@@ -28,63 +28,38 @@
 						<div class="form-group">
 							<label for="exampleInputEmail1">Imię</label>
 							<p><input type="text" name="first_name" maxlength="30" required id="id_first_name" class="form-control" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$" placeholder="Podaj imię" required></p>
-							<span class="error"></span>
+							<span class="error_first_name"></span>
 						</div>
 						<input type="number" name="instytucja" value={{user.pk}} required hidden>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nazwisko</label>
 							<p><input type="text" name="last_name" maxlength="30" required id="id_last_name" class="form-control" pattern="[\-a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\s]{3,}$" placeholder="Podaj nazwisko" required></p>
-							<span class="error"></span>
+							<span class="error_last_name"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Specjalizacja</label>
 							<p><input type="text" name="specjalization" maxlength="254" required id="id_specjalization" class="form-control" pattern="[\-a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\s]{3,}$" placeholder="Podaj specjalizacje" required></p>
-							<span class="error"></span>
+							<span class="error error_specjalization"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Email</label>
 							<p><input type="email" name="email" maxlength="254" required id="id_email" class="form-control" placeholder="Podaj email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></p>
-							<span class="error"></span>
+							<span class="error error_email"></span>
 						</div>
 						<div class="form-group">
-<<<<<<< HEAD
-							<p><input type="password" name="password1" autocomplete="new-password"  id="id_password1" class="form-control" placeholder="Podaj hasło" focusable hidden value="{% if generated_password %}{{ generated_password }}{% endif %}"></p>
-						</div>
-						<div class="form-group">
-							<p><input type="password" name="password2" autocomplete="new-password"  id="id_password2" class="form-control"  placeholder="Podaj ponownie hasło" focusable hidden value="{% if generated_password %}{{ generated_password }}{% endif %}"></p>
-=======
 							<p><input type="password" name="password1" autocomplete="new-password" required id="id_password1" class="form-control" placeholder="Podaj hasło" required hidden value="{% if generated_password %}{{ generated_password }}{% endif %}"></p>
 						</div>
 						<div class="form-group">
 							<p><input type="password" name="password2" autocomplete="new-password" required id="id_password2" class="form-control"  placeholder="Podaj ponownie hasło" required hidden value="{% if generated_password %}{{ generated_password }}{% endif %}"></p>
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nr Telefonu</label>
 							<p><input type="text" name="phone" autocomplete="new-password" maxlength="9" id="id_phone" class="form-control" pattern="[0-9]{9,15}$" placeholder="Podaj nr telefonu"></p>
-							<span class="error"></span>
+							<span class="error error_phone"></span>
 						</div>
-						<div class="col-md-12 ">
-								{% if form.errors %}	
-									<font color="red">
-										<p>Nie prawidłowy: </p>		
-										{%for x in form.errors%}
-											<p><li>{{x}}</li></p>
-										{% endfor %}
-									</font>
-								{% endif %}
-
-								{% if next %}
-									{% if user.is_authenticated %}
-									<p>Your account doesn't have access to this page. To proceed,
-									please login with an account that has access.</p>
-									{% else %}
-									<p>Please login to see this page.</p>
-									{% endif %}
-								{% endif %}
-						</div>
+						
 						<div class="form-group mt-5">
-							<button type="submit" onclick="employeeValidation()" class=" btn btn-block mybtn btn-primary tx-tfm">Dodaj pracownika</button>
+							<button type="submit" onclick="validate()" class=" btn btn-block mybtn btn-primary tx-tfm">Dodaj pracownika</button>
 						</div>
 						<div class="form-group">
 							<p class="text-center"><a href="{%url 'main'%}" id="signin"><i class="fa fa-angle-left fa-x"></i> Wróć</a></p>

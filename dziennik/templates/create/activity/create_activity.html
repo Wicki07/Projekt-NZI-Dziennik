@@ -32,12 +32,12 @@
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nazwa zajęć</label>
 							<p><input type="text" name="name" maxlength="30" required id="id_name" class="form-control" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\s]{3,}$" placeholder="Podaj nazwę zajęć" required></p>
-							<span class="error"></span>
+							<span class="error error_name"></span>
 						</div>
 						<div class="imput-group date">
 							<label for="exampleInputEmail1">Data zajęć</label>
 							<p><input type="text" name="date" maxlength="30" required id="date" class="form-control date-withicon" pattern="(?:20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$" placeholder="RRRR-MM-DD" required></p>
-							<span class="error"></span>
+							<span class="error error_date"></span>
 							<div class="input-group-addon">
 								<span class="glyphicon glyphicon-th"></span>
 							</div>
@@ -45,12 +45,12 @@
 						<div class="form-group">
 							<label for="exampleInputEmail1">Godzina rozpoczecia</label>
 							<p><input type="text" name="start_time" maxlength="30" required id="start_time" pattern="(?:0[1-9]|1[0-9]|2[0-4]):(?:[0-5])[0-9]$" class="form-control" placeholder="HH:MM" required></p>
-							<span class="error"></span>
+							<span class="error error_start_time"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Godzina zakonczenia</label>
 							<p><input type="text" name="end_time" maxlength="30" required id="end_time" pattern="(?:0[1-9]|1[0-9]|2[0-4]):(?:[0-5])[0-9]$" class="form-control" placeholder="HH:MM" required></p>
-							<span class="error"></span>
+							<span class="error error_end_time"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Cykliczność:</label>
@@ -62,7 +62,7 @@
 								<option value="14">Co dwa tygodnie</option>
 								<option value="28">Co miesiąc</option>
 							</select>	
-							<span class="error"></span>
+							<span class="error error_periodicity"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Wybierz pracownika:</label>
@@ -80,7 +80,7 @@
 									<option value="0">Brak</option>
 								{% endif %}
 							</select>	
-							<span class="error"></span>
+							<span class="error error_employee"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Wybierz podopiecznych:</label>
@@ -94,12 +94,12 @@
 									<option value="0">Brak</option>
 								{% endif %}
 							</select>	
-							<span class="error"></span>
+							<span class="error error_children"></span>
 						</div>
 						<div class="col-md-12 ">
 						</div>
 						<div class="form-group mt-5">
-							<button type="submit" onclick="activityValidation()" class=" btn btn-block round mybtn btn-primary tx-tfm">Dodaj zajęcia</button>
+							<button type="submit" onclick="validate()" class=" btn btn-block round mybtn btn-primary tx-tfm">Dodaj zajęcia</button>
 						</div>
 						<div class="form-group">
 							<p class="text-center"><a href="{%url 'main'%}" id="signin"><i class="fa fa-angle-left fa-x"></i> Wróć</a></p>

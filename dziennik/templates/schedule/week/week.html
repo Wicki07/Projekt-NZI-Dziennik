@@ -4,6 +4,18 @@
 	<head>
 		<title>Dziennik | {{ user }}</title>
 	</head>
+	{% if message %}
+		<div class="popup-background">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<font>{{message}}</font><br><br>
+						<a href="{%url 'main'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
 	{% include 'header.html' %}
 	{% if user.role == "User" or user.role == "Employee"%}
 		<div class="popup-background" id="view" style="display: none;">

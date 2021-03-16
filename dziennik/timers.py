@@ -4,14 +4,21 @@ import time
 import datetime
 import pytz
 from threading import Thread, Lock
-from .models import User, Employee, Activity, Child, Attendance
+from .models import User, Employee, Activity, Child, Attendance,EmailChange
 from django.core.mail import EmailMessage
-<<<<<<< HEAD
+
 from django.template.loader import render_to_string
-=======
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
 
 
+
+def removeChangeEmail():
+    # usuwanie pracownika po 24h nieaktwowanego konta
+    time=pytz.timezone('Europe/Warsaw')
+    email = EmailChange.objects.filter()
+    for us in email:
+        if (us.change_date + datetime.timedelta(days=1)) < time.localize(datetime.datetime.now()):
+            EmailChange.objects.filter(id=us.pk).delete()
+            ##User.objects.filter(id=pr.user_id).delete()
 def removeInactiveUsers():
     # usuwanie pracownika po 24h nieaktwowanego konta
     time=pytz.timezone('Europe/Warsaw')
@@ -21,7 +28,6 @@ def removeInactiveUsers():
             print("User: "+ us.first_name +" "+ us.last_name  + " was deleted! - UserID: " + str(us.id))
             User.objects.filter(id=us.pk).delete()
             ##User.objects.filter(id=pr.user_id).delete()
-
 def remindEmployee():
     # powiadomienia o pracownika zajęciach
     activities = Activity.objects.filter(finished=False,remind_employee=True)
@@ -33,11 +39,11 @@ def remindEmployee():
             print("Nazwa: "+str(activity))
 
             # wysyłanie emaila
-<<<<<<< HEAD
+
             employee =activity.employee_id
-=======
+
             employee = Employee.objects.get(id=activity.employee_id)  
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
+
             print("Prowadzący: "+str(employee))
             mail_subject = "Przypomnienie o zajeciach."
             message = render_to_string('email/remind.html', {
@@ -56,19 +62,19 @@ def remindParent():
     activities = Activity.objects.filter(finished=False)
     for activity in activities: 
         attendances = Attendance.objects.filter(remind_parent=True,activity_id=activity)
-<<<<<<< HEAD
+        for attendance in attendances:
             child = attendance.child_id
             parent = child.parent_id # Objekt rodzica
             activity_start_time = datetime.datetime.strptime(str(activity.date) + " " + str(activity.start_time), '%Y-%m-%d %H:%M:%S')
             if (activity_start_time - datetime.timedelta(days=1) == datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')):
                 print("----------/ Powiadomienie o zajęciach /----------")
-=======
+
         for attendance in attendances:
             child = Child.objects.get(id=attendance.child_id.pk)
             parent = child.parent_id # Objekt rodzica
             activity_start_time = datetime.datetime.strptime(str(activity.date) + " " + str(activity.start_time), '%Y-%m-%d %H:%M:%S')
             if (activity_start_time - datetime.timedelta(days=1) == datetime.datetime.strptime(str(datetime.datetime.now())[0:16], '%Y-%m-%d %H:%M')):
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
+
                 print("Wysłane do: "+str(parent))
                 mail_subject = "Przypomnienie o zajeciach."
                 message = render_to_string('email/remind.html', {
@@ -117,11 +123,8 @@ def refreshPeriodicity():
                         Attendance.objects.create(
                             activity_id = activity,
                             child_id = attendance.child_id,
-<<<<<<< HEAD
-                            remind_parent = attendance.remind_parent
-=======
+                            remind_parent = attendance.remind_parent,
                             remind = attendance.remind
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
                         )
             
 
@@ -153,11 +156,10 @@ def remindEmployeeTimer():
 
 t3 = Thread(target=remindEmployeeTimer, args=(), kwargs={})
 t3.setDaemon(True)
-<<<<<<< HEAD
+
 t3.start()
-=======
+
 # t2.start()
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
 
 def remindParentTimer():
     time_span = 60 # w sekundach (60 = 1 na minute)
@@ -183,3 +185,15 @@ def refreshPeriodicityTimer():
 t5 = Thread(target=refreshPeriodicityTimer, args=(), kwargs={})
 t5.setDaemon(True)
 t5.start()
+
+def removeChangeEmailTimer():
+    time_span = 60 # w sekundach (60 = 1 na minute)
+    print("Uruchomiono sprawdzanie zmian emaili (usuwanie nieaktywych po 24h), Freq: "+ timeFormater(time_span))
+    while True:
+        print("Usuwanie nieaktywnych modeli")
+        removeChangeEmail()
+        time.sleep(time_span) 
+
+t6 = Thread(target=removeChangeEmailTimer, args=(), kwargs={})
+t6.setDaemon(True)
+t6.start()

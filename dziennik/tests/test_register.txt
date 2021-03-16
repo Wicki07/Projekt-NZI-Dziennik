@@ -1,0 +1,136 @@
+'''
+from django.test import TestCase , Client
+from dziennik.models import User,UserManager
+from dziennik.forms import RegisterForm
+from django.urls import reverse , resolve
+from django.shortcuts import reverse 
+from dziennik.views import  week_list 
+import json 
+#Rejestrcja 
+class RegistrationTestUser(TestCase):
+    def setUp(self) -> None:
+        self.username = 'testuser'
+        self.first_name = 'Das'
+        self.last_name = 'asdasd'
+        self.email = 'testuser@email.com'
+        self.phone = '123123123'
+        self.password = 'password'
+    def test_signup_form(self):
+        response = self.client.post(reverse('signup'), data={  
+            'username': self.username,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone': self.phone,
+            'password1': self.password,
+            'password2': self.password
+        })
+        self.assertEqual(response.status_code, 200)
+#Logowanie
+
+class LogInTest(TestCase):
+    def setUp(self):
+        c = Client()
+        response = c.post('/login/', {'email': 'Dziennik@mail.com', 'password': 'smith'})
+        self.assertEqual(response.status_code, 200)
+
+#Tworzenie profilu dziecka
+class RegistrationTestChild(TestCase):
+    def setUp(self) -> None:
+        self.parentid = 2
+        self.first_name = 'Das'
+        self.last_name = 'asdasd'
+        self.age = 9 
+    def test_signup_form(self):
+        response = self.client.post(reverse('newchild'), data={  
+            'parentid': self.parentid,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'age': self.age,
+        })
+        self.assertEqual(response.status_code, 200)
+
+#Tworzenie profilu pracownika
+class RegistrationTestEmployee(TestCase):
+    def setUp(self) -> None:
+        self.institutionid = 2
+        self.userid = 1
+        self.email = 'testuser@email.com'
+        self.specjalization = 'Das'
+        self.first_name = 'Das'
+        self.last_name = 'asdasd'
+        self.phone = '123123123'
+    def test_signup_form(self):
+        response = self.client.post(reverse('newemployee'), data={  
+            'institutionid': self.institutionid,
+            'userid': self.userid,
+            'specjalization': self.specjalization,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone': self.phone,
+        })
+        self.assertEqual(response.status_code, 200)
+
+
+#Tworzenie zajęć
+class ActivityTest(TestCase):
+    def setUp(self) -> None:
+        self.name = 'Daffasfsddsa'
+        self.instytucja = 'dziennik'
+        self.data_rozpoczecia = '2021-01-17'
+        self.godzina_rozpoczecia = '18:00'
+        self.godzina_zakonczenia = '19:00'
+        self.cyklicznosc = 1
+        self.prowadzacy = 'asdasd'
+        self.uczniowie = 9
+    def test_signup_form(self):
+        response = self.client.post(reverse('newactivity'), data={  
+            'name': self.name,
+            'instytucja': self.instytucja,
+            'data_rozpoczecia': self.data_rozpoczecia,
+            'godzina_rozpoczecia': self.godzina_rozpoczecia,
+            'godzina_zakonczenia': self.godzina_zakonczenia,
+            'cyklicznosc': self.cyklicznosc,
+            'prowadzacy': self.prowadzacy,
+            'uczniowie': self.uczniowie,
+        })
+        self.assertEqual(response.status_code, 200)
+#Podgląd planu zajęć
+class WeekPageTest(TestCase):
+    def test_home_status_code(self):
+        response = self.client.get(reverse('week_list'))
+        self.assertEquals(response.status_code,200)
+#Ustawianie przypomnień o zajęciach
+class Assign_activity(TestCase):
+    def test_correct_template(self):
+        response = self.client.get(reverse('assign_activity'))
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'assign_activity/assign_activity.html')
+#Wysyłanie wiadomości do prowadzącego
+class NotaficationTests(TestCase):
+    def test_correct_template(self):
+        response = self.client.get('/notification_prowadzacy/')
+        self.assertEquals(response.status_code, 200)
+
+class HomePageTest(TestCase):
+    def test_home_status_code(self):
+        response = self.client.get(reverse('week_list'))
+        self.assertEquals(response.status_code,200)
+
+class TestForms(TestCase):
+    def test_nazwa_form_valid_data(self):
+        form = RegisterForm(data={
+            'email': 'Damianm116@wp.pl',
+            'password1': 'Marik1234',
+            'password2': 'Marik1234',
+            'first_name': 'Damian',
+            'last_name': 'Mosinski',
+            'phone': '123123123',
+        }) 
+        self.assertTrue(form.is_valid())
+    def test_nazwa_form_no_data(self):
+        form = RegisterForm(data={}) 
+        self.assertFalse(form.is_valid())
+        self.assertEquals(len(form.errors),3)
+'''

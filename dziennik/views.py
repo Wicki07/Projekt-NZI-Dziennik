@@ -1,10 +1,12 @@
+from logging import error
+from allauth import account
 from django.db.models.functions.text import Length
 from django.utils import timezone
 from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .forms import RegisterForm, CreationForm ,RegisterCreation
+from .forms import MailUpdateForm, RegisterForm, CreationForm ,RegisterCreation, NameAndSurnameChangeForm
 from django.contrib.auth import authenticate, login, get_user_model
 from django.views.generic import CreateView, FormView
 from django.http import HttpResponse
@@ -16,11 +18,14 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from .tokens import account_activation_token
+from .tokens import account_activation_token, confirmed_change_email_token,confirmed_change_password_token
 from django.core.mail import EmailMessage
-from .models import Institution, Employee, Activity, Child, Assignment, Attendance
+from .models import Institution, Employee, Activity, Child, Assignment, Attendance, EmailChange 
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 import datetime
 import random
 import string
@@ -40,6 +45,7 @@ def signup(request):
             user.role = 'User'
             user.creation_date = datetime.datetime.now()
             user.save()
+            
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('email/activation_email.html', {
@@ -130,16 +136,8 @@ def create_employee(request):
                 
                 return render(request, 'create/employee/create_employee.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
         else:
-<<<<<<< HEAD
-
             form = CreationForm()
 
-=======
-
-            form = CreationForm()
-
-    return render(request, 'create/employee/create_employee.html', {})
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
     
     generated_password_size = 8
     generated_password_chars = string.ascii_uppercase + string.digits
@@ -227,23 +225,22 @@ def activate(request, uidb64, token):
             employee.save()
         user.save()
 
-
         if user.role == "Employee":
           employee.active=True
           employee.save()
 
-        
         # return redirect('home')
         return render(request, 'account/activate.html', {'title':"Dziękujemy za potwierdzenie emaila",'activation_message':" Twoje konto zostało aktywowane."})
     else:
         return render(request, 'account/activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywazyjny jest nieprawidłowy lub został już użyty!"})
 
 def schedule_week(request):
+    error_message = ''
     if request.user != "": # Czy zalogowany
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
         remind = {} # [!] Jest tutaj bo musi byc widoczne
-<<<<<<< HEAD
+
 
         # Przechwycenie formularzy
         data = request.POST.dict()
@@ -276,7 +273,7 @@ def schedule_week(request):
             activityId = data.get('hiddenActivityId')
             message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
 
-=======
+
 
         # Przechwycenie formularzy
         data = request.POST.dict()
@@ -309,16 +306,18 @@ def schedule_week(request):
             activityId = data.get('hiddenActivityId')
             message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
 
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
+
             
             if change_remind_activity != 0:
                 for activity in activities:
                     if change_remind_activity == '1':
                         activity.remind_employee = False
                         activity.save()
+                        error_message = 'Włączono powiadomienie o zajęciach'
                     if change_remind_activity == '-1':
                         activity.remind_employee = True
                         activity.save()
+                        error_message = 'Wyłączono powiadomienie o zajęciach'
 
             if send_mesage:
                 activity = Activity.objects.get(id=activityId)
@@ -340,12 +339,8 @@ def schedule_week(request):
                     
                 activity.finished=True
                 activity.save()
-<<<<<<< HEAD
-            print(monday_of_last_week)
-            print(monday_of_this_week)
-=======
+                error_message = 'Wysłano powiadomienie o odwołaniu zajęć'
 
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
             for activity in activities:
                 remind[activity.pk] = activity.remind_employee
@@ -376,9 +371,11 @@ def schedule_week(request):
                         if change_remind_activity == '1':
                             attendance.remind_parent = False
                             attendance.save()
+                            error_message = 'Włączono powiadomenie o zajęciach'
                         if change_remind_activity == '-1':
                             attendance.remind_parent = True
                             attendance.save()
+                            error_message = 'Wyłączono powiadomenie o zajęciach'
 
             if send_mesage:
                 activity = Activity.objects.get(id=activityId)
@@ -394,6 +391,7 @@ def schedule_week(request):
                     mail_subject, message, to=[to_email]
                 )
                 email.send()
+                error_message = 'Wysłano wiadomość do prowadzącego'
 
             for child in children:
                 # Pobranie zajęć do jakich jest przypisane dane dziecko
@@ -407,38 +405,38 @@ def schedule_week(request):
                         # Filtrowanie zajęć po dacie
                         # date_gte - Date Greater Than or Equal
                         # date_lt  - Date Less Than
-<<<<<<< HEAD
+
                     __activities = Activity.objects.filter(id=attendance.activity_id.pk)
-=======
+
                     __activities = Activity.objects.filter(id=attendance.activity_id.id,date__gte=monday_of_last_week, date__lt=monday_of_this_week)
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
+
                     #setattr(__activity,'child',child)
                     #activities.extend(__activity)
                     activities |= __activities
                     
                     for __activity in __activities:
                         children_in_activity[(__activity.id,child.id)] = str(child)
-<<<<<<< HEAD
+
             
 
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
-=======
 
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
+
+
             for activity in activities:
                 date= str(activity.date)
                 day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
                 setattr(activity,'day',week_day)
 
-<<<<<<< HEAD
-=======
-        print(activities)
 
->>>>>>> 702244926881adb11fa223591a15cde16f3003c8
-        return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind})
 
-    return render(request, 'schedule/week/week.html',{})
+        print(error_message)
+
+
+        return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message})
+    print(error_message)
+    return render(request, 'schedule/week/week.html',{'message':error_message})
 
 def view_children(request):
     if request.user != "": # Czy zalogowany
@@ -505,3 +503,172 @@ def view_assignments(request):
 
         return render(request, 'view/assignments/view_assignments.html',{'assignments':assignments})
     return render(request, 'view/assignments/view_assignments.html',{})
+
+def view_settings(request):
+    return render(request, 'view/settings/view_settings.html',{})
+
+
+def name_surname_change(request):
+    try:
+        account = User.objects.get(id=request.user.pk)
+    except User.DoesNotExist:
+        return HttpResponse("coś się popsuło")
+    context ={}
+    if request.POST:
+        form = NameAndSurnameChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return render (request,'view/settings/name_surname_change.html',{'message': 'Na podany email została wysłana wiadomośc z linkiem potwierdzającym zmiane imienia i nazwiska.'})
+        else:
+            form = NameAndSurnameChangeForm(request.POST, instance=request.user)
+            context['form'] = form
+            return render (request,'view/settings/name_surname_change.html',{'message': 'Coś poszło nie tak'})
+    else:
+        form = NameAndSurnameChangeForm(request.POST, instance=request.user)
+                
+        context['form'] = form
+        return render(request, 'view/settings/name_surname_change.html',context)
+
+def institution_change_about_us(request):
+    institution = Institution.objects.get(user_id = request.user)
+    if request.POST:
+        # pobierane dane z formularza 
+        # i ustawione dane instytycji na dane z formularze
+        data = request.POST.dict()
+        # po get sa dane z formularza
+        institution.name = data.get('name')
+        user = institution.user_id
+        user.first_name= data.get('name')
+        user.save()
+        institution.category = data.get('category')
+        institution.profile = data.get('profile')
+        institution.save()
+        return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution,'message': 'Poprawnie zmienione dane'})
+
+    return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution})
+
+def confirmed_change_email(request, uidb64, token):
+    #jak activity 
+    #odbieramy i  zz tamtego modelu odczytujemy i zmieniamy mail
+    uid = force_text(urlsafe_base64_decode(uidb64))
+    user = User.objects.get(pk=uid)
+    email = EmailChange.objects.none()
+    try:
+        #sprawdzenie czy user to user
+        if user.role == "User":
+            email = EmailChange.objects.get(user_id=user)
+        #Sprawdza czy user istnieje i token 
+        if user is not None and confirmed_change_email_token.check_token(user, token):
+            user.email = str(email.new_email)
+            user.save()
+            email.delete()
+            return render(request, 'account/confirmed_change_email_activate.html', {'title':"Email został pomyślnie zmieniony",'activation_message':" Możesz sie teraz zalogować"})
+        else:
+            return render(request, 'account/confirmed_change_email_activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywacyjny jest nieprawidłowy lub został już użyty!"})
+    except EmailChange.DoesNotExist:
+        return render(request, 'account/confirmed_change_email_activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywacyjny jest nieprawidłowy lub został już użyty!"})
+
+def change_email(request):
+    try:
+        account = User.objects.get(id=request.user.pk)
+    except User.DoesNotExist:
+        return HttpResponse("coś się popsuło")
+    context ={}
+    if request.POST:
+        #dane
+        data = request.POST.dict()
+        new_email = data.get('email')
+        old_email = request.user.email
+        #try sprawdzajacy czy nie ma juz modelu przypisanego do modeli emailchange
+        try:
+            EmailChange.objects.get(user_id=account)
+            form = MailUpdateForm(request.POST, instance=request.user)
+            context['form'] = form
+            return render (request,'view/settings/change_email.html',{'message': 'Podany adres email wysyłał już zmianę'})
+        except EmailChange.DoesNotExist:
+            form = MailUpdateForm(request.POST, instance=request.user)
+            # warunek sprawdzajacy czy email nie jest juz w bazie 
+            if  User.objects.filter(email=new_email):
+                return render (request,'view/settings/change_email.html',{'message': 'Podany adres email jest już zajęty'})
+            #sprawdzenie czy email nie jest taki sam jak request
+            if  data.get('email') != request.user.email and data.get('email') != account.email :
+                #przypisanie do modelu emailchange bo musimy gdizes zapisac te dane przed wyslaniem potwierdzenia
+                EmailChange.objects.create(user_id=request.user,change_date=datetime.datetime.now(),old_email=old_email,new_email=new_email)
+                #form.save()
+                #wysylanie maila
+                #zczytanie danych
+                current_site = get_current_site(request)
+                mail_subject = 'Activate your blog account.'
+                #towrzenie massage
+                message = render_to_string('email/confirmation_email.html', {
+                    'user': request.user,
+                    'domain': current_site.domain,
+                    'uid':urlsafe_base64_encode(force_bytes(request.user.pk)),
+                    'token':account_activation_token.make_token(request.user),
+                })
+                #email do kogo wysylamy
+                to_email = old_email
+                email = EmailMessage(
+                            mail_subject, message, to=[to_email]
+                )
+                #wyslanie maila
+                email.send()
+                return render (request,'view/settings/change_email.html',{'form':form ,'message': 'Na podany email została wysłana wiadomośc z linkiem potwierdzającym zmiane emailu.'})
+            else:
+                form = MailUpdateForm(request.POST, instance=request.user)
+                context['form'] = form
+                return render (request,'view/settings/change_email.html',{'message': 'Podany adres email jest już zajęty'})
+    else:
+        form = MailUpdateForm(request.POST, instance=request.user)
+                
+        context['form'] = form
+        return render(request, 'view/settings/change_email.html',context)
+
+def confirmed_change_password(request):
+    try:
+        account = User.objects.get(id=request.user.pk)
+    except User.DoesNotExist:
+        return HttpResponse("coś się popsuło")
+    current_site = get_current_site(request)
+    mail_subject = 'Activate your blog account.'
+    #towrzenie massage
+    message = render_to_string('email/confirmation_password.html', {
+        'user': request.user,
+        'domain': current_site.domain,
+        'uid':urlsafe_base64_encode(force_bytes(request.user.pk)),
+        'token':account_activation_token.make_token(request.user),
+    })
+    #email do kogo wysylamy
+    to_email = request.user.email
+    email = EmailMessage(
+                mail_subject, message, to=[to_email]
+    )
+    #wyslanie maila
+    email.send()
+    return render (request,'view/settings/confirmed_change_password.html',{'message': 'Na podany email została wysłana wiadomośc z linkiem potwierdzającym zmiane emailu.'})
+  
+
+def change_password(request, uidb64, token):
+    #jak activity 
+    #odbieramy i  zz tamtego modelu odczytujemy i zmieniamy mail
+    uid = force_text(urlsafe_base64_decode(uidb64))
+    try:
+        user = User.objects.get(pk=uid)
+    except User.DoesNotExist:
+        return HttpResponse("coś się popsuło")
+    if request.method == 'POST':
+        # Formularz z html zostaje przekazany, oraz user
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user_handler = form.save()
+            # Linia 664 Jest Konieczna aby zaktualizować hasło
+            # Wymagane jest zaktowalizowanie hasha w sesji
+            update_session_auth_hash(request, user_handler)
+            return render (request,'view/settings/change_password.html',{'message': 'Hasło zostało zmienione'})
+        else:
+            return render (request,'view/settings/change_password.html',{'message': 'Hasła się nie zgadzają'})
+    else:
+        form = PasswordChangeForm(request.user)
+                
+        return render(request, 'view/settings/change_password.html',{'form':form})
+    

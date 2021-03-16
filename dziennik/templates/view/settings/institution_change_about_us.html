@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+	<head>
+		<title>Dziennik | Rejestracja</title>
+	</head>
+    {% include 'header.html' %}
+    <main>
+	{% if message %}
+            <div class="popup-background">
+                <div class="container popup-center">
+                    <div class="row">
+                        <div class="col-md-6 mx-auto popup">
+                            {{message}}<br><br>
+                            <a href="{%url 'view_settings'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {% endif %}
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div id="login-panel">
+                    <form  name="singup" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+							<label for="exampleInputEmail1">Nazwa</label>
+							<p><input type="text" name="name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="{2,}$" required></p>
+							<span class="error"></span>
+						</div>
+                        <div class="form-group">
+							<label for="sel1">Wybierz kategorię:</label>
+							<select class="form-control" name="category" id="kat" required>
+								<option disabled selected hidden>Wybierz z listy...</option>
+								<option value="Szkoła języków obych">Szkoła języków obych</option>
+								<option value="Klub sportowy">Klub sportowy</option>
+								<option value="Korepetycje">Korepetycje</option>
+								<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
+							</select>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Podaj profil</label>
+							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+							<span class="error"></span>
+						</div>
+                        <div class="form-group mt-4">
+                            <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Zmień Dane Instytucji</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

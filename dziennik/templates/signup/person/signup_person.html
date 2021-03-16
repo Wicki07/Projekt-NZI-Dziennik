@@ -38,62 +38,35 @@
 						<div class="form-group">
 							<label for="exampleInputEmail1">Imię</label>
 							<p><input id="id1" type="text" name="first_name" maxlength="30" required id="id_first_name" class="form-control" placeholder="Podaj imię" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$" required></p>
-							<span class="error"></span>
+							<span class="error error_first_name"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nazwisko</label>
 							<p><input type="text" name="last_name" maxlength="30" required id="id_last_name" class="form-control" placeholder="Podaj nazwisko" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$" required></p>
-							<span class="error"></span>
+							<span class="error error_last_name"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Email</label>
 							<p><input id="mail" type="email" name="email" maxlength="254" required id="id_email" class="form-control" placeholder="Podaj email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></p>
-							<span class="error"></span>
+							<span class="error error_email"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Hasło</label>
 							<p><input type="password" name="password1" autocomplete="new-password" required id="id_password1" class="form-control" placeholder="Podaj hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
-							<span class="error"></span>
+							<span class="error error_password1"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Potwierdź hasło</label>
 							<p><input type="password" name="password2" autocomplete="new-password" required id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
-							<span class="error"></span>
+							<span class="error error_password2"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nr Telefonu</label>
 							<p><input type="text" name="phone"  id="id_phone" class="form-control" placeholder="Podaj nr telefonu" pattern="[0-9]{9,15}$"></p>
-							<span class="error"></span>
-						</div>
-						<div class="col-md-12 " id="demo">
-								{% if form.errors %}
-									{% for field in form %}
-										{% for error in field.errors %}
-											<div class="alert alert-danger">
-												<strong>{{ error|escape }}</strong>
-												<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
-											</div>
-										{% endfor %}
-									{% endfor %}
-									{% for error in form.non_field_errors %}
-										<div class="alert alert-danger">
-											<strong>{{ error|escape }}</strong>
-											<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
-										</div>
-									{% endfor %}
-								{% endif %}
-
-								{% if next %}
-									{% if user.is_authenticated %}
-									<p>Your account doesn't have access to this page. To proceed,
-									please login with an account that has access.</p>
-									{% else %}
-									<p>Please login to see this page.</p>
-									{% endif %}
-								{% endif %}
+							<span class="error error_phone"></span>
 						</div>
 						<div class="form-group mt-4">
-							<button type="submit" onclick="userValidation()" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
+							<button type="submit" onclick="validate()" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
 						</div>
 						<div class="form-group">
 								<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>

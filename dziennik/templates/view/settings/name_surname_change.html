@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+	<head>
+		<title>Dziennik | Rejestracja</title>
+	</head>
+    {% include 'header.html' %}
+    <main>
+	{% if message %}
+            <div class="popup-background">
+                <div class="container popup-center">
+                    <div class="row">
+                        <div class="col-md-6 mx-auto popup">
+                            {{message}}<br><br>
+                            <a href="{%url 'view_settings'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {% endif %}
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div id="login-panel">
+                    <form  name="singup" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+							<label for="exampleInputEmail1">Nowe Imię</label>
+							<p><input id="id1" value={{user.first_name}} type="text" name="first_name" maxlength="30" required id="id_first_name" class="form-control" placeholder="Podaj imię" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$" required></p>
+							<span class="error"></span>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1">Nowe Nazwisko</label>
+							<p><input type="text" value={{user.last_name}} name="last_name" maxlength="30" required id="id_last_name" class="form-control" placeholder="Podaj nazwisko" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$" required></p>
+							<span class="error"></span>
+						</div>
+                        <div class="form-group mt-4">
+                            <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Zmień Dane Osobiste</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

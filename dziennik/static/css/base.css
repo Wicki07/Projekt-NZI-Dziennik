@@ -189,6 +189,19 @@ main{
 	transform: translateY(-50%);
 }
 
+/*White Box inside Settings list item Container*/
+.whiteBox{
+	background-color: #f8f9fa!important;
+	margin-top:1.5rem;
+	border-radius: 2rem;
+	list-style: none;
+	padding:1.1rem 2.5rem 1.1rem 2.5rem
+}
+
+ul a li{
+	color: black!important;
+}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar{
     width: 0.75rem;

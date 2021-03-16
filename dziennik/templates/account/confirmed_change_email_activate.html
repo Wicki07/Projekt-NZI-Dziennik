@@ -1,0 +1,23 @@
+<style>
+	html{
+		overflow:hidden;
+	}
+</style>
+	{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+	<head>
+		<title>Dziennik | Logowanie</title>
+	</head>
+	<div class="container verticaly-center p-5">
+		<div class="row">
+			<div class="col-md-8 mx-auto">
+				<div id="login-panel inactive-account" style="text-align:center;">
+					<font size="5">{{title}}</font></br><br>
+					<font size="3">{{activation_message}}</font><br><br>
+					<a href="{%url 'login'%}"><button type="submit" class=" btn btn-block mybtn btn-primary m-auto mt-5 w-50 tx-tfm">OK</button></a>
+				</div>
+			</div>
+		</div>
+	</div>	
+{% endblock %}

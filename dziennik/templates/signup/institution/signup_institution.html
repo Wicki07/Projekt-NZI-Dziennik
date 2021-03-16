@@ -37,28 +37,28 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nazwa</label>
-							<p><input type="text" name="first_name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="{2,}$" required></p>
-							<span class="error"></span>
+							<p><input type="text" name="name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="{2,}$" required></p>
+							<span class="error_name error"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Email</label>
 							<p><input type="email" name="email" maxlength="254"  id="id_email" class="form-control" placeholder="Podaj email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></p>
-							<span class="error"></span>
+							<span class="error_email error"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Hasło</label>
 							<p><input type="password" name="password1" autocomplete="new-password"  id="id_password1" class="form-control" placeholder="Podaj hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
-							<span class="error"></span>
+							<span class="error_password1 error"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Potwierdź hasło</label>
 							<p><input type="password" name="password2" autocomplete="new-password" id="id_password2" class="form-control" placeholder="Podaj ponownie hasło" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></p>
-							<span class="error"></span>
+							<span class="error_password2 error"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nr kontaktowy</label>
 							<p><input type="text" name="phone" autocomplete="phone"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$"></p>
-							<span class="error"></span>
+							<span class="error_phone error"></span>
 						</div>
 						<div class="form-group">
 							<label for="sel1">Wybierz kategorię:</label>
@@ -69,42 +69,15 @@
 								<option value="Korepetycje">Korepetycje</option>
 								<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
 							</select>
-							<span class="error"></span>
+							<span class="error_category error"></span>
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Podaj profil</label>
 							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
-							<span class="error"></span>
-						</div>
-						<div class="col-md-12 " id="demo">
-								{% if form.errors %}
-									{% for field in form %}
-										{% for error in field.errors %}
-											<div class="alert alert-danger">
-												<strong>{{ error|escape }}</strong>
-												<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
-											</div>
-										{% endfor %}
-									{% endfor %}
-									{% for error in form.non_field_errors %}
-										<div class="alert alert-danger">
-											<strong>{{ error|escape }}</strong>
-											<a href="{%url 'login'%}"><b>Zaloguj się</b></a>
-										</div>
-									{% endfor %}
-								{% endif %}
-
-								{% if next %}
-									{% if user.is_authenticated %}
-									<p>Your account doesn't have access to this page. To proceed,
-									please login with an account that has access.</p>
-									{% else %}
-									<p>Please login to see this page.</p>
-									{% endif %}
-								{% endif %}
+							<span class="error_profile error"></span>
 						</div>
 						<div class="form-group">
-							<button type="submit" onclick="instytutionValidation()" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
+							<button type="submit" onclick="validate();" class=" btn btn-block mybtn btn-primary tx-tfm">Dołącz za darmo</button>
 						</div>
 						<div class="form-group">
 							<p class="text-center"><a href="{%url 'login'%}" id="signin">Masz już konto?</a></p>

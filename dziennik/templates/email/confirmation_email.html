@@ -1,0 +1,8 @@
+{% autoescape off %}
+Cześć to twój nowy email {{ user.email }},
+
+
+Proszę kliknij w link aby dokończyc aktywację nowego maila.
+
+http://127.0.0.1:8000{%url 'confirmed_change_email' uidb64=uid token=token %}
+{% endautoescape %}

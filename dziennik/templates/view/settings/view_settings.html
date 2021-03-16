@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<head>
+  <title>Dziennik | Tworzenie profilu dziecka</title>
+</head>
+{% include 'header.html' %}
+<main>
+{% if message %}
+  <div class="popup-background">
+      <div class="container popup-center">
+          <div class="row">
+              <div class="col-md-6 mx-auto popup">
+                  {{message}}<br><br>
+                  <a href="{%url 'view_settings'%}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endif %}
+  <div class="main-shadow"></div>
+  <div class="container-fluid pt-5">
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        {% if user.role == 'User' %}
+        <ul>
+          <a href="{% url 'change_email'%}"
+            ><li class="whiteBox">Zmiana Emaila</li></a
+          >
+          <a href="{% url 'confirmed_change_password'%}"
+            ><li class="whiteBox">Zmiana Hasła</li></a
+          >
+          <a href="{% url 'name_surname_change'%}"
+            ><li class="whiteBox">Zmiana Imienia i Nazwiska</li></a
+          >
+        </ul>
+        {% endif %} {% if user.role == 'Institution' %}
+        <ul>
+          <a href="{% url 'institution_change_about_us'%}"
+            ><li class="whiteBox">Zmień Dane Instytucji</li></a
+          >
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
