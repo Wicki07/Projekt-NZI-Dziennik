@@ -8,7 +8,7 @@ function nameValidation() {
      input[0].reportValidity();
      error[0].innerHTML = '<p>Nie podano nazwy</p>'
     }
-    else if(validityState_object.valid)
+    else if(validityState_object.patternMismatch)
     {
         input[0].setCustomValidity('');
         input[0].reportValidity();
@@ -79,11 +79,89 @@ function password1Validation() {
         error[0].innerHTML = ''
         });
 }
+function old_passwordValidation() {
+    const input = document.getElementsByName("old_password")
+    let validityState_object = input[0].validity;
+    const error = document.getElementsByClassName("error_old_password");
+    if (validityState_object.valueMissing)
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Nie podano hasła</p>'
+    }
+    else if(validityState_object.patternMismatch)
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Podane hasło jest nieprawidłowe (minimum 8 znaków, 1 mała litera, 1 duża litera, 1 cyfra)</p>'
+    }
+    else
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+    }
+    input[0].addEventListener('change', (event) => {
+        error[0].innerHTML = ''
+        });
+}
+function new_password1Validation() {
+    const input = document.getElementsByName("new_password1")
+    let validityState_object = input[0].validity;
+    const error = document.getElementsByClassName("error_new_password1");
+    if (validityState_object.valueMissing)
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Nie podano hasła</p>'
+    }
+    else if(validityState_object.patternMismatch)
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Podane hasło jest nieprawidłowe (minimum 8 znaków, 1 mała litera, 1 duża litera, 1 cyfra)</p>'
+    }
+    else
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+    }
+    input[0].addEventListener('change', (event) => {
+        error[0].innerHTML = ''
+        });
+}
 function password2Validation() {
     const input = document.getElementsByName("password2")
     const inputPreviousPass = document.getElementsByName("password1")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_password2");
+    if (validityState_object.valueMissing)
+    {
+     input[0].setCustomValidity('');
+     input[0].reportValidity();
+     error[0].innerHTML = '<p>Nie podano hasła ponownie</p>'
+    }
+    else if(input[0].value != inputPreviousPass[0].value)
+    {
+        input[0].value = '';
+        inputPreviousPass[0].value = '';
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Podane hasła się nie zgdzają</p>'
+    }
+    else{
+
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+    }
+    input[0].addEventListener('change', (event) => {
+        error[0].innerHTML = ''
+      });
+}
+function new_password2Validation() {
+    const input = document.getElementsByName("new_password2")
+    const inputPreviousPass = document.getElementsByName("new_password1")
+    let validityState_object = input[0].validity;
+    const error = document.getElementsByClassName("error_new_password2");
     if (validityState_object.valueMissing)
     {
      input[0].setCustomValidity('');
@@ -159,7 +237,7 @@ function proflieValidation() {
     {
         input[0].setCustomValidity('');
         input[0].reportValidity();
-        error[0].innerHTML = '<p>Podany profil jest nieprawidłowa</p>'
+        error[0].innerHTML = '<p>Podany profil jest nieprawidłowy</p>'
     }
     else
     {
@@ -429,6 +507,15 @@ function validate(){
             case "password2":
                 password2Validation()
                 break;
+            case "old_password":
+                old_passwordValidation()
+                break;
+            case "new_password1":
+                new_password1Validation()
+                break;
+            case "new_password2":
+                new_password2Validation()
+                break;
             case "phone":
                 phoneValidation()
                 break;
@@ -471,5 +558,6 @@ function validate(){
             default:
                 break;
         }
+        console.log(input)
     }
 }

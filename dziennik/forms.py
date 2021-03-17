@@ -186,5 +186,37 @@ class NameAndSurnameChangeForm(forms.ModelForm):
             account.save()
         return account
 
+class AlternativeRegisterForm(forms.ModelForm):
+    password1 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+
+    
+    class Meta:
+        model = User
+        fields = ('email','password1','password2','phone',)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        qs = User.objects.filter(email=email)
+        if qs.exists():
+            raise forms.ValidationError("Email jest już zajęty")
+        return email
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(AlternativeRegisterForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        user.active = False # send confirmation email
+        if commit:
+            user.save()
+        return user
+
+    """def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Hasła nie są identyczne")
+        return password2"""
+        
 
 

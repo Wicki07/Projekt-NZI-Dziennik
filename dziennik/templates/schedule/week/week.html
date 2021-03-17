@@ -29,11 +29,7 @@
 								<button type="submit" name="changeRemindActivity" value="1" id="changeRemindActivity" class="btn btn-link mt-3 w-50 float-left"></button>
 								<button type="button" id="goToActicitySendMessage" class="btn btn-link mt-3 w-50 float-right"><i class="fas display-1 mb-3 fa-envelope-open-text"></i></button>
 								<span id="changeRemindActivityDescription" class="w-50 float-left px-3 text-center"></span>
-								{%if user.role == "User"%}
-									<span class="w-50 float-left px-3 text-center">Wyślij wiadomość do prowadzącego</span>
-								{%else %}
-									<span class="w-50 float-left px-3 text-center">Wyślij wiadomość o odwołaniu zajęć</span>
-								{%endif%}
+								<span class="w-50 float-left px-3 text-center">Wyślij wiadomość do prowadzącego</span>
 								<button type="button" id="closeView" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
 							</form>
 						</div>
@@ -41,13 +37,8 @@
 							<form method="POST" action="{% url 'schedule_week'%}">
 								{% csrf_token %}
 								<input class="inputActivityId" hidden name="hiddenActivityId" type="number">
-								{%if user.role == "User"%}
-									<span class="w-100 float-left mb-4 h6">Powiadomienie prowadzącego o nieobecności swojego dziecka:</span>
-									<textarea class="form-control" id="messageToEmployee" required rows="5" maxlength="300" placeholder="Napisz wiadomość do prowadzącego... (maksymalnie 300 znaków)"></textarea>
-								{%else %}
-									<span class="w-100 float-left mb-4 h6">Powiadomienie rodziców o odwołaniu zajęć</span>
-									<textarea class="form-control" id="messageToEmployee" required rows="5" maxlength="300" placeholder="Napisz wiadomość do rodziców... (maksymalnie 300 znaków)"></textarea>
-								{%endif%}
+								<span class="w-100 float-left mb-4 h6">Powiadomienie prowadzącego o nieobecności swojego dziecka:</span>
+								<textarea class="form-control" id="messageToEmployee" required rows="5" maxlength="300" placeholder="Napisz wiadomość do prowadzącego... (maksymalnie 300 znaków)"></textarea>
 								<span id="noMessageTyped" class="error w-100 float-left my-2" style="display: none;"> Musisz podac terść wiadomości!</span>
 								<button type="button" id="backToActivityMenu" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
 								<button type="button" id="goToViewActicitySendMessage" class="btn btn-link mt-3 w-50 text-right float-right">Wyślij <i class="fas fa-paper-plane"></i></button>

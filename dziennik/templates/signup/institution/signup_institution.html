@@ -37,7 +37,7 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nazwa</label>
-							<p><input type="text" name="name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="{2,}$" required></p>
+							<p><input type="text" name="name" maxlength="30"id="id_first_name" class="form-control name" placeholder="Podaj nazwę" pattern=".{2,}$" required></p>
 							<span class="error_name error"></span>
 						</div>
 						<div class="form-group">
@@ -57,7 +57,7 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Nr kontaktowy</label>
-							<p><input type="text" name="phone" autocomplete="phone"  maxlength="9" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$"></p>
+							<p><input type="text" name="phone" autocomplete="phone" id="id_phone" class="form-control" placeholder="Podaj nr kontaktowy" pattern="[0-9]{9,15}$"></p>
 							<span class="error_phone error"></span>
 						</div>
 						<div class="form-group">
@@ -73,7 +73,7 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Podaj profil</label>
-							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ.]{3,}$" required></p>
 							<span class="error_profile error"></span>
 						</div>
 						<div class="form-group">

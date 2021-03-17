@@ -6,7 +6,7 @@ from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .forms import MailUpdateForm, RegisterForm, CreationForm ,RegisterCreation, NameAndSurnameChangeForm
+from .forms import MailUpdateForm, RegisterForm, CreationForm ,RegisterCreation, NameAndSurnameChangeForm, AlternativeRegisterForm
 from django.contrib.auth import authenticate, login, get_user_model
 from django.views.generic import CreateView, FormView
 from django.http import HttpResponse
@@ -67,7 +67,9 @@ def signup(request):
 
 def signup_institution(request):
     if request.method == 'POST':
-        form = CreationForm(request.POST or None)
+        form = AlternativeRegisterForm(request.POST or None)
+        print(form.is_valid())
+        print(form)
         if form.is_valid():
             # Tworzenie konta instytucji
             user = form.save(commit=False)
@@ -75,10 +77,11 @@ def signup_institution(request):
             user.role = 'Institution'
             user.last_name = '-'
             user.phone=form.data['phone']
+            user.first_name=form.data['name']
             user.save()
 
             # Tworzenie profilu instytucji
-            Institution.objects.create(user_id=user,email=user.email,name=user.first_name,category=form.data['category'],profile=form.data['profile'])
+            Institution.objects.create(user_id=user,email=user.email,name=form.data['name'],category=form.data['category'],profile=form.data['profile'])
 
             # Wysyłanie wiadomości aktywującej konto
             current_site = get_current_site(request)
@@ -97,7 +100,7 @@ def signup_institution(request):
 
             return render(request, 'signup/institution/signup_institution.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
     else:
-        form = CreationForm()
+        form = AlternativeRegisterForm()
     return render(request, 'signup/institution/signup_institution.html', {'form': form})
 
 def create_employee(request):
@@ -117,7 +120,7 @@ def create_employee(request):
                 specialization=form.data['specjalization']
                 phone=form.data['phone']
                 Employee.objects.create(institution_id=institution,user_id=user,first_name=user.first_name,last_name=user.last_name,specialization=specialization,email=user.email,phone=phone,creation_date=datetime.datetime.now())
-                
+                print(Employee.objects.get(user_id=user))
                 # Wysyłanie wiadomości aktywującej konto
                 current_site = get_current_site(request)
                 mail_subject = 'Aktywacja konta w serwisie Dziennik.'
@@ -559,9 +562,25 @@ def confirmed_change_email(request, uidb64, token):
             email = EmailChange.objects.get(user_id=user)
         #Sprawdza czy user istnieje i token 
         if user is not None and confirmed_change_email_token.check_token(user, token):
+            print(user.email)
+            print(email.new_email)
             user.email = str(email.new_email)
+            print(user.email)
             user.save()
             email.delete()
+            current_site = get_current_site(request)
+            mail_subject = 'Zmiana adresu e-mail.'
+            #towrzenie massage
+            message = render_to_string('email/change_email.html', {
+                'user': request.user,
+            })
+            #email do kogo wysylamy
+            to_email = user.email
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            #wyslanie maila
+            email.send()
             return render(request, 'account/confirmed_change_email_activate.html', {'title':"Email został pomyślnie zmieniony",'activation_message':" Możesz sie teraz zalogować"})
         else:
             return render(request, 'account/confirmed_change_email_activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywacyjny jest nieprawidłowy lub został już użyty!"})
@@ -578,6 +597,7 @@ def change_email(request):
         #dane
         data = request.POST.dict()
         new_email = data.get('email')
+        print(new_email)
         old_email = request.user.email
         #try sprawdzajacy czy nie ma juz modelu przypisanego do modeli emailchange
         try:
@@ -607,7 +627,7 @@ def change_email(request):
                     'token':account_activation_token.make_token(request.user),
                 })
                 #email do kogo wysylamy
-                to_email = old_email
+                to_email = new_email
                 email = EmailMessage(
                             mail_subject, message, to=[to_email]
                 )
@@ -645,7 +665,7 @@ def confirmed_change_password(request):
     )
     #wyslanie maila
     email.send()
-    return render (request,'view/settings/confirmed_change_password.html',{'message': 'Na podany email została wysłana wiadomośc z linkiem potwierdzającym zmiane emailu.'})
+    return render (request,'view/settings/confirmed_change_password.html',{'message': 'Na podany email została wysłana wiadomośc z linkiem potwierdzającym zmiane hasła.'})
   
 
 def change_password(request, uidb64, token):
