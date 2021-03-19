@@ -581,6 +581,7 @@ def confirmed_change_email(request, uidb64, token):
             )
             #wyslanie maila
             email.send()
+            update_session_auth_hash(request, user_handler)
             return render(request, 'account/confirmed_change_email_activate.html', {'title':"Email został pomyślnie zmieniony",'activation_message':" Możesz sie teraz zalogować"})
         else:
             return render(request, 'account/confirmed_change_email_activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywacyjny jest nieprawidłowy lub został już użyty!"})
@@ -691,4 +692,6 @@ def change_password(request, uidb64, token):
         form = PasswordChangeForm(request.user)
                 
         return render(request, 'view/settings/change_password.html',{'form':form})
+    
+
     
