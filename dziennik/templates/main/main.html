@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-	{% if user.role == "Employee" or user.role == "User"%}
+	{% if user.role == "Employee" or user.role == "User" or user.role == "Institution" %}
 		<meta http-equiv="refresh" content="0; URL=/schedule/week/" />
 	{%endif%}
 	<head>

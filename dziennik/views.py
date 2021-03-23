@@ -1,4 +1,9 @@
+from decimal import Context
 from logging import error
+import json
+from collections import ChainMap
+from django.core.serializers import serialize
+from itertools import chain
 from allauth import account
 from django.db.models.functions.text import Length
 from django.utils import timezone
@@ -239,6 +244,7 @@ def activate(request, uidb64, token):
 
 def schedule_week(request):
     error_message = ''
+    context = {}
     if request.user != "": # Czy zalogowany
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
@@ -263,6 +269,7 @@ def schedule_week(request):
             this_week_days_numbers.append(__day_number)
 
 
+        """
         # Pobieranie zajęć
         activities = Activity.objects.none()
         # Dla pracownika
@@ -275,6 +282,7 @@ def schedule_week(request):
             send_mesage = data.get('sendMesage') 
             activityId = data.get('hiddenActivityId')
             message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
+        """
 
 
 
@@ -350,9 +358,23 @@ def schedule_week(request):
 
             for activity in activities:
                 date = str(activity.date)  
-                day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
-                setattr(activity,'day',week_day) 
+                setattr(activity,'day',week_day)
+
+        ######## Wyświetlanie planu pracowników przez instytucje
+        elif request.user.role == "Institution":
+            institution = Institution.objects.get(user_id=request.user)
+            employees = Employee.objects.filter(institution_id=institution)
+            activities = Activity.objects.none()
+            for employee in employees :
+                _activities = Activity.objects.filter(employee_id=employee)
+
+                __activities = _activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
+                activities |= __activities
+            for a in activities:
+                date = str(a.date)
+                week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
+                setattr(a,'day',week_day)
 
         # Reszra użytkowników
         elif request.user.role == "User":
@@ -436,8 +458,7 @@ def schedule_week(request):
 
         print(error_message)
 
-
-        return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message})
+        return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,})
     print(error_message)
     return render(request, 'schedule/week/week.html',{'message':error_message})
 
@@ -521,7 +542,7 @@ def name_surname_change(request):
         form = NameAndSurnameChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return render (request,'view/settings/name_surname_change.html',{'message': 'Na podany email została wysłana wiadomośc z linkiem potwierdzającym zmiane imienia i nazwiska.'})
+            return render (request,'view/settings/name_surname_change.html',{'message': 'Dane zostały zmienione'})
         else:
             form = NameAndSurnameChangeForm(request.POST, instance=request.user)
             context['form'] = form
