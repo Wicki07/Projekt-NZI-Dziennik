@@ -713,6 +713,7 @@ def change_password(request, uidb64, token):
         form = PasswordChangeForm(request.user)
                 
         return render(request, 'view/settings/change_password.html',{'form':form})
+        ###################
     
 
     
