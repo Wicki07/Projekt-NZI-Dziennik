@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware'
 ]
 
 ROOT_URLCONF = 'dziennik.urls'
@@ -162,6 +164,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'
 
+
 # autentication backends 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -180,7 +183,11 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_SESSION_REMEMBER = None
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+SESSION_TIMEOUT_REDIRECT = "/login/"
+SESSION_SAVE_EVERY_REQUEST = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 #ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
@@ -192,3 +199,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'projektnzi@gmail.com'
 EMAIL_HOST_PASSWORD = 'xwaauukvwdrgveul'
 EMAIL_USE_TLS = True
+

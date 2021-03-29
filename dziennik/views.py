@@ -1,9 +1,4 @@
-from decimal import Context
 from logging import error
-import json
-from collections import ChainMap
-from django.core.serializers import serialize
-from itertools import chain
 from allauth import account
 from django.db.models.functions.text import Length
 from django.utils import timezone
@@ -35,12 +30,25 @@ import datetime
 import random
 import string
 from django.db.models.functions import Lower
+from allauth.account.views import LoginView
 
 
 def main(request):
     return render(request, 'main/main.html')
 
 User = get_user_model() 
+class CustomLoginView(LoginView):
+
+    def form_valid(self, form):
+        print("form")
+        remember_me = form.cleaned_data['remember'] 
+        if not remember_me:
+            self.request.session.set_expiry(0)
+            self.request.session.modified = True
+            print("tu je ")
+        
+        return super(CustomLoginView, self).form_valid(form)
+
 def signup(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST or None)
@@ -244,7 +252,6 @@ def activate(request, uidb64, token):
 
 def schedule_week(request):
     error_message = ''
-    context = {}
     if request.user != "": # Czy zalogowany
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
@@ -269,7 +276,6 @@ def schedule_week(request):
             this_week_days_numbers.append(__day_number)
 
 
-        """
         # Pobieranie zajęć
         activities = Activity.objects.none()
         # Dla pracownika
@@ -282,7 +288,6 @@ def schedule_week(request):
             send_mesage = data.get('sendMesage') 
             activityId = data.get('hiddenActivityId')
             message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
-        """
 
 
 
@@ -358,23 +363,9 @@ def schedule_week(request):
 
             for activity in activities:
                 date = str(activity.date)  
+                day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
-                setattr(activity,'day',week_day)
-
-        ######## Wyświetlanie planu pracowników przez instytucje
-        elif request.user.role == "Institution":
-            institution = Institution.objects.get(user_id=request.user)
-            employees = Employee.objects.filter(institution_id=institution)
-            activities = Activity.objects.none()
-            for employee in employees :
-                _activities = Activity.objects.filter(employee_id=employee)
-
-                __activities = _activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
-                activities |= __activities
-            for a in activities:
-                date = str(a.date)
-                week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
-                setattr(a,'day',week_day)
+                setattr(activity,'day',week_day) 
 
         # Reszra użytkowników
         elif request.user.role == "User":
@@ -458,7 +449,8 @@ def schedule_week(request):
 
         print(error_message)
 
-        return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,})
+
+        return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message})
     print(error_message)
     return render(request, 'schedule/week/week.html',{'message':error_message})
 
@@ -483,6 +475,7 @@ def view_children(request):
             institution_list[child.pk] = child_institution_list
         return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list,'childDelete':childDelete})
     return render(request, 'view/children/view_children.html', {})
+
 
 def assign_child(request):
     if request.user != "": # Czy zalogowany
@@ -530,6 +523,7 @@ def view_assignments(request):
 def view_settings(request):
     return render(request, 'view/settings/view_settings.html',{})
 
+
 def name_surname_change(request):
     try:
         account = User.objects.get(id=request.user.pk)
@@ -553,7 +547,6 @@ def name_surname_change(request):
 
 def institution_change_about_us(request):
     institution = Institution.objects.get(user_id = request.user)
-    form = AlternativeRegisterForm(request.POST or None)
     if request.POST:
         # pobierane dane z formularza 
         # i ustawione dane instytycji na dane z formularze
@@ -567,6 +560,7 @@ def institution_change_about_us(request):
         institution.profile = data.get('profile')
         institution.save()
         return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution,'message': 'Poprawnie zmienione dane'})
+
     return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution})
 
 def confirmed_change_email(request, uidb64, token):
@@ -711,7 +705,6 @@ def change_password(request, uidb64, token):
         form = PasswordChangeForm(request.user)
                 
         return render(request, 'view/settings/change_password.html',{'form':form})
-        ###################
     
 
     

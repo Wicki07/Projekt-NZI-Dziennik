@@ -2,7 +2,6 @@ function nameValidation() {
     const input = document.getElementsByName("name")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_name");
-    console.log(validityState_object)
     if (validityState_object.valueMissing)
     {
      input[0].setCustomValidity('');
@@ -10,12 +9,6 @@ function nameValidation() {
      error[0].innerHTML = '<p>Nie podano nazwy</p>'
     }
     else if(validityState_object.patternMismatch)
-    {
-        input[0].setCustomValidity('');
-        input[0].reportValidity();
-        error[0].innerHTML = '<p>Podano niewłaściwą nazwę</p>'
-    }
-    else if(validityState_object.valid)
     {
         input[0].setCustomValidity('');
         input[0].reportValidity();
