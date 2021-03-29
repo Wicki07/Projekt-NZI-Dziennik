@@ -1349,7 +1349,6 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.execute_script("validate()")
         time.sleep(1)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/div/div/form/div[2]/span"), "Podano niewłaściwe nazwisko"))
-<<<<<<< HEAD
         self.browser.close()
     """ T124 Ustawienia instytucji - zmiana nazwy poprawne"""     
     def test_T124(self):
@@ -1368,8 +1367,4 @@ class TestProject(StaticLiveServerTestCase):
         change = self.browser.find_element_by_xpath('/html/body/main/div[2]/div/div/ul/a[3]')
         change.click()
         time.sleep(10)
-
-        
-=======
         self.browser.close()
->>>>>>> 5eb152c6c94f800d26e3a1c731b806a0949d0fad
