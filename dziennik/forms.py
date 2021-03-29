@@ -217,6 +217,7 @@ class AlternativeRegisterForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Hasła nie są identyczne")
         return password2"""
-        
+
+
 
 

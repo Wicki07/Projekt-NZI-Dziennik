@@ -484,7 +484,6 @@ def view_children(request):
         return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list,'childDelete':childDelete})
     return render(request, 'view/children/view_children.html', {})
 
-
 def assign_child(request):
     if request.user != "": # Czy zalogowany
         institutions = Institution.objects.all()
@@ -531,7 +530,6 @@ def view_assignments(request):
 def view_settings(request):
     return render(request, 'view/settings/view_settings.html',{})
 
-
 def name_surname_change(request):
     try:
         account = User.objects.get(id=request.user.pk)
@@ -555,6 +553,7 @@ def name_surname_change(request):
 
 def institution_change_about_us(request):
     institution = Institution.objects.get(user_id = request.user)
+    form = AlternativeRegisterForm(request.POST or None)
     if request.POST:
         # pobierane dane z formularza 
         # i ustawione dane instytycji na dane z formularze
@@ -568,7 +567,6 @@ def institution_change_about_us(request):
         institution.profile = data.get('profile')
         institution.save()
         return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution,'message': 'Poprawnie zmienione dane'})
-
     return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution})
 
 def confirmed_change_email(request, uidb64, token):

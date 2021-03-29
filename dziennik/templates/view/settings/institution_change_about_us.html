@@ -26,8 +26,8 @@
                         {% csrf_token %}
                         <div class="form-group">
 							<label for="exampleInputEmail1">Nazwa</label>
-							<p><input type="text" name="name" maxlength="30"id="id_first_name" class="form-control" placeholder="Podaj nazwę" pattern="{2,}$" required></p>
-							<span class="error error_name"></span>
+							<p><input type="text" name="name" maxlength="30"id="id_first_name" class="form-control name" placeholder="Podaj nazwę" pattern=".{2,}$" required></p>
+							<span class="error_name error"></span>
 						</div>
                         <div class="form-group">
 							<label for="sel1">Wybierz kategorię:</label>
@@ -42,7 +42,7 @@
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Podaj profil</label>
-							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" placeholder="Podaj profil" required></p>
+							<p><input type="text" name="profile" autocomplete="new-password" id="id_profil" class="form-control" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ.]{3,}$" placeholder="Podaj profil" required></p>
 							<span class="error error_profile"></span>
 						</div>
                         <div class="form-group mt-4">
