@@ -4,8 +4,11 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth import authenticate, login, get_user_model
 from django.forms import fields
 from .models import User, Institution
+from allauth.account.forms import LoginForm
 
 User = get_user_model()
+
+
 
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput)
@@ -217,7 +220,6 @@ class AlternativeRegisterForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Hasła nie są identyczne")
         return password2"""
-
-
+        
 
 

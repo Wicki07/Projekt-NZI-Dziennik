@@ -13,7 +13,7 @@ urlpatterns = [
     path('panel/admin/', include('smuggler.urls')),
     path('panel/admin/', admin.site.urls, name='panel_admin'),
     path('accounts/', include('allauth.urls')),
-    path('login/',allauth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
+    path('login/',views.CustomLoginView.as_view(template_name='login/login.html'), name='login'),
     path('logout/',auth_views.LogoutView.as_view(template_name='base.html'), name='logout'),
     path('signup/person/', views.signup, name='signup'),
     path('signup/institution/', views.signup_institution, name='signup_institution'),

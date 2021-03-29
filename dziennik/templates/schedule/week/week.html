@@ -59,7 +59,7 @@
 				</div>
 			</div>
 		</div>
-	{% endif %}
+	{%endif%}
 	<main>
 		<div class="main-shadow"></div>
 		<div class="container-fluid pt-5">
@@ -139,40 +139,21 @@
 								x++;
 							}
 						</script>
-						{% if user.role == "User" or user.role == "Employee" %}
-							{% for activity in activities %}
-								<script type="text/javascript">
-									display_activity(
-										{{activity.pk}},
-										{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
-										[
-											"<font size='3'>{{activity.name}}</font><br/><font size='2'><i>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}<br>{%endif%}{% endfor %}</i></font>", 
-											"<span><font size='2'>od</font> {{activity.start_time}}</span>",  
-											"<span> <font size='2'>do</font> {{activity.end_time}}</span>",
-										],
-										x,
-										{{activity.day}}
-									)
-								</script>
-							{% endfor %}
-						{% endif %}
-						{% if user.role == "Institution" %}
-							{% for activity in activities %}
-								<script type="text/javascript">
-									display_activity(
-										{{activity.pk}},
-										{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
-										[
-											"<font size='3'>{{activity.employee_id}}<br/>{{activity.name}}</font><br/><br/><font size='2'><i>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}<br>{%endif%}{% endfor %}</i></font>", 
-											"<span><font size='2'>od</font> {{activity.start_time}}</span>",  
-											"<span> <font size='2'>do</font> {{activity.end_time}}</span>",
-										],
-										x,
-										{{activity.day}}
-									)
-								</script>
-							{% endfor %}
-						{% endif %}
+						{% for activity in activities %}
+							<script type="text/javascript">
+								display_activity(
+									{{activity.pk}},
+									{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
+									[
+										"<font size='3'>{{activity.name}}", 
+										"<span><font size='2'>od</font> {{activity.start_time}}</span>", 
+										"<span> <font size='2'>do</font> {{activity.end_time}}</span>"
+									],
+									x,
+									{{activity.day}}
+								)
+							</script>
+						{% endfor %}
 						<script src="{% static 'js/activity.js' %}"></script>
 					</div>
 				</div>
