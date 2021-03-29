@@ -1367,3 +1367,5 @@ class TestProject(StaticLiveServerTestCase):
         change = self.browser.find_element_by_xpath('/html/body/main/div[2]/div/div/ul/a[3]')
         change.click()
         time.sleep(10)
+
+        
