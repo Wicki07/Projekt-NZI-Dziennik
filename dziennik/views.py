@@ -40,13 +40,10 @@ User = get_user_model()
 class CustomLoginView(LoginView):
 
     def form_valid(self, form):
-        print("form")
         remember_me = form.cleaned_data['remember'] 
         if not remember_me:
             self.request.session.set_expiry(0)
-            self.request.session.modified = True
-            print("tu je ")
-        
+            self.request.session.modified = True     
         return super(CustomLoginView, self).form_valid(form)
 
 def signup(request):
