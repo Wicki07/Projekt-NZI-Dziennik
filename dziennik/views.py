@@ -2,6 +2,8 @@ from logging import error
 from allauth import account
 from django.db.models.functions.text import Length
 from django.utils import timezone
+from django.core.serializers import serialize
+from django.core import serializers
 from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -249,6 +251,7 @@ def activate(request, uidb64, token):
 
 def schedule_week(request):
     error_message = ''
+    context = {}
     if request.user != "": # Czy zalogowany
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
@@ -273,6 +276,7 @@ def schedule_week(request):
             this_week_days_numbers.append(__day_number)
 
 
+        """
         # Pobieranie zajęć
         activities = Activity.objects.none()
         # Dla pracownika
@@ -285,6 +289,7 @@ def schedule_week(request):
             send_mesage = data.get('sendMesage') 
             activityId = data.get('hiddenActivityId')
             message = data.get('hoverMessageToEmployee')# Hidden input aby forma odczytała
+        """
 
 
 
@@ -360,9 +365,62 @@ def schedule_week(request):
 
             for activity in activities:
                 date = str(activity.date)  
-                day_name= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
-                setattr(activity,'day',week_day) 
+                setattr(activity,'day',week_day)
+
+        ######## Wyświetlanie planu pracowników przez instytucje
+        elif request.user.role == "Institution":
+            serialized_activity = '[{}]'
+            serialized_children = '[{}]'
+            institution = Institution.objects.get(user_id=request.user)
+            employees = Employee.objects.filter(institution_id=institution)
+            activities = Activity.objects.none()
+            for employee in employees :
+                _activities = Activity.objects.filter(employee_id=employee)
+
+                __activities = _activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
+                activities |= __activities
+            children = Attendance.objects.none()
+            for a in activities:
+                children |=  Attendance.objects.filter(activity_id = a)
+                date = str(a.date)
+                week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
+                setattr(a,'day',week_day)
+            _children_list = Assignment.objects.filter(institution_id = institution)
+            children_list = Child.objects.none()
+
+            for assigement in _children_list:
+                children_list |= Child.objects.filter(id=assigement.child_id.pk)
+            
+            print(data)
+            serialized_activity = serializers.serialize('json',activities)
+            serialized_children = serializers.serialize('json',children)
+            if data.get("updateActivitySubmit"):
+                activity_to_update = Activity.objects.get(id= data.get('idActivityToUpdate'))
+                # Dane z formularza
+                _employee_id = data.get('employee')
+                activity_to_update.name = data.get('name')
+                activity_to_update.date = data.get('date')
+                activity_to_update.start_time = data.get('start_time')
+                activity_to_update.end_time = data.get('end_time')
+                activity_to_update.periodicity = data.get('periodicity')
+                activity_to_update.employee_id = Employee.objects.get(id=_employee_id)
+                activity_to_update.save()
+                
+                
+                
+                # Dopisywanie przypisania wybranych dzieci
+                children = request.POST.getlist('children')
+                print(children)
+                try:
+                    Attendance.objects.get(activity_id=activity_to_update).delete()
+                except Attendance.DoesNotExist:
+                    pass
+                for child in children:
+                    __child = Child.objects.get(id=child)
+                    Attendance.objects.create(child_id=__child,activity_id=activity_to_update)
+                return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Zaktualizowano zajęcia'})
+            return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list})
 
         # Reszra użytkowników
         elif request.user.role == "User":
@@ -443,11 +501,9 @@ def schedule_week(request):
                 setattr(activity,'day',week_day)
 
 
-
         print(error_message)
 
-
-        return render(request, 'schedule/week/week.html',{'activities':activities,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message})
+        return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,})
     print(error_message)
     return render(request, 'schedule/week/week.html',{'message':error_message})
 
@@ -561,6 +617,7 @@ def institution_change_about_us(request):
     return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution})
 
 def confirmed_change_email(request, uidb64, token):
+    ############
     #jak activity 
     #odbieramy i  zz tamtego modelu odczytujemy i zmieniamy mail
     uid = force_text(urlsafe_base64_decode(uidb64))
