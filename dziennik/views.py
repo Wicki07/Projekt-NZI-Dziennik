@@ -392,9 +392,16 @@ def schedule_week(request):
             for assigement in _children_list:
                 children_list |= Child.objects.filter(id=assigement.child_id.pk)
             
+
+            # Usuwanie zajęć z panelu Instytucji
+            if data.get("deleteActivityByInstitution"):
+                Activity.objects.get(id=data.get('hiddenActivityIdToDelete')).delete() #usuwanie zajęć
+                return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Usunięto zajęcia'})
+
             print(data)
             serialized_activity = serializers.serialize('json',activities)
             serialized_children = serializers.serialize('json',children)
+            # Aktualizacja zajęć z panelu Instytucji
             if data.get("updateActivitySubmit"):
                 activity_to_update = Activity.objects.get(id= data.get('idActivityToUpdate'))
                 # Dane z formularza
