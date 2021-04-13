@@ -1,0 +1,5 @@
+# to komenda instalująca brakujące moduły
+pip install django djangorestframework django-phonenumber-field django_admin_logs django-smuggler django-allauth six django_session_timeout
+
+# na problem z migracją
+python manage.py migrate --run-syncdb

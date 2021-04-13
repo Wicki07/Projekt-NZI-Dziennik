@@ -512,11 +512,24 @@ def view_children(request):
         children = Child.objects.filter(parent_id=request.user)
 
         data = request.POST.dict() # Dane z frontu do backendu w psotaci slownika
-        childDelete = data.get('deleteChild') # Odczytanie czy chcemy usunąć dziecko
         childId = data.get('toDeleteHiddenChildID') # Odczytanie danych po etykiecie(name) z formularza który jest ukryty 'hiddenChildID'
-        
+
+        # USUWANIE DZIECKA
+        childDelete = data.get('deleteChild') # Odczytanie czy chcemy usunąć dziecko
         if childDelete:
             Child.objects.filter(id=childId).delete()
+
+        # EDYCJA DZIECKA
+        childEdit = data.get('editChild')
+        childIdEdit = data.get('toEditHiddenChildID')
+        childToEdit = Child.objects.none()
+        if childEdit:
+            childToEdit = Child.objects.get(id=childIdEdit)
+            childToEdit.first_name = data.get('first_name')
+            childToEdit.last_name = data.get('last_name')
+            childToEdit.age = data.get('age')
+            childToEdit.save()
+
 
         institution_list = {}
         # Lista instytucji do których dziecko jest przypisane

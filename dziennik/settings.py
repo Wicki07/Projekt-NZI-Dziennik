@@ -97,16 +97,6 @@ DATABASES = {
     }
 }
 
-'''DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql', 
-        'NAME': 'dziennik',
-        'USER': 'dziennik',
-        'PASSWORD': 'Marik1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
- }'''
 ## Zewnętrzna baza mysql
 '''
 DATABASES = {
