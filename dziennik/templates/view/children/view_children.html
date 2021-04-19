@@ -6,6 +6,25 @@
 	</head>
 	{% include 'header.html' %}
 	{% include 'redirect/no_parent.html' %}
+	{% if message %}
+	<div class="popup-background">
+	  <div class="container popup-center">
+		<div class="row">
+		  <div class="col-md-6 mx-auto popup">
+			{{message}}<br /><br />
+			<a href="{%url 'view_children'%}"
+			  ><button
+				type="submit"
+				class="btn btn-block mybtn btn-primary tx-tfm"
+			  >
+				OK
+			  </button></a
+			>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	{% endif %}
 	<div class="popup-background" id="childDeleteMenu" style="display:none;">
 		<div class="container popup-center">
 			<div class="row">

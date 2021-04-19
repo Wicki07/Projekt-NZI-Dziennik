@@ -516,6 +516,7 @@ def schedule_week(request):
 
 def view_children(request):
     if request.user != "": # Czy zalogowany
+        message = ''
         children = Child.objects.filter(parent_id=request.user)
 
         data = request.POST.dict() # Dane z frontu do backendu w psotaci slownika
@@ -536,6 +537,7 @@ def view_children(request):
             childToEdit.last_name = data.get('last_name')
             childToEdit.age = data.get('age')
             childToEdit.save()
+            message = "Poprawnie zmieniono dane profilu dziecka"
 
 
         institution_list = {}
@@ -546,8 +548,8 @@ def view_children(request):
             for assigment in assigments:
                 child_institution_list[assigment.id] = str(assigment.institution_id)
             institution_list[child.pk] = child_institution_list
-        return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list,'childDelete':childDelete})
-    return render(request, 'view/children/view_children.html', {})
+        return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list,'childDelete':childDelete,'message':message})
+    return render(request, 'view/children/view_children.html', {'message':message})
 
 
 def assign_child(request):
