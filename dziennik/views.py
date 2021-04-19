@@ -116,7 +116,7 @@ def signup_institution(request):
     return render(request, 'signup/institution/signup_institution.html', {'form': form})
 
 def create_employee(request):
-    if request.user != "": # Czy zalogowany
+    if request.user.is_authenticated: # Czy zalogowany
         institution = Institution.objects.get(user_id=request.user)
         if request.method == 'POST':
             form = RegisterCreation(request.POST or None)
@@ -158,10 +158,10 @@ def create_employee(request):
     generated_password_chars = string.ascii_uppercase + string.digits
     generated_password = ''.join(random.choice(generated_password_chars) for _ in range(generated_password_size))
 
-    return render(request, 'create/employee/create_employee.html', {'form': form , 'generated_password': generated_password})
+    return render(request, 'create/employee/create_employee.html', {'generated_password': generated_password})
 
 def create_activity(request):
-    if request.user != "": # Czy zalogowany
+    if request.user.is_authenticated: # Czy zalogowany
         institution = Institution.objects.get(user_id=request.user)
         if request.method == 'POST':
             # Dane z formularza
@@ -201,7 +201,7 @@ def create_activity(request):
     return render(request, 'create/activity/create_activity.html', {})
 
 def create_child(request):
-    if request.user != "": # Czy zalogowany
+    if request.user.is_authenticated: # Czy zalogowany
         if request.method == 'POST':
             data = request.POST.dict()
             first_name = data.get('first_name')
@@ -252,7 +252,7 @@ def activate(request, uidb64, token):
 def schedule_week(request):
     error_message = ''
     context = {}
-    if request.user != "": # Czy zalogowany
+    if request.user.is_authenticated: # Czy zalogowany
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
         remind = {} # [!] Jest tutaj bo musi byc widoczne
@@ -512,10 +512,11 @@ def schedule_week(request):
 
         return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,})
     print(error_message)
-    return render(request, 'schedule/week/week.html',{'message':error_message})
+    return render(request, 'schedule/week/week.html',{})
 
 def view_children(request):
-    if request.user != "": # Czy zalogowany
+    print(request.user)
+    if request.user.is_authenticated: # Czy zalogowany
         message = ''
         children = Child.objects.filter(parent_id=request.user)
 
@@ -549,11 +550,11 @@ def view_children(request):
                 child_institution_list[assigment.id] = str(assigment.institution_id)
             institution_list[child.pk] = child_institution_list
         return render(request, 'view/children/view_children.html', {'children': children,'institution_list':institution_list,'childDelete':childDelete,'message':message})
-    return render(request, 'view/children/view_children.html', {'message':message})
+    return render(request, 'view/children/view_children.html', {})
 
 
 def assign_child(request):
-    if request.user != "": # Czy zalogowany
+    if request.user.is_authenticated: # Czy zalogowany
         institutions = Institution.objects.all()
         __child_id = 0
         institution_id = 0
@@ -574,7 +575,7 @@ def assign_child(request):
     return render(request, 'assign/child/assign_child.html',{})
 
 def view_assignments(request):
-    if request.user != "": # Czy zalogowany
+    if request.user.is_authenticated: # Czy zalogowany
         if request.method == 'POST':
             data = request.POST.dict()
             accept = data.get('accept')
@@ -621,22 +622,24 @@ def name_surname_change(request):
         return render(request, 'view/settings/name_surname_change.html',context)
 
 def institution_change_about_us(request):
-    institution = Institution.objects.get(user_id = request.user)
-    if request.POST:
-        # pobierane dane z formularza 
-        # i ustawione dane instytycji na dane z formularze
-        data = request.POST.dict()
-        # po get sa dane z formularza
-        institution.name = data.get('name')
-        user = institution.user_id
-        user.first_name= data.get('name')
-        user.save()
-        institution.category = data.get('category')
-        institution.profile = data.get('profile')
-        institution.save()
-        return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution,'message': 'Poprawnie zmienione dane'})
+    if request.user.is_authenticated: # Czy zalogowany
+        institution = Institution.objects.get(user_id = request.user)
+        if request.POST:
+            # pobierane dane z formularza 
+            # i ustawione dane instytycji na dane z formularze
+            data = request.POST.dict()
+            # po get sa dane z formularza
+            institution.name = data.get('name')
+            user = institution.user_id
+            user.first_name= data.get('name')
+            user.save()
+            institution.category = data.get('category')
+            institution.profile = data.get('profile')
+            institution.save()
+            return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution,'message': 'Poprawnie zmienione dane'})
 
-    return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution})
+        return render(request, 'view/settings/institution_change_about_us.html',{'institution':institution})
+    return render(request, 'view/settings/institution_change_about_us.html',{})
 
 def confirmed_change_email(request, uidb64, token):
     ############
@@ -682,6 +685,7 @@ def change_email(request):
         account = User.objects.get(id=request.user.pk)
     except User.DoesNotExist:
         return HttpResponse("coś się popsuło")
+        #return redirect('login')
     context ={}
     if request.POST:
         #dane
@@ -739,6 +743,7 @@ def confirmed_change_password(request):
         account = User.objects.get(id=request.user.pk)
     except User.DoesNotExist:
         return HttpResponse("coś się popsuło")
+        #return redirect('login')
     current_site = get_current_site(request)
     mail_subject = 'Activate your blog account.'
     #towrzenie massage
@@ -766,6 +771,7 @@ def change_password(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except User.DoesNotExist:
         return HttpResponse("coś się popsuło")
+        #return redirect('login')
     if request.method == 'POST':
         # Formularz z html zostaje przekazany, oraz user
         form = PasswordChangeForm(request.user, request.POST)
