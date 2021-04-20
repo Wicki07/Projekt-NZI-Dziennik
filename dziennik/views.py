@@ -407,6 +407,10 @@ def schedule(request, display_type='week'):
                 date = str(activity.date)  
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
                 setattr(activity,'day',week_day)
+                if display_type == 'month':
+                    data_temp = datetime.datetime.strptime(date, '%Y-%m-%d')
+                    setattr(activity,'weekNumber',get_week_of_month(data_temp.year,data_temp.month,data_temp.day))
+                
 
         ######## Wyświetlanie planu pracowników przez instytucje
         elif request.user.role == "Institution":
@@ -537,7 +541,6 @@ def schedule(request, display_type='week'):
 
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
 
-            print(activities)
             for activity in activities:
                 date= str(activity.date)
                 day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
