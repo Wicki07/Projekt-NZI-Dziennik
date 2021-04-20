@@ -18,19 +18,19 @@
 	{% endif %}
 	{% include 'header.html' %}
 	{% if user.role == "User" or user.role == "Employee"%}
-	<div class="popup-background" id="viewList" style="display: none;">
-		<div class="container popup-center">
-			<div class="row">
-				<div class="col-md-6 mx-auto popup">
-					<div id="acticityMenuList">
-						<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+		<div class="popup-background" id="viewList" style="display: none;">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<div id="acticityMenuList">
+							<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+							</div>
+							<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
 						</div>
-						<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 		<div class="popup-background" id="view" style="display: none;">
 			<div class="container popup-center">
 				<div class="row">
@@ -75,6 +75,19 @@
 	{% elif user.role == "Institution" %}
 		<pre hidden id = 'institutionActivitiesJSON'>{{ institutionActivitiesJSON }}</pre>
 		<pre hidden id = 'childrenActivitiesJSON'>{{ childrenActivitiesJSON }}</pre>
+		<div class="popup-background" id="viewList" style="display: none;">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<div id="acticityMenuList">
+							<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+							</div>
+							<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="popup-background" id="view" style="display: none;">
 			<div class="container popup-center">
 				<div class="row">
@@ -499,6 +512,9 @@
 						{% endif %}
 						<script src="{% static 'js/activity.js' %}"></script>
 					{% elif user.role == "Institution" %}
+						{% if display_type == 'month' %}
+							<script src="{% static 'js/updateActivityMonth.js' %}"></script>
+						{% endif %}
 						<script src="{% static 'js/updateActivity.js' %}"></script>
 					{% endif %}
 				</div>

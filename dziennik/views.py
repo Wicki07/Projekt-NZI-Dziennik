@@ -430,6 +430,9 @@ def schedule(request, display_type='week'):
                 date = str(a.date)
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
                 setattr(a,'day',week_day)
+                if display_type == 'month':
+                    data_temp = datetime.datetime.strptime(date, '%Y-%m-%d')
+                    setattr(a,'weekNumber',get_week_of_month(data_temp.year,data_temp.month,data_temp.day))
             _children_list = Assignment.objects.filter(institution_id = institution)
             children_list = Child.objects.none()
 
