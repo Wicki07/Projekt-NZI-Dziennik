@@ -1,8 +1,13 @@
 from logging import error
 from allauth import account
+import calendar
+
+import numpy as np
 from django.db.models.functions.text import Length
 from django.utils import timezone
 from django.core.serializers import serialize
+from django.utils.translation import gettext
+from django.utils import translation
 from django.core import serializers
 from django.shortcuts import redirect ,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -249,14 +254,32 @@ def activate(request, uidb64, token):
     else:
         return render(request, 'account/activate.html', {'title':"Wystąpił błąd.",'activation_message':"Link aktywazyjny jest nieprawidłowy lub został już użyty!"})
 
-def schedule_week(request):
+# wyliczanie numeru tygodnia (wykorzystywne przy ustawianiu zajęć w odpowiednie tygodnie)
+def get_week_of_month(year, month, day):
+    x = np.array(calendar.monthcalendar(year, month))
+    week_of_month = np.where(x==day)[0][0] + 1
+    return(week_of_month)
+
+def schedule(request, display_type='week'):
+    # Tryp wyświetlania
+    # 0 - day
+    # 1 - week
+    # 2 - month
+
+    # Odsyłanie do default czyli week
+    if(display_type != 'day' and display_type != 'week' and display_type != 'month'):
+        display_type = 'week'
+        return redirect(schedule,'week')
+
+    # Polska translacja - konkretnie do dni tygodnia
+    translation.activate('pl')
+    shedule_title=''
     error_message = ''
     context = {}
     if request.user.is_authenticated: # Czy zalogowany
         # Przekazanie imion dzieci do danych zajęć (lista) w Dict
         children_in_activity = {} # [!] Jest tutaj bo musi byc widoczne
         remind = {} # [!] Jest tutaj bo musi byc widoczne
-
 
         # Przechwycenie formularzy
         data = request.POST.dict()
@@ -265,6 +288,17 @@ def schedule_week(request):
         some_day_last_week = timezone.now().date()
         monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
         monday_of_this_week = monday_of_last_week + timedelta(days=7)
+        week_number = datetime.date(timezone.now().year,timezone.now().month,timezone.now().day).isocalendar()[1]
+        datetime_object_day = datetime.datetime.strptime(str(timezone.now().day), "%d")
+        datetime_object_month = datetime.datetime.strptime(str(timezone.now().month), "%m")
+
+        # Ustawianie tytułu harmonogramu
+        if(display_type=='day'):
+            shedule_title = gettext(datetime_object_day.strftime("%d"))+" "+gettext(datetime_object_month.strftime("%B"))+", "+gettext(datetime_object_day.strftime("%A"))
+        if(display_type=='week'):
+            shedule_title = "Tydzień "+str(week_number)
+        if(display_type=='month'):
+            shedule_title = gettext(datetime_object_month.strftime("%B"))+ " "+ str(timezone.now().year) 
 
         # Przygotowanie tablicy z numerami dnia
         week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
@@ -300,7 +334,13 @@ def schedule_week(request):
         some_day_last_week = timezone.now().date()
         monday_of_last_week = some_day_last_week - timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
         monday_of_this_week = monday_of_last_week + timedelta(days=7)
-
+        
+        # Zwiekszenie zasiegu dla podglądu miesiąca
+        this_month_days = calendar.monthrange(timezone.now().year,timezone.now().month)[1]
+        if(display_type=='month'):
+            monday_of_this_week = monday_of_last_week + timedelta(days=this_month_days - timezone.now().day)
+            monday_of_last_week = datetime.date(timezone.now().year,timezone.now().month,1)
+        
         # Przygotowanie tablicy z numerami dnia
         week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
         this_week_days_numbers = []
@@ -396,7 +436,7 @@ def schedule_week(request):
             # Usuwanie zajęć z panelu Instytucji
             if data.get("deleteActivityByInstitution"):
                 Activity.objects.get(id=data.get('hiddenActivityIdToDelete')).delete() #usuwanie zajęć
-                return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Usunięto zajęcia'})
+                return render(request, 'schedule/week/week.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Usunięto zajęcia'})
 
             print(data)
             serialized_activity = serializers.serialize('json',activities)
@@ -426,8 +466,8 @@ def schedule_week(request):
                 for child in children:
                     __child = Child.objects.get(id=child)
                     Attendance.objects.create(child_id=__child,activity_id=activity_to_update)
-                return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Zaktualizowano zajęcia'})
-            return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list})
+                return render(request, 'schedule/schedule.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Zaktualizowano zajęcia'})
+            return render(request, 'schedule/schedule.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list})
 
         # Reszra użytkowników
         elif request.user.role == "User":
@@ -495,24 +535,24 @@ def schedule_week(request):
                     for __activity in __activities:
                         children_in_activity[(__activity.id,child.id)] = str(child)
 
-            
-
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
 
-
-
+            print(activities)
             for activity in activities:
                 date= str(activity.date)
                 day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
                 setattr(activity,'day',week_day)
+                if display_type == 'month':
+                    data_temp = datetime.datetime.strptime(date, '%Y-%m-%d')
+                    setattr(activity,'weekNumber',get_week_of_month(data_temp.year,data_temp.month,data_temp.day))
 
+            print(activities)
+        #print(error_message)
 
-        print(error_message)
-
-        return render(request, 'schedule/week/week.html',{'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,})
+        return render(request, 'schedule/schedule.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities})
     print(error_message)
-    return render(request, 'schedule/week/week.html',{})
+    return render(request, 'schedule/schedule.html',{'display_type':display_type})
 
 def view_children(request):
     print(request.user)

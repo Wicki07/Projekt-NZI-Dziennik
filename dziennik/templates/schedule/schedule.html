@@ -1,0 +1,508 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+	<head>
+		<title>Dziennik | {{ user }}</title>
+	</head>
+	{% if message %}
+		<div class="popup-background">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<font>{{message}}</font><br><br>
+						<a href="{%url 'schedule' display_type %}"><button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	{% include 'header.html' %}
+	{% if user.role == "User" or user.role == "Employee"%}
+	<div class="popup-background" id="viewList" style="display: none;">
+		<div class="container popup-center">
+			<div class="row">
+				<div class="col-md-6 mx-auto popup">
+					<div id="acticityMenuList">
+						<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+						</div>
+						<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<div class="popup-background" id="view" style="display: none;">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<div id="acticityMenu">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+                                {% csrf_token %}
+                                <input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+                                <button type="submit" name="changeRemindActivity" value="1" id="changeRemindActivity" class="btn btn-link mt-3 w-50 float-left"></button>
+                                <button type="button" id="goToActicitySendMessage" class="btn btn-link mt-3 w-50 float-right"><i class="fas display-1 mb-3 fa-envelope-open-text"></i></button>
+                                <span id="changeRemindActivityDescription" class="w-50 float-left text-center"></span>
+                                <span class="w-50 float-right text-center">Wyślij wiadomość do prowadzącego</span>
+                                <button type="button" id="closeView" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
+                            </form>
+						</div>
+						<div id="acticitySendMessage" style="display: none;">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+								{% csrf_token %}
+								<input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+								<span class="w-100 float-left mb-4 h6">Powiadomienie prowadzącego o nieobecności swojego dziecka:</span>
+								<textarea class="form-control" id="messageToEmployee" required rows="5" maxlength="300" placeholder="Napisz wiadomość do prowadzącego... (maksymalnie 300 znaków)"></textarea>
+								<span id="noMessageTyped" class="error w-100 float-left my-2" style="display: none;"> Musisz podac terść wiadomości!</span>
+								<button type="button" id="backToActivityMenu" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
+								<button type="button" id="goToViewActicitySendMessage" class="btn btn-link mt-3 w-50 text-right float-right">Wyślij <i class="fas fa-paper-plane"></i></button>
+							</form>
+						</div>
+						<div id="viewActicitySendMessage" style="display: none;">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+								{% csrf_token %}
+								<input id="hoverMessageToEmployee" hidden name="hoverMessageToEmployee" type="text">
+								<input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+								<span class="w-100 float-left mb-4 h6">Czy chcesz wysłać nastepującą wiadomość:</span>
+								<span id="viewMessageToEmployee" class="w-100 float-left mb-4 h7"><i>twoja wiadomość...</i></span>
+								<button type="button" id="backToActicitySendMessage" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
+								<button type="submit" id="sendMesage" name="sendMesage" value="1"  class="btn btn-link mt-3 w-50 text-right float-right">Wyślij <i class="fas fa-paper-plane"></i></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% elif user.role == "Institution" %}
+		<pre hidden id = 'institutionActivitiesJSON'>{{ institutionActivitiesJSON }}</pre>
+		<pre hidden id = 'childrenActivitiesJSON'>{{ childrenActivitiesJSON }}</pre>
+		<div class="popup-background" id="view" style="display: none;">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<div id="acticityMenu">
+							<form  name="singup" method="post">
+								{% csrf_token %}
+								<input hidden name = "idActivityToUpdate" id = "idActivityToUpdate">
+								<div class="form-group">
+									<label for="exampleInputEmail1">Nazwa zajęć</label>
+									<p><input type="text" name="name" maxlength="30" required id="id_name" class="form-control" pattern="[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\s]{3,}$" placeholder="Podaj nazwę zajęć" required></p>
+									<span class="error error_name"></span>
+								</div>
+								<div class="imput-group date">
+									<label for="exampleInputEmail1">Data zajęć</label>
+									<p><input type="text" name="date" maxlength="30" required id="date" class="form-control date-withicon" pattern="(?:20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$" placeholder="RRRR-MM-DD" required></p>
+									<span class="error error_date"></span>
+									<div class="input-group-addon">
+										<span class="glyphicon glyphicon-th"></span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1">Godzina rozpoczecia</label>
+									<p><input type="text" name="start_time" maxlength="30" required id="start_time" pattern="(?:0[1-9]|1[0-9]|2[0-4]):(?:[0-5])[0-9]$" class="form-control" placeholder="HH:MM" required></p>
+									<span class="error error_start_time"></span>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1">Godzina zakonczenia</label>
+									<p><input type="text" name="end_time" maxlength="30" required id="end_time" pattern="(?:0[1-9]|1[0-9]|2[0-4]):(?:[0-5])[0-9]$" class="form-control" placeholder="HH:MM" required></p>
+									<span class="error error_end_time"></span>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1">Cykliczność:</label>
+									<select class="form-control" name="periodicity" id="periodicity"required>
+										<option disabled selected hidden>Nie wybrano...</option>
+										<option value="0">Brak</option>
+										<option value="1">Codziennie</option>
+										<option value="7">Co tydzień</option>
+										<option value="14">Co dwa tygodnie</option>
+										<option value="28">Co miesiąc</option>
+									</select>	
+									<span class="error error_periodicity"></span>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1">Wybierz pracownika:</label>
+									<select class="form-control" name="employee" id="employee" required>
+										<option disabled selected hidden>Nie wybrano...</option>
+										{% if employees %}
+											{% for employee in employees %}
+												{% if employee.active %}
+													<option value={{employee.pk}}>{{employee}}</option>
+												{% else %}
+													<option disabled value={{employee.pk}}>{{employee}} (nieaktywny)</option>
+												{% endif %}
+											{% endfor %}
+										{% else %}
+											<option value="0">Brak</option>
+										{% endif %}
+									</select>	
+									<span class="error error_employee"></span>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1">Wybierz podopiecznych:</label>
+									<select class="form-control" name="children" id="children"  size="3" required multiple>
+										<option disabled selected hidden>Nie wybrano...</option>
+										{%  if children %}
+											{% for child in children %}
+												<option value={{child.pk}}>{{child}}</option>
+											{% endfor %}
+										{% else %}
+											<option value="0">Brak</option>
+										{% endif %}
+									</select>	
+									<span class="error error_children"></span>
+								</div>
+								<div class="col-md-12 ">
+								</div>
+								<div class="form-group mt-5">
+									<button name = "updateActivitySubmit" value=1 type="submit" onclick="validate()" class=" btn btn-block round mybtn btn-primary tx-tfm">Edytuj zajęcia</button>
+								</div>
+								<div class="form-group">
+									<p class="text-center pl-5 float-left mw-50"><a id="closeEdit"class=" text-primary"><i class="fa fa-angle-left fa-x"></i> Wróć</a></p>
+									<p class="text-center pr-5 float-right mw-50  text-danger"><a id="deleteActivityByInstitution" class=" text-danger"><i class="fa fa-trash"></i> Usuń zajęcia</a></p>
+									
+									<!--<button class="text-center pr-5 float-right mw-50 btn round text-center btn-danger" id="deleteActivityByInstitution"><i class="fa fa-trash"></i> Usuń zajęcia</button>
+									--></div>
+							</form>
+						</div>
+						
+						<!--usuwanie zajęć popup-->
+						<div id="confirmActivityDeletion" style="display: none;">
+							<form method="POST" action="{% url 'schedule' display_type %}">
+								{% csrf_token %}
+								<input id="inputActivityDeleteId" class="inputActivityDeleteId" hidden name="hiddenActivityIdToDelete" type="number">
+								<span class="w-100 float-left mb-4 h6">Czy chcesz uzunąć zajęcia: <b id="activityNameToDisplay">Nazwa zajęć</b></span>
+								<button type="button" id="closeActivityDeletion" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
+								<button type="submit" id="deleteActivityByInstitution" name="deleteActivityByInstitution" value="1"  class="btn btn-link mt-3 w-50 text-right float-right  text-danger"><i class="fa fa-trash"></i> Usuń</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	<main>
+		<div class="main-shadow"></div>
+		<div class="container-fluid pt-5">
+			<div class="row">
+				<div class="col-md-12 mx-auto">
+					<div class="weekScheduleWeekMenu d-flex justify-content-between">
+						<div class="btn-group w-25 d-flex mr-5">
+							<a style="z-index: 2;" href="{% url 'schedule' 'day' %}"><button class="btn weekScheduleWeekMenuElement float-left">DZIEŃ</button></a>
+							<a style="z-index: 2;" href="{% url 'schedule' 'week' %}"><button class="btn weekScheduleWeekMenuElement float-left">TYDZIEŃ</button></a>
+							<a style="z-index: 2;" href="{% url 'schedule' 'month' %}"><button class="btn weekScheduleWeekMenuElement float-left">MIESIĄC</button></a>
+						</div>
+						<div style="z-index: 1;" class="btn-group w-100 d-flex justify-content-center">
+							<button class="btn weekScheduleWeekMenuElement"disabled>{{schedule_title}}</button>
+						</div>
+					</div>
+					{% if display_type == 'day'%}
+					<div class="weekSchedule" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+						<script>
+							var x = 0
+							let order = 0;
+							function display_activity(id, remind, activity, x, day, weekNumber=0){
+								var days = document.querySelector(".weekSchedule");
+								var new_span = document.createElement("span");
+								new_span.style.gridRowStart = order+1;
+								new_span.style.gridRowEnd = order+2;
+								new_span.style.gridColumnStart = 0;
+								new_span.style.gridColumnEnd = 0;
+								//new_span.style.width = 'calc(100% + 48px)';
+								new_span.style.opacity = '0.75';
+								order++;
+								//new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
+								new_span.setAttribute('class','weekScheduleActivity activity')
+								new_span.setAttribute('id',id)
+								new_span.setAttribute('remind',remind)
+
+								for(let info in activity){
+									var myJavaScriptVariable = activity[info];
+									new_span.innerHTML += myJavaScriptVariable;
+								}
+								let today = new Date().getDay() - 1;
+								if(day == today){
+									days.appendChild(new_span);
+								}
+								x++;
+							}
+						</script>
+					</div>
+					{%endif%}
+					{% if display_type == 'week'%}
+					<div class="weekSchedule" style="grid-template-columns: repeat(7, 1fr);width:calc(100%)">
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 1;">Pn <i class="weekDayNumber">{{thisWeek.0}}</i><br><br><br></span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 2;">Wt <i class="weekDayNumber">{{thisWeek.1}}</i><br><br><br></span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 3;">Śr <i class="weekDayNumber">{{thisWeek.2}}</i><br><br><br></span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 4;">Cz <i class="weekDayNumber">{{thisWeek.3}}</i><br><br><br></span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 5;">Pt <i class="weekDayNumber">{{thisWeek.4}}</i><br><br><br></span>
+						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 6;" class="weekend">Sb <i class="weekDayNumber">{{thisWeek.5}}</i><br><br><br></span>
+						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 7;" class="weekend">Nd <i class="weekDayNumber">{{thisWeek.6}}</i><br><br><br></span>
+						<!--<span>
+							{% for podgl in podglad%}
+								<span>{{podgl.data_rozpoczecia}}</span>
+								<span>{{podgl.godzina_rozpoczecia}}</span>
+								<span>{{podgl.prowadzacy}}</span>
+								<span>{{podgl.nazwa}}</span>
+								<span>{{podgl.day}}</span>			
+							{% endfor %}
+						</span>-->
+						<script>
+							var x = 0;
+							var pn=2;
+							var wt =2;
+							var sr=2;
+							var cz=2;
+							var pt=2;
+							var sob=2;
+							var nd=2;
+							function display_activity(id, remind, activity, x, day, weekNumber=0){
+								var days = document.querySelector(".weekSchedule");
+								var new_span = document.createElement("span");
+								new_span.style.gridRowStart = day+1;
+
+								if(day==0){
+									new_span.style.gridColumnStart = pn;
+									pn++;
+								}
+								if(day==1){
+									new_span.style.gridColumnStart = wt;
+									wt++;
+								}
+								if(day==2){
+									new_span.style.gridColumnStart = sr;
+									sr++;
+								}
+								if(day==3){
+									new_span.style.gridColumnStart = cz;
+									cz++;
+								}
+								if(day==4){
+									new_span.style.gridColumnStart = pt;
+									pt++;
+								}
+								if(day==5){
+									new_span.style.gridColumnStart = sob;
+									sob++;
+								}
+								if(day==6){
+									new_span.style.gridColumnStart = nd;
+									nd++;
+								}
+
+								new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
+								new_span.setAttribute('class','weekScheduleActivity activity')
+								new_span.setAttribute('id',id)
+								new_span.setAttribute('remind',remind)
+
+								for(let info in activity){
+									var myJavaScriptVariable = activity[info];
+									new_span.innerHTML += myJavaScriptVariable;
+								}
+
+								days.appendChild(new_span);
+								x++;
+							}
+						</script>
+					</div>
+					{%endif%}
+					{% if display_type == 'month'%}
+					<div class="weekSchedule" style="grid-template-columns: repeat(7, 1fr);width:calc(100%)">
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 1;">Pn</span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 2;">Wt</span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 3;">Śr</span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 4;">Cz</span>
+						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 5;">Pt</span>
+						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 6;" class="weekend">Sb</span>
+						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 7;" class="weekend">Nd</span>
+						<!--<span>
+							{% for podgl in podglad%}
+								<span>{{podgl.data_rozpoczecia}}</span>
+								<span>{{podgl.godzina_rozpoczecia}}</span>
+								<span>{{podgl.prowadzacy}}</span>
+								<span>{{podgl.nazwa}}</span>
+								<span>{{podgl.day}}</span>			
+							{% endfor %}
+						</span>-->
+						<script>
+							var x = 0;
+							function matrix( rows, cols, defaultValue){
+								var arr = [];
+
+								// Creates all lines:
+								for(var i=0; i < rows; i++){
+
+									// Creates an empty line
+									arr.push([]);
+
+									// Adds cols to the empty line:
+									arr[i].push( new Array(cols));
+
+									for(var j=0; j < cols; j++){
+									// Initializes:
+									arr[i][j] = defaultValue;
+									}
+								}
+
+								return arr;
+							}
+
+							var monthDayData = matrix(6,7,0);
+							function getWeekNumberFromDate(year, month,day){
+								Date.prototype.getWeek = function() {
+									var dt = new Date(this.getFullYear(),0,1);
+									return Math.ceil((((this - dt) / 86400000) + dt.getDay()+1)/7);
+								};
+
+								var myDate = new Date(year, month, day); // 2013, 25 April
+
+								return myDate.getWeek()
+							}
+							const getZeroBasedIsoWeekDay = date => (date.getDay() + 6) % 7
+							const getIsoWeekDay = date => getZeroBasedIsoWeekDay(date) + 1
+
+							function weekDateToDate(year, week, weekDay) {
+								const zeroBasedWeek = week - 1
+								const zeroBasedWeekDay = weekDay - 1
+								let days = (zeroBasedWeek * 7) + zeroBasedWeekDay
+
+								// Dates start at 2017-01-01 and not 2017-01-00
+								days += 1
+
+								const firstDayOfYear = new Date(year, 0, 1)
+								const firstIsoWeekDay = getIsoWeekDay(firstDayOfYear)
+								const zeroBasedFirstIsoWeekDay = getZeroBasedIsoWeekDay(firstDayOfYear)
+
+								// If year begins with W52 or W53
+								if (firstIsoWeekDay > 4) days += 8 - firstIsoWeekDay
+								// Else begins with W01
+								else days -= zeroBasedFirstIsoWeekDay
+
+								return new Date(year, 0, days)
+							}
+
+							function display_activity_month_init(){
+								var days = document.querySelector(".weekSchedule");
+								var new_span = document.createElement("span");
+								
+								//przygotowanie daych o miesiącu
+								var today = new Date()
+								var firstDayOfMonth = new Date(today.getFullYear(),today.getMonth(), 1)
+								var lastDayOfMonth = new Date(today.getFullYear(),today.getMonth(), new Date(today.getFullYear(),today.getMonth(), 0).getDate())
+								var monthStartWeek = getWeekNumberFromDate(firstDayOfMonth.getFullYear(),firstDayOfMonth.getMonth(),firstDayOfMonth.getDay())+1
+								var monthEndWeek = getWeekNumberFromDate(lastDayOfMonth.getFullYear(),lastDayOfMonth.getMonth(),lastDayOfMonth.getDay())+1
+
+								//console.log(today)
+								//console.log(firstDayOfMonth)
+								//console.log(lastDayOfMonth)
+								//console.log(monthStartWeek)
+								//console.log(monthEndWeek)
+
+								for(var i = 2; i < 8; i++){
+									for(var j = 0; j < 7; j++){
+										var new_span = document.createElement("span");
+										new_span.setAttribute('class','weekScheduleActivity')
+										new_span.style.opacity = '0.25';
+										new_span.style.gridRowEnd = j+1;
+										new_span.style.gridRowStart = j+1;
+										new_span.style.gridColumnStart = i;
+										
+										new_span.setAttribute('week',i-1)
+										new_span.setAttribute('day',j)
+										new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
+								
+										//new_span.innerHTML += "[week" + (i-1) + " - day" + j+"]";
+										//new_span.innerHTML += "[week" + (monthEndWeek-(6-i)-1) + " - day" + j+"]";
+										new_span.innerHTML += "<br>"+weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getDate() + "<br><br>"
+										if(weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth()!=today.getMonth()){
+											new_span.style.opacity = '0.1';
+										}
+										days.appendChild(new_span);
+									}
+								}
+							}
+							function display_activity(id, remind, activity, x, day, weekNumber=0){
+								var days = document.querySelector(".weekSchedule");
+								var new_span = document.createElement("span");
+								new_span.style.gridRowStart = day+1;
+								new_span.style.gridRowEnd = day+1;
+								new_span.style.margin='auto'
+								new_span.style.float='right'
+								new_span.style.marginRight='1rem'
+								new_span.style.marginTop = '1rem'
+								new_span.style.right='0'
+								new_span.style.gridColumnStart = weekNumber+1;
+
+								new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
+								new_span.setAttribute('class','weekScheduleActivity')
+								new_span.setAttribute('id',id)
+								new_span.setAttribute('remind',remind)
+
+								monthDayData[weekNumber][day] += 1;
+								new_span.setAttribute('weekToFind',weekNumber)
+								new_span.setAttribute('dayToFind',day)
+								var hiddenInfo=''
+								new_span.innerHTML = monthDayData[weekNumber][day].toString()
+								for(let info in activity){
+									var myJavaScriptVariable = activity[info];
+									hiddenInfo += myJavaScriptVariable;
+								}
+								new_span.setAttribute('hiddenInfo','<span class="weekScheduleActivity activity" id="'+id+'" remind="'+remind+'" style="grid-row: '+(monthDayData[weekNumber][day]+1)+'/'+(monthDayData[weekNumber][day]+2)+'; opacity: 0.75;">'+hiddenInfo+'</span>')
+								//aktywowanie kliknięcia w dzień
+								var toActivateDayTemp = document.querySelectorAll(`span[week="`+weekNumber+`"]`)
+								toActivateDayTemp[day].setAttribute('class',"weekScheduleActivity activityList")
+
+								days.appendChild(new_span);
+								x++;
+							}
+							display_activity_month_init()
+						</script>
+					</div>
+					{%endif%}
+					{% if user.role == "User" or user.role == "Employee" %}
+						{% for activity in activities %}
+							<script type="text/javascript">
+								display_activity(
+									{{activity.pk}},
+									{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
+									[
+										"<font size='3'>{{activity.name}}</font><br/><font size='2'><i>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}<br>{%endif%}{% endfor %}</i></font>", 
+										"<span><font size='2'>od</font> {{activity.start_time}}</span>",  
+										"<span> <font size='2'>do</font> {{activity.end_time}}</span>",
+									],
+									x,
+									{{activity.day}},
+									{{activity.weekNumber}}
+								)
+							</script>
+						{% endfor %}
+					{% endif %}
+					{% if user.role == "Institution" %}
+						{% for activity in activities %}
+							<script type="text/javascript">
+								display_activity(
+									{{activity.pk}},
+									{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
+									[
+										"<font size='3'>{{activity.employee_id}}<br/>{{activity.name}}</font><br/><br/><font size='2'><i>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}<br>{%endif%}{% endfor %}</i></font>", 
+										"<span><font size='2'>od</font> {{activity.start_time}}</span>",  
+										"<span> <font size='2'>do</font> {{activity.end_time}}</span>",
+									],
+									x,
+									{{activity.day}},
+									{{activity.weekNumber}}
+								)
+							</script>
+						{% endfor %}
+					{% endif %}
+					{% if user.role == "User" or user.role == "Employee" %}
+						{% if display_type == 'month' %}
+							<script src="{% static 'js/activityMonth.js' %}"></script>
+						{% endif %}
+						<script src="{% static 'js/activity.js' %}"></script>
+					{% elif user.role == "Institution" %}
+						<script src="{% static 'js/updateActivity.js' %}"></script>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}
