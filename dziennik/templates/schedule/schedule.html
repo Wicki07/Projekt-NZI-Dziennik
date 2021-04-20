@@ -428,6 +428,17 @@
 										if(weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth()!=today.getMonth()){
 											new_span.style.opacity = '0.1';
 										}
+										if(today.getWeek()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j).getWeek()){
+											new_span.style.opacity = '0.4';
+										}
+										console.log(today)
+										console.log(weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1))
+										if(today.getDate()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getDate() &&
+										   today.getMonth()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth() &&
+										   today.getFullYear()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getFullYear()
+										){
+											new_span.style.opacity = '0.6';
+										}
 										days.appendChild(new_span);
 									}
 								}
