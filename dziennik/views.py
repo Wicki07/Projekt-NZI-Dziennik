@@ -350,9 +350,12 @@ def schedule(request, display_type='week'):
             iterator += 1
             this_week_days_numbers.append(__day_number)
 
-
         # Pobieranie zajęć
         activities = Activity.objects.none()
+
+        # Pojemnik na obecność dzieci
+        childrenAttendence = {}
+
         # Dla pracownika
         if request.user.role == "Employee":
             employee = Employee.objects.get(user_id=request.user)
@@ -399,12 +402,32 @@ def schedule(request, display_type='week'):
                 activity.save()
                 error_message = 'Wysłano powiadomienie o odwołaniu zajęć'
 
+
+            # Update listy obecności
+            # Zmiana na obecne
+            ch_attendence = Attendance.objects.none()
+            children_present = request.POST.getlist('children_present')
+            for ch_present in children_present:
+                ch_attendence = Attendance.objects.get(id=int(ch_present))
+                ch_attendence.presence = True
+                ch_attendence.save()
+            # Zmiana na nieobecne
+            children_absent = request.POST.getlist('children_absent')
+            for ch_absent in children_absent:
+                ch_attendence = Attendance.objects.get(id=int(ch_absent))
+                ch_attendence.presence = False
+                ch_attendence.save()
+            # W innym przypadku nie robimy nic
+
             activities = activities.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week)
             for activity in activities:
-                remind[activity.pk] = activity.remind_employee
-
-            for activity in activities:
                 date = str(activity.date)  
+                remind[activity.pk] = activity.remind_employee
+                
+                # Pobranie informacji o obecności dzieci
+                # umieszczamy w słowniku pod etykietą, o wartości id, queryset z wszystkimi obecnościami
+                childrenAttendence[activity.pk] = Attendance.objects.filter(activity_id=activity)
+                #
                 week_day = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
                 setattr(activity,'day',week_day)
                 if display_type == 'month':
@@ -556,7 +579,7 @@ def schedule(request, display_type='week'):
             print(activities)
         #print(error_message)
 
-        return render(request, 'schedule/schedule.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities})
+        return render(request, 'schedule/schedule.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'childrenAttendence':childrenAttendence,'remind':remind,'message':error_message,'activities':activities})
     print(error_message)
     return render(request, 'schedule/schedule.html',{'display_type':display_type})
 

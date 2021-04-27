@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
 	<head>
 		<title>Dziennik | {{ user }}</title>
@@ -17,7 +18,7 @@
 		</div>
 	{% endif %}
 	{% include 'header.html' %}
-	{% if user.role == "User" or user.role == "Employee"%}
+	{% if user.role == "User"%}
 		<div class="popup-background" id="viewList" style="display: none;">
 			<div class="container popup-center">
 				<div class="row">
@@ -35,7 +36,7 @@
 			<div class="container popup-center">
 				<div class="row">
 					<div class="col-md-6 mx-auto popup">
-						<div id="acticityMenu">
+						<div style="font-size:20px!important" id="acticityMenu">
 							<form method="POST" action="{% url 'schedule' display_type%}">
                                 {% csrf_token %}
                                 <input class="inputActivityId" hidden name="hiddenActivityId" type="number">
@@ -66,6 +67,96 @@
 								<span id="viewMessageToEmployee" class="w-100 float-left mb-4 h7"><i>twoja wiadomość...</i></span>
 								<button type="button" id="backToActicitySendMessage" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
 								<button type="submit" id="sendMesage" name="sendMesage" value="1"  class="btn btn-link mt-3 w-50 text-right float-right">Wyślij <i class="fas fa-paper-plane"></i></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% elif user.role == "Employee" %}
+		<div class="popup-background" id="viewList" style="display: none;">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<div id="acticityMenuList">
+							<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+							</div>
+							<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="popup-background" id="view" style="display: none;">
+			<div class="container popup-center">
+				<div class="row">
+					<div class="col-md-6 mx-auto popup">
+						<div id="acticityMenu">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+                                {% csrf_token %}
+                                <input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+									<div class="container">
+										<div class="row">
+											<div class="col" style="text-align: center">
+												<button type="button" id="goToActicitySendMessage" class="btn btn-link mt-3"><i style="font-size: 5.5rem; "class="fas display-1 mb-3 fa-envelope-open-text"></i></button>
+											</div>
+											<div class="col" >
+												<span class="" style="display:block;transform:translateY(90%)">Wyślij wiadomość do prowadzącego </span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col" style="text-align: center">
+												<button type="submit" name="changeRemindActivity" value="1" id="changeRemindActivity" class="btn btn-link"></button>
+											</div>
+											<div class="col">
+												<span style="display:block;transform:translateY(66%)">Wyślij wiadomość do prowadzącego</span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col" style="text-align: center">
+												<button type="button" id="goToActicityCheckAttendance" class="btn btn-link"><i style="font-size: 6.7rem;" class="fas display-1 mb-3 fa-clipboard-list"></i></button>
+											</div>
+											<div class="col">
+												<span style="display:block;transform:translateY(100%)">Sprawdź listę obecności</span>
+											</div>
+										</div>
+										<button type="button" id="closeView" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
+									</div>
+                            </form>
+						</div>
+						<div id="acticitySendMessage" style="display: none;">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+								{% csrf_token %}
+								<input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+								<span class="w-100 float-left mb-4 h6">Powiadomienie prowadzącego o nieobecności swojego dziecka:</span>
+								<textarea class="form-control" id="messageToEmployee" required rows="5" maxlength="300" placeholder="Napisz wiadomość do prowadzącego... (maksymalnie 300 znaków)"></textarea>
+								<span id="noMessageTyped" class="error w-100 float-left my-2" style="display: none;"> Musisz podac terść wiadomości!</span>
+								<button type="button" id="backToActivityMenu" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
+								<button type="button" id="goToViewActicitySendMessage" class="btn btn-link mt-3 w-50 text-right float-right">Wyślij <i class="fas fa-paper-plane"></i></button>
+							</form>
+						</div>
+						<div id="viewActicitySendMessage" style="display: none;">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+								{% csrf_token %}
+								<input id="hoverMessageToEmployee" hidden name="hoverMessageToEmployee" type="text">
+								<input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+								<span class="w-100 float-left mb-4 h6">Czy chcesz wysłać nastepującą wiadomość:</span>
+								<span id="viewMessageToEmployee" class="w-100 float-left mb-4 h7"><i>twoja wiadomość...</i></span>
+								<button type="button" id="backToActicitySendMessage" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
+								<button type="submit" id="sendMesage" name="sendMesage" value="1"  class="btn btn-link mt-3 w-50 text-right float-right">Wyślij <i class="fas fa-paper-plane"></i></button>
+							</form>
+						</div>
+						<div id="acticityCheckAttendance" style="display: none;">
+							<form method="POST" action="{% url 'schedule' display_type%}">
+								{% csrf_token %}
+								<input class="inputActivityId" hidden name="hiddenActivityId" type="number">
+								<div  class="custom-control custom-checkbox custom-checkbox-lg">
+									<label class="p-3" for="customCheck0"><b>Lista obecności</b></label>
+								</div>
+								<div class="p-3" id="attendenceListDisplay">
+								</div>
+								<button type="button" id="backToActivityMenuFromAttendanceList" class="btn btn-link mt-3 w-50 text-left float-left"><i class="fa fa-angle-left fa-x"></i> Wróć</button>
+								<button type="submit" id="saveAttendenceList" name="saveAttendenceList" value="1" class="btn btn-link mt-3 w-50 text-right float-right">Zapisz <i class="fas fa-save"></i></button>
 							</form>
 						</div>
 					</div>
@@ -212,7 +303,7 @@
 						<script>
 							var x = 0
 							let order = 0;
-							function display_activity(id, remind, activity, x, day, weekNumber=0){
+							function display_activity(id, remind, activity, x, day, weekNumber=0{% if user.role == 'Employee'%}, attendenceList{% endif %}){
 								var days = document.querySelector(".weekSchedule");
 								var new_span = document.createElement("span");
 								new_span.style.gridRowStart = order+1;
@@ -226,6 +317,7 @@
 								new_span.setAttribute('class','weekScheduleActivity activity')
 								new_span.setAttribute('id',id)
 								new_span.setAttribute('remind',remind)
+								{% if user.role == 'Employee'%}new_span.setAttribute('attendenceList',attendenceList){% endif %}
 
 								for(let info in activity){
 									var myJavaScriptVariable = activity[info];
@@ -267,7 +359,7 @@
 							var pt=2;
 							var sob=2;
 							var nd=2;
-							function display_activity(id, remind, activity, x, day, weekNumber=0){
+							function display_activity(id, remind, activity, x, day, weekNumber=0{% if user.role == 'Employee'%}, attendenceList{% endif %}){
 								var days = document.querySelector(".weekSchedule");
 								var new_span = document.createElement("span");
 								new_span.style.gridRowStart = day+1;
@@ -305,6 +397,7 @@
 								new_span.setAttribute('class','weekScheduleActivity activity')
 								new_span.setAttribute('id',id)
 								new_span.setAttribute('remind',remind)
+								{% if user.role == 'Employee'%}console.log(attendenceList);new_span.setAttribute('attendenceList',attendenceList){% endif %}
 
 								for(let info in activity){
 									var myJavaScriptVariable = activity[info];
@@ -445,7 +538,7 @@
 									}
 								}
 							}
-							function display_activity(id, remind, activity, x, day, weekNumber=0){
+							function display_activity(id, remind, activity, x, day, weekNumber=0 {% if user.role == 'Employee'%}, attendenceList{% endif %}){
 								var days = document.querySelector(".weekSchedule");
 								var new_span = document.createElement("span");
 								new_span.style.gridRowStart = day+1;
@@ -461,6 +554,7 @@
 								new_span.setAttribute('class','weekScheduleActivity')
 								new_span.setAttribute('id',id)
 								new_span.setAttribute('remind',remind)
+								{% if user.role == 'Employee'%}new_span.setAttribute('attendencelist',attendenceList){% endif %}
 
 								monthDayData[weekNumber][day] += 1;
 								new_span.setAttribute('weekToFind',weekNumber)
@@ -496,7 +590,8 @@
 									],
 									x,
 									{{activity.day}},
-									{{activity.weekNumber}}
+									{%if activity.weekNumber %}{{activity.weekNumber}}{% else %}0{% endif %},
+									{% if user.role == 'Employee'%}"{% for childActivity in childrenAttendence|get_by_index:activity.pk %}<div class='custom-control custom-checkbox custom-checkbox-lg'><input name='children_present' type='checkbox' {% if childActivity.presence %} checked {% endif %}class='custom-control-input' value='{{childActivity.pk}}' id='customCheck{{childActivity.pk}}' name='example{{childActivity.pk}}'><input type='checkbox' hidden {% if not childActivity.presence %} checked {% endif %}  class='customCheck{{childActivity.pk}}' name='children_absent' value='{{childActivity.pk}}' /><label class='custom-control-label' for='customCheck{{childActivity.pk}}'>{{childActivity.child_id}}</label></div>{% endfor %}"{% endif %}
 								)
 							</script>
 						{% endfor %}
@@ -514,7 +609,7 @@
 									],
 									x,
 									{{activity.day}},
-									{{activity.weekNumber}}
+									{%if activity.weekNumber %}{{activity.weekNumber}}{% else %}0{% endif %}
 								)
 							</script>
 						{% endfor %}

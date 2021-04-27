@@ -65,6 +65,16 @@ a{
     border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
 }
+/* checkbox size */
+.custom-checkbox-lg .custom-control-label::before,
+.custom-checkbox-lg .custom-control-label::after {
+  width: 2rem;
+  height: 2rem;
+}
+
+.custom-checkbox-lg .custom-control-label {
+  margin: .5rem 1rem;
+}
 /* fix */
 .select-institution{
 	border: none !important;
