@@ -397,7 +397,7 @@
 								new_span.setAttribute('class','weekScheduleActivity activity')
 								new_span.setAttribute('id',id)
 								new_span.setAttribute('remind',remind)
-								{% if user.role == 'Employee'%}console.log(attendenceList);new_span.setAttribute('attendenceList',attendenceList){% endif %}
+								{% if user.role == 'Employee'%}new_span.setAttribute('attendenceList',attendenceList){% endif %}
 
 								for(let info in activity){
 									var myJavaScriptVariable = activity[info];

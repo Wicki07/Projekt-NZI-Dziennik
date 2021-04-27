@@ -34,7 +34,11 @@ $(document).ready(function() {
         $('#acticityMenu').toggle();
     });
     $('#goToActicityCheckAttendance').click(function(event) {
-        $('#attendenceListDisplay').html($(document.querySelectorAll(`span[id="`+$(this).attr('activityid')+`"]`)[1]).attr('attendencelist')) 
+        if($(document.querySelectorAll(`span[id="`+$(this).attr('activityid')+`"]`)[1]).attr('attendencelist') != undefined){
+            $('#attendenceListDisplay').html($(document.querySelectorAll(`span[id="`+$(this).attr('activityid')+`"]`)[1]).attr('attendencelist')) 
+        }else{
+            $('#attendenceListDisplay').html($(document.querySelectorAll(`span[id="`+$(this).attr('activityid')+`"]`)[0]).attr('attendencelist')) 
+        }
         $('#acticityMenu').toggle();
         $('#acticityCheckAttendance').toggle();
     });
@@ -57,8 +61,6 @@ $(document).ready(function() {
 
     $(document).on("change",'input[type=checkbox]',function(){
         var target = $(document.querySelectorAll("."+$(this).attr('id'))[0])
-        console.log(target)
-        console.log(target[0].checked)
         if($(this).is(':checked'))
         {
             target[0].checked=false
@@ -67,6 +69,5 @@ $(document).ready(function() {
         {
             target[0].checked=true
         }
-        console.log(target.checked)
     });
 });
