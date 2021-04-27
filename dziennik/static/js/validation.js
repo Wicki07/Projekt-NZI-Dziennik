@@ -422,7 +422,7 @@ function endTimeValidation() {
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podano niewłaściwy format godziny</p>'
     }
-    else if(input[0].value < inputStartTime[0].value)
+    else if(input[0].value <  inputStartTime[0].value)
     {
         input[0].setCustomValidity('');
         input[0].reportValidity();
