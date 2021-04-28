@@ -466,9 +466,8 @@ def schedule(request, display_type='week'):
             # Usuwanie zajęć z panelu Instytucji
             if data.get("deleteActivityByInstitution"):
                 Activity.objects.get(id=data.get('hiddenActivityIdToDelete')).delete() #usuwanie zajęć
-                return render(request, 'schedule/week/week.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Usunięto zajęcia'})
+                return render(request, 'schedule/schedule.html',{'display_type':display_type,'schedule_title':shedule_title,'thisWeek':this_week_days_numbers,'children_in_activity':children_in_activity,'remind':remind,'message':error_message,'activities':activities,'institutionActivitiesJSON':serialized_activity,'employees': employees,'childrenActivitiesJSON':serialized_children,'children':children_list,'message':'Usunięto zajęcia'})
 
-            print(data)
             serialized_activity = serializers.serialize('json',activities)
             serialized_children = serializers.serialize('json',children)
             # Aktualizacja zajęć z panelu Instytucji
@@ -484,13 +483,12 @@ def schedule(request, display_type='week'):
                 activity_to_update.employee_id = Employee.objects.get(id=_employee_id)
                 activity_to_update.save()
                 
-                
-                
                 # Dopisywanie przypisania wybranych dzieci
                 children = request.POST.getlist('children')
-                print(children)
                 try:
-                    Attendance.objects.get(activity_id=activity_to_update).delete()
+                    toDeleteAttendences = Attendance.objects.filter(activity_id=activity_to_update)
+                    for xAttend in toDeleteAttendences:
+                        xAttend.delete()
                 except Attendance.DoesNotExist:
                     pass
                 for child in children:
