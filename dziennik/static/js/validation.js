@@ -443,14 +443,14 @@ function periodicityValidation() {
     const error = document.getElementsByClassName("error_periodicity");
     if (validityState_object.valid)
     {
-        input[i].setCustomValidity('');
-        input[i].reportValidity();
-        error[i].innerHTML = '<p>Nie wybrano cykliczności</p>'
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Nie wybrano cykliczności</p>'
     }
     else
     {
-        input[i].setCustomValidity('');
-        input[i].reportValidity();
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
     }
     input[i].addEventListener('change', (event) => {
         error[4].innerHTML = ''
