@@ -100,7 +100,7 @@
 								</div>
 							</div>
 							<div id="collapseOne{{child.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion ">
-								<div class="card-body card-child">
+								<div class="card-b card-child">
 									{% for key, value in institution_list.items %} 
 										{% if key == child.id %}
 											{% for inner_key, inner_value in value.items %} 
@@ -111,9 +111,20 @@
 									<form method="POST" action="{% url 'assign_child'%}" >
 										{% csrf_token %}
 										<input value="{{child.id}}" hidden name="hiddenChildID" type="number">
-										<button type="submit" class="btn btn-primary mt-3 round mw-50 w-auto"><i class="fa fa-plus" aria-hidden="true"></i> Przypisz do instytucji</button>
-										<button type="button" value="{{child.id}}" childName="{{child}}" class="btn btn-danger mt-3 ml-2 round float-right mw-25 w-auto position-static deleteChildOpenMenu"><i class="fa fa-trash" aria-hidden="true"></i> Usuń profil dziecka</button>
-										<button type="button" value="{{child.id}}" childName="{{child}}" age="{{child.age}}" class="btn btn-success mt-3 round float-right mw-25 w-auto position-static editChildOpenMenu"><i class="fa fa-pencil-square-o " aria-hidden="true"></i> Edytuj profil dziecka</button>
+										<div class="container">
+											<div class="row">
+												<div class="col-sm text-center">
+													<button type="button" value="{{child.id}}" childName="{{child}}" age="{{child.age}}" class="btn btn-success mt-3 round   w-100 position-static editChildOpenMenu"><i class="fa fa-pencil-square-o " aria-hidden="true"></i> Edytuj profil dziecka</button>
+												</div>
+												<div class="col-sm text-center">
+													<button type="button" value="{{child.id}}" childName="{{child}}" class="btn btn-danger mt-3 round   w-100 position-static deleteChildOpenMenu"><i class="fa fa-trash" aria-hidden="true"></i> Usuń profil dziecka</button>
+												</div>
+												<div class="col-sm text-center">
+													<button type="submit" class="btn btn-primary mt-3 round  w-100 position-static "><i class="fa fa-plus" aria-hidden="true"></i> Przypisz do instytucji</button>
+												</div>
+											</div>
+										</div>
+										</div>
 									</form>
 								</div>
 							</div>
