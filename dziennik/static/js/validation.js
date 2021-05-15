@@ -356,6 +356,12 @@ function specjalizationValidation() {
         });
 }
 function dateValidation() {
+    var tempdate = new Date()
+    var today = new Date(tempdate.getFullYear(),tempdate.getMonth(),tempdate.getDate())
+    today.setHours(0)
+    today.setMinutes(0)
+    today.setSeconds(0)
+    today.setMilliseconds(0)
     const input = document.getElementsByName("date")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_date");
@@ -371,10 +377,8 @@ function dateValidation() {
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podana data jest nieprawidłowa</p>'
     }
-    else if(Date.parse((input[0].value)) <= Date.now())
+    else if(Date.parse((input[0].value)) < Date.parse(today))
     {
-        console.log(Date.parse((input[0].value)))
-        console.log(Date.now())
         input[0].setCustomValidity('Podana data jest nieprawidłowa');
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podana data jest nieprawidłowa</p>'
