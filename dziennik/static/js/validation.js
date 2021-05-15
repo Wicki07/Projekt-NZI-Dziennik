@@ -433,11 +433,7 @@ function endTimeValidation() {
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podano niewłaściwy format godziny</p>'
     }
-<<<<<<< HEAD
     else if(input[0].value <=  inputStartTime[0].value)
-=======
-    else if(input[0].value <  inputStartTime[0].value)
->>>>>>> 8ce13c0031744ee087c5634781b0293678e54a27
     {
 
         input[0].setCustomValidity('Podano złą godzinę');
@@ -459,11 +455,7 @@ function periodicityValidation() {
     const error = document.getElementsByClassName("error_periodicity");
     if (input[0].value == 'Nie wybrano...')
     {
-<<<<<<< HEAD
         input[0].setCustomValidity('Nie wybrano cykliczności');
-=======
-        input[0].setCustomValidity('');
->>>>>>> 8ce13c0031744ee087c5634781b0293678e54a27
         input[0].reportValidity();
         error[0].innerHTML = '<p>Nie wybrano cykliczności</p>'
     }
