@@ -38,6 +38,7 @@ import random
 import string
 from django.db.models.functions import Lower
 from allauth.account.views import LoginView
+from django.urls import resolve
 
 
 def main(request):
@@ -460,7 +461,8 @@ def schedule(request, display_type='week'):
             children_list = Child.objects.none()
 
             for assigement in _children_list:
-                children_list |= Child.objects.filter(id=assigement.child_id.pk)
+                if assigement.status=='Accepted':
+                    children_list |= Child.objects.filter(id=assigement.child_id.pk)
             
 
             # Usuwanie zajęć z panelu Instytucji
@@ -517,11 +519,11 @@ def schedule(request, display_type='week'):
                         if change_remind_activity == '1':
                             attendance.remind_parent = False
                             attendance.save()
-                            error_message = 'Włączono powiadomenie o zajęciach'
+                            error_message = 'Wyłączono powiadomenie o zajęciach'
                         if change_remind_activity == '-1':
                             attendance.remind_parent = True
                             attendance.save()
-                            error_message = 'Wyłączono powiadomenie o zajęciach'
+                            error_message = 'Włączono powiadomenie o zajęciach'
 
             if send_mesage:
                 activity = Activity.objects.get(id=activityId)
@@ -834,6 +836,9 @@ def change_password(request, uidb64, token):
     #jak activity 
     #odbieramy i  zz tamtego modelu odczytujemy i zmieniamy mail
     uid = force_text(urlsafe_base64_decode(uidb64))
+    current_url = request.get_full_path_info()
+    print("print")
+    print(current_url)
     try:
         user = User.objects.get(pk=uid)
     except User.DoesNotExist:

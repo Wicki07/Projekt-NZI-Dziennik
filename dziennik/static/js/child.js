@@ -5,7 +5,7 @@ $(document).ready(function() {
         $('#toDeleteHiddenChildID').attr('value',$(this).val())
         $('#displayChildName').text($(this).attr('childName'))
     });
-    $('#closeView').click(function(event) {
+    $('#closeDelView').click(function(event) {
         $('#childDeleteMenu').toggle();
     });
     //edycja dziecka
@@ -17,7 +17,7 @@ $(document).ready(function() {
         $('#id_last_name').val($(this).attr('childName').split(' ')[1])
         $('#id_age').val($(this).attr('age'))
     });
-    $('#closeView').click(function(event) {
+    $('#closeEditView').click(function(event) {
         $('#childEditMenu').toggle();
     });
 });

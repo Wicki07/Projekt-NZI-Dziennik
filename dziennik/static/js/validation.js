@@ -2,6 +2,7 @@ function nameValidation() {
     const input = document.getElementsByName("name")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_name");
+    console.log(validityState_object)
     if (validityState_object.valueMissing)
     {
      input[0].setCustomValidity('');
@@ -370,12 +371,22 @@ function dateValidation() {
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podana data jest nieprawidłowa</p>'
     }
-    else if(Date.parse((input[0].value)) < Date.now())
+    else if(Date.parse((input[0].value)) <= Date.now())
     {
-        input[0].setCustomValidity('');
+        console.log(Date.parse((input[0].value)))
+        console.log(Date.now())
+        input[0].setCustomValidity('Podana data jest nieprawidłowa');
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podana data jest nieprawidłowa</p>'
     }
+    else
+    {
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
+    }
+    input[0].addEventListener('change', (event) => {
+        error[0].innerHTML = ''
+        });
 }
 function startTimeValidation() {
     const input = document.getElementsByName("start_time")
@@ -419,9 +430,10 @@ function endTimeValidation() {
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podano niewłaściwy format godziny</p>'
     }
-    else if(input[0].value > inputStartTime[0].value)
+    else if(input[0].value <=  inputStartTime[0].value)
     {
-        input[0].setCustomValidity('');
+
+        input[0].setCustomValidity('Podano złą godzinę');
         input[0].reportValidity();
         error[0].innerHTML = '<p>Podano złą godzinę</p>'
     }
@@ -438,18 +450,18 @@ function periodicityValidation() {
     const input = document.getElementsByName("periodicity")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_periodicity");
-    if (validityState_object.valid)
+    if (input[0].value == 'Nie wybrano...')
     {
-        input[i].setCustomValidity('');
-        input[i].reportValidity();
-        error[i].innerHTML = '<p>Nie wybrano cykliczności</p>'
+        input[0].setCustomValidity('Nie wybrano cykliczności');
+        input[0].reportValidity();
+        error[0].innerHTML = '<p>Nie wybrano cykliczności</p>'
     }
     else
     {
-        input[i].setCustomValidity('');
-        input[i].reportValidity();
+        input[0].setCustomValidity('');
+        input[0].reportValidity();
     }
-    input[i].addEventListener('change', (event) => {
+    input[0].addEventListener('change', (event) => {
         error[4].innerHTML = ''
         });
 }
@@ -457,9 +469,10 @@ function employeeValidation() {
     const input = document.getElementsByName("employee")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_employee");
-    if (validityState_object.valid)
+    console.log(validityState_object)
+    if (input[0].value == 'Nie wybrano...')
     {
-        input[0].setCustomValidity('');
+        input[0].setCustomValidity('Nie wybrano prowadzącego');
         input[0].reportValidity();
         error[0].innerHTML = '<p>Nie wybrano prowadzącego</p>'
     }
@@ -476,9 +489,11 @@ function childrenValidation() {
     const input = document.getElementsByName("children")
     let validityState_object = input[0].validity;
     const error = document.getElementsByClassName("error_children");
-    if (validityState_object.valid)
+    console.log(validityState_object)
+    console.log(input[0].value)
+    if (input[0].value == 'Nie wybrano...')
     {
-        input[0].setCustomValidity('');
+        input[0].setCustomValidity('Nie wybrano uczestników');
         input[0].reportValidity();
         error[0].innerHTML = '<p>Nie wybrano uczestników</p>'
     }
@@ -558,6 +573,5 @@ function validate(){
             default:
                 break;
         }
-        console.log(input)
     }
 }

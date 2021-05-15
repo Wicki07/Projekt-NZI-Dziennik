@@ -1,13 +1,21 @@
 /* GLOBAL STYLES */
 html{
-	overflow-x: hidden;
+	/*overflow-x: hidden; */
+	margin: 0!important;
+	padding: 0!important;
 }
 body{
-	background:white !important;
+	background:#EEEEEE !important;
+	margin: 0!important;
+	padding: 0!important;
 }
 a{
 	text-decoration:none !important;
 }
+.fv-plugins-message-container {
+    display: none;
+}
+::-webkit-validation-bubble-message { display: none; }
 
 /* HEADER */
 .header{
@@ -42,7 +50,7 @@ a{
 /* additonal */
 .mw-50{
 	max-width: 50%;
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 .btn-child{
 	color:black !important;
@@ -113,12 +121,11 @@ a{
 
 /* MAIN */
 main{
-	margin: 0 !important;
-	padding-top: 5rem;
-	display: block !important;
-	background-color: #EEEEEE !important;
-	width: 100vw !important;
-	height: 100vh !important;
+	padding-top: 3.4rem!important;
+    display: block !important;
+    background-color: #EEEEEE !important;
+    width: 100vw !important;
+    height: 100vh;
 }
 .main-shadow{
 	position: fixed;
@@ -155,14 +162,14 @@ main{
 }
 
 .weekScheduleWeekDay{
-	background-color:rgba(96,96,96,0.9);
-	border-radius: 1rem;
-	margin: 0.5rem;
-	padding: 1rem;
-	color: white;
-	height:calc(100% - 0.5rem);
-	justify-content: center; 
-	align-items: center; 
+	background-color: rgba(96,96,96,0.9);
+    border-radius: 1rem;
+    margin: 0.395rem;
+    padding: 1rem;
+    color: white;
+    height: calc(100% - 0.395rem);
+    justify-content: center;
+    align-items: center;
 }
 .weekScheduleWeekMenu{
 	background-color:#007bff;
@@ -184,20 +191,20 @@ main{
 }
 
 .weekScheduleWeekendDay{
-	background-color:rgba(180,69,69,0.9);
-	border-radius: 1rem;
-	margin: 0.5rem;
-	padding: 1rem;
-	color: white;
-	height:calc(100% - 0.5rem);
-	justify-content: center; 
-	align-items: center; 
+	background-color: rgba(180,69,69,0.9);
+    border-radius: 1rem;
+    margin: 0.395rem;
+    padding: 1rem;
+    color: white;
+    height: calc(100% - 0.395rem);
+    justify-content: center;
+    align-items: center;
 }
 .weekScheduleActivity{
 	--border: 2px dashed rgba(96,96,96,0.9);
 	background-color:rgba(0, 123, 255,0.9);
 	border-radius: 1rem;
-	margin: 0.5rem;
+	margin: 0.395rem;
 	padding: 1rem;
 	color: white;
 }
@@ -213,16 +220,71 @@ main{
 	z-index:101;
 }
 .popup-center{
-	margin-top:50vh;
+	/*margin-top:50vh;*/
 	z-index:100;
 }
+#popup1{
+	height: auto;
+	padding:1rem;
+	background-color:white;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 1.1rem;
+	transform: translateY(14.5%);
+}
+
+#popup2{
+	height: auto;
+	padding:1rem;
+	background-color:white;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 1.1rem;
+	transform: translateY(155%);
+}
+
+#popup3{
+	height: auto;
+	padding:1rem;
+	background-color:white;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 1.1rem;
+	transform: translateY(40.5%);
+}
+
+.popup4{
+	height: auto;
+	padding:1rem;
+	background-color:white;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 1.1rem;
+	transform: translateY(88.5%);
+}
+
+.popup5{
+	height: auto;
+	padding:1rem;
+	background-color:white;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 1.1rem;
+	transform: translateY(290.5%);
+}
+
+.popup6{
+	height: auto;
+	padding:1rem;
+	background-color:white;
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: 1.1rem;
+	transform: translateY(60.5%);
+}
+
+
 .popup{
 	height: auto;
 	padding:1rem;
 	background-color:white;
 	border: 1px solid rgba(0,0,0,.2);
 	border-radius: 1.1rem;
-	transform: translateY(-50%);
+	transform: translateY(14.5%);
 }
 
 /*White Box inside Settings list item Container*/
@@ -258,3 +320,12 @@ ul a li{
 ::-webkit-scrollbar-thumb:active {
 	background-color:#118cff;
 }
+
+
+.card-b { /* 100+1=101 priority score, yay! */
+	/* -webkit-box-flex: 1; */
+    -ms-flex: 1 1 auto;
+    /* flex: 1 1 auto; */
+    padding-bottom: 1.25rem!important;
+	padding-top: 1rem!important;
+  }

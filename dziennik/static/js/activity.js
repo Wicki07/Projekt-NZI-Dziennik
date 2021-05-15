@@ -1,4 +1,14 @@
 $(document).ready(function() {
+    $('*').click(function(event){
+        var height;
+        //if(document.documentElement.scrollHeight>=screen.height+(0.25*screen.height))height = screen.height+(0.25*screen.height)
+        height = document.documentElement.scrollHeight
+        width = document.documentElement.scrollWidth
+        var popup = document.querySelectorAll(".popup-background")[1]
+        popup.style.height = height+"px"
+        //popup.style.width = width+"px"
+        console.log('test')
+    })
     $('.activity').click(function(event) {
         $('#view').toggle();
         let activity = this.id
