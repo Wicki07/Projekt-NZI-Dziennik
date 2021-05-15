@@ -1,11 +1,19 @@
 /* GLOBAL STYLES */
 html{
+<<<<<<< HEAD
 	/*overflow-x: hidden; */
+=======
+	overflow-x: hidden;
+>>>>>>> 8ce13c0031744ee087c5634781b0293678e54a27
 	margin: 0!important;
 	padding: 0!important;
 }
 body{
+<<<<<<< HEAD
 	background:#EEEEEE !important;
+=======
+	background:white !important;
+>>>>>>> 8ce13c0031744ee087c5634781b0293678e54a27
 	margin: 0!important;
 	padding: 0!important;
 }
