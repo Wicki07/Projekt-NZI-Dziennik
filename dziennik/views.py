@@ -57,6 +57,7 @@ class CustomLoginView(LoginView):
 def signup(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST or None)
+
         if form.is_valid():
             user = form.save(commit=False)
             user.active = False
@@ -79,8 +80,11 @@ def signup(request):
             email.send()
 
             return render(request, 'signup/person/signup_person.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
+        else:
+            return render(request, 'signup/person/signup_person.html', {'form': form,'message': 'Podany adres email jest już zajęty'})
     else:
         form = RegisterForm()
+        
     return render(request, 'signup/person/signup_person.html', {'form': form})
 
 def signup_institution(request):
@@ -88,6 +92,7 @@ def signup_institution(request):
         form = AlternativeRegisterForm(request.POST or None)
         print(form.is_valid())
         print(form)
+        
         if form.is_valid():
             # Tworzenie konta instytucji
             user = form.save(commit=False)
@@ -117,6 +122,8 @@ def signup_institution(request):
             email.send()
 
             return render(request, 'signup/institution/signup_institution.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
+        else:
+            return render(request, 'signup/person/signup_person.html', {'form': form,'message': 'Podany adres email jest już zajęty'})
     else:
         form = AlternativeRegisterForm()
     return render(request, 'signup/institution/signup_institution.html', {'form': form})
@@ -156,6 +163,8 @@ def create_employee(request):
                 email.send()
                 
                 return render(request, 'create/employee/create_employee.html', {'form': form, 'message': 'Na podany email została wysłana wiadomośc z linkiem aktywującym konto.'})
+            else:
+                return render(request, 'signup/person/signup_person.html', {'form': form,'message': 'Podany adres email jest już zajęty'})
         else:
             form = CreationForm()
 
