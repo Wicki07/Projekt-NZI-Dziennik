@@ -65,7 +65,7 @@ def signup(request):
             user.save()
             
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Aktywacja konta w serwisie Dziennik.'
             message = render_to_string('email/activation_email.html', {
                 'user': user,
                 'domain': current_site.domain,
@@ -781,7 +781,7 @@ def change_email(request):
                 #wysylanie maila
                 #zczytanie danych
                 current_site = get_current_site(request)
-                mail_subject = 'Activate your blog account.'
+                mail_subject = 'Potwierdź zmianę adresu e-mail.'
                 #towrzenie massage
                 message = render_to_string('email/confirmation_email.html', {
                     'user': request.user,
@@ -814,7 +814,7 @@ def confirmed_change_password(request):
         return HttpResponse("coś się popsuło")
         #return redirect('login')
     current_site = get_current_site(request)
-    mail_subject = 'Activate your blog account.'
+    mail_subject = 'Potwierdź zmianę hasła.'
     #towrzenie massage
     message = render_to_string('email/confirmation_password.html', {
         'user': request.user,
