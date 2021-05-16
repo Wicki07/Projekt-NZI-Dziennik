@@ -5,7 +5,7 @@ $(document).ready(function() {
         height = document.documentElement.scrollHeight
         width = document.documentElement.scrollWidth
         var popup = document.querySelectorAll(".popup-background")
-        popup.style.height = height+"px"
+        popup[0].style.height = height+"px"
         //popup.style.width = width+"px"
         console.log('test')
     })

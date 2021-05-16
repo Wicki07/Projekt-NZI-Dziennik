@@ -322,6 +322,7 @@
 							var x = 0
 							let order = 0;
 							function display_activity(id, remind, activity, x, day, weekNumber=0{% if user.role == 'Employee'%}, attendenceList{% endif %}){
+								
 								var days = document.querySelector(".weekSchedule");
 								var new_span = document.createElement("span");
 								new_span.style.gridRowStart = order+1;
@@ -332,17 +333,21 @@
 								new_span.style.opacity = '0.75';
 								order++;
 								//new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
-								new_span.setAttribute('class','weekScheduleActivity activity')
+								new_span.setAttribute('class','weekScheduleActivityForDay activity')
 								new_span.setAttribute('id',id)
 								new_span.setAttribute('remind',remind)
-								{% if user.role == 'Employee'%}new_span.setAttribute('attendenceList',attendenceList){% endif %}
+								
+								{% if user.role == 'Employee'%}
+									new_span.setAttribute('attendenceList',attendenceList)
+								{% endif %}
 
 								for(let info in activity){
 									var myJavaScriptVariable = activity[info];
 									new_span.innerHTML += myJavaScriptVariable;
 								}
-								let today = new Date().getDay() - 1;
-								if(day == today){
+								let today = new Date().getDay();
+								let week =[6,0,1,2,3,4,5]
+								if(day == week[today]){
 									days.appendChild(new_span);
 								}
 								x++;
