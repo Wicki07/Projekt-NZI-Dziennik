@@ -36,7 +36,7 @@
 				<div class="row">
 					<div class="col-md-6 mx-auto popup">
 						<div id="acticityMenuList">
-							<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+							<div class="weekScheduleList" style="width:calc(100%)">
 							</div>
 							<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
 						</div>
@@ -91,7 +91,7 @@
 				<div class="row">
 					<div class="col-md-6 mx-auto"id ="popup2">
 						<div id="acticityMenuList">
-							<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+							<div class="weekScheduleList" style="width:calc(100%)">
 							</div>
 							<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
 						</div>
@@ -183,7 +183,7 @@
 				<div class="row">
 					<div class="col-md-6 mx-auto"id="popup2">
 						<div id="acticityMenuList">
-							<div class="weekScheduleList" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
+							<div class="weekScheduleList" style="width:calc(100%)">
 							</div>
 							<button type="button" id="closeViewList" class="btn btn-link mt-3 w-100 text-center mt-5"><i class="fas fa-times"></i> Zamknij</button>
 						</div>
@@ -299,17 +299,6 @@
 		<div class="container-fluid "style="padding-top: 0.6rem">
 			<div class="row">
 				<div class="col-md-12 mx-auto">
-					<!--<div class="weekScheduleWeekMenu d-flex justify-content-between">
-						<div class="btn-group w-25 d-flex mr-5">
-							<a style="z-index: 2;" href="{% url 'schedule' 'day' %}"><button class="btn weekScheduleWeekMenuElement float-left">DZIEŃ</button></a>
-							<a style="z-index: 2;" href="{% url 'schedule' 'week' %}"><button class="btn weekScheduleWeekMenuElement float-left">TYDZIEŃ</button></a>
-							<a style="z-index: 2;" href="{% url 'schedule' 'month' %}"><button class="btn weekScheduleWeekMenuElement float-left">MIESIĄC</button></a>
-						</div>
-						<div style="z-index: 1;" class="btn-group w-100 d-flex justify-content-center">
-							<button class="btn weekScheduleWeekMenuElement"disabled>{{schedule_title}}</button>
-						</div>
-					</div>-->
-
 					<div style="background-color: #007bff!important;border-radius:1rem">
 						<div class="row ">
 							<div class="col">
@@ -327,6 +316,7 @@
 						</div>
 					</div>
 					{% if display_type == 'day'%}
+					<!--<div class="weekSchedule" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">-->
 					<div class="weekSchedule" style="grid-template-columns: repeat(1, 1fr); width:calc(100%)">
 						<script>
 							var x = 0
@@ -360,251 +350,277 @@
 						</script>
 					</div>
 					{%endif%}
-					{% if display_type == 'week'%}
-					<div class="weekSchedule" style="grid-template-columns: repeat(7, 1fr);width:calc(100%)">
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 1;">Pn <i class="weekDayNumber">{{thisWeek.0}}</i><br><br><br></span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 2;">Wt <i class="weekDayNumber">{{thisWeek.1}}</i><br><br><br></span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 3;">Śr <i class="weekDayNumber">{{thisWeek.2}}</i><br><br><br></span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 4;">Cz <i class="weekDayNumber">{{thisWeek.3}}</i><br><br><br></span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 5;">Pt <i class="weekDayNumber">{{thisWeek.4}}</i><br><br><br></span>
-						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 6;" class="weekend">Sb <i class="weekDayNumber">{{thisWeek.5}}</i><br><br><br></span>
-						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 7;" class="weekend">Nd <i class="weekDayNumber">{{thisWeek.6}}</i><br><br><br></span>
-						<!--<span>
-							{% for podgl in podglad%}
-								<span>{{podgl.data_rozpoczecia}}</span>
-								<span>{{podgl.godzina_rozpoczecia}}</span>
-								<span>{{podgl.prowadzacy}}</span>
-								<span>{{podgl.nazwa}}</span>
-								<span>{{podgl.day}}</span>			
-							{% endfor %}
-						</span>-->
-						<script>
-							var x = 0;
-							var pn=2;
-							var wt =2;
-							var sr=2;
-							var cz=2;
-							var pt=2;
-							var sob=2;
-							var nd=2;
-							function display_activity(id, remind, activity, x, day, weekNumber=0{% if user.role == 'Employee'%}, attendenceList{% endif %}){
-								var days = document.querySelector(".weekSchedule");
-								var new_span = document.createElement("span");
-								new_span.style.gridRowStart = day+1;
+					{% if display_type == 'week' %}
+						<div style="width:100%!important">
+							<div class="row mondayToFriday">Pn <i class="weekDayNumber">{{thisWeek.0}}</i><br><br><br></div>
+							<div class="row" id="poniedzialek"></div>
+							<div class="row mondayToFriday" >Wt <i class="weekDayNumber">{{thisWeek.1}}</i><br><br><br></div>
+							<div class="row" id="wtorek"></div>
+							<div class="row mondayToFriday">Śr <i class="weekDayNumber">{{thisWeek.2}}</i><br><br><br></div>
+							<div class="row" id="sroda"></div>
+							<div class="row mondayToFriday">Cz <i class="weekDayNumber">{{thisWeek.3}}</i><br><br><br></div>
+							<div class="row" id="czwartek"> </div>
+							<div class="row mondayToFriday">Pt <i class="weekDayNumber">{{thisWeek.4}}</i><br><br><br></div>
+							<div class="row" id="piatek"></div>
+							<div class="row saturdaySunday">Sb <i class="weekendNumber">{{thisWeek.5}}</i><br><br><br></div>
+							<div class="row" id="sobota"></div>
+							<div class="row saturdaySunday">Nd <i class="weekendNumber">{{thisWeek.6}}</i><br><br><br></div>
+							<div class="row" id="niedziela"></div>
+							<script>
+								var x = 0;
+								function display_activity(id, remind, activity, x, day, weekNumber=0{% if user.role == 'Employee'%}, attendenceList{% endif %}){
+									var newColumn = document.createElement("div");
+									var days;
+									newColumn.className = "col";
+									newColumn.style.maxWidth ="250px"
+									newColumn.style.paddingTop ="5px";
+									newColumn.style.paddingBottom ="5px";
+									switch(day){
+										case 6:
+											days = document.querySelector("#niedziela");
+											break;
+										case 5:
+											days = document.querySelector("#sobota");
+											break;
+										case 4:
+											days = document.querySelector("#piatek");
+											break;
+										case 3:
+											days = document.querySelector("#czwartek");
+											break;
+										case 2:
+											days = document.querySelector("#sroda");
+											break;
+										case 1:
+											days = document.querySelector("#wtorek");
+											break;
+										case 0:
+											days = document.querySelector("#poniedzialek");
+											break;
+									}
+									var new_span = document.createElement("span");
+									days.appendChild(newColumn);
+									new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
+									new_span.setAttribute('class','weekScheduleActivity activity')
+									new_span.setAttribute('id',id)
+									new_span.setAttribute('remind',remind)
+									{% if user.role == 'Employee'%}new_span.setAttribute('attendenceList',attendenceList){% endif %}
 
-								if(day==0){
-									new_span.style.gridColumnStart = pn;
-									pn++;
+									for(let info in activity){
+										var myJavaScriptVariable = activity[info];
+										console.log(activity[info])
+										new_span.innerHTML += myJavaScriptVariable;
+									}
+									newColumn.appendChild(new_span);
+									x++;
 								}
-								if(day==1){
-									new_span.style.gridColumnStart = wt;
-									wt++;
-								}
-								if(day==2){
-									new_span.style.gridColumnStart = sr;
-									sr++;
-								}
-								if(day==3){
-									new_span.style.gridColumnStart = cz;
-									cz++;
-								}
-								if(day==4){
-									new_span.style.gridColumnStart = pt;
-									pt++;
-								}
-								if(day==5){
-									new_span.style.gridColumnStart = sob;
-									sob++;
-								}
-								if(day==6){
-									new_span.style.gridColumnStart = nd;
-									nd++;
-								}
-
-								new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
-								new_span.setAttribute('class','weekScheduleActivity activity')
-								new_span.setAttribute('id',id)
-								new_span.setAttribute('remind',remind)
-								{% if user.role == 'Employee'%}new_span.setAttribute('attendenceList',attendenceList){% endif %}
-
-								for(let info in activity){
-									var myJavaScriptVariable = activity[info];
-									new_span.innerHTML += myJavaScriptVariable;
-								}
-
-								days.appendChild(new_span);
-								x++;
-							}
-						</script>
-					</div>
-					{%endif%}
+							</script>
+						</div>
+					{% endif %}
 					{% if display_type == 'month'%}
-					<div class="weekSchedule" style="grid-template-columns: repeat(7, 1fr);width:calc(100%)">
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 1;">Pn</span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 2;">Wt</span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 3;">Śr</span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 4;">Cz</span>
-						<span class="weekScheduleWeekDay" style="grid-column-start: 1; grid-row-start: 5;">Pt</span>
-						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 6;" class="weekend">Sb</span>
-						<span class="weekScheduleWeekendDay" style="grid-column-start: 1; grid-row-start: 7;" class="weekend">Nd</span>
-						<!--<span>
-							{% for podgl in podglad%}
-								<span>{{podgl.data_rozpoczecia}}</span>
-								<span>{{podgl.godzina_rozpoczecia}}</span>
-								<span>{{podgl.prowadzacy}}</span>
-								<span>{{podgl.nazwa}}</span>
-								<span>{{podgl.day}}</span>			
-							{% endfor %}
-						</span>-->
-						<script>
-							var x = 0;
-							function matrix( rows, cols, defaultValue){
-								var arr = [];
+						<div class="weekSchedule" style="width:calc(100%)">
+							<div class="row monthBlock" id="poniedzialekMonth">
+								<div class="col paddingLR0px weekDayNumberMonth"><span class="monthDaysSpan">Pn</span></div>
+							</div>
+							<div class="row monthBlock" id="wtorekMonth">
+								<div class="col paddingLR0px weekDayNumberMonth"><span class="monthDaysSpan">Wt</span></div>
+							</div>
+							<div class="row monthBlock" id="srodaMonth">
+								<div class="col paddingLR0px weekDayNumberMonth"><span class="monthDaysSpan">Śr</span></div>
+							</div>
+							<div class="row monthBlock" id="czwartekMonth">
+								<div class="col paddingLR0px weekDayNumberMonth"><span class="monthDaysSpan">Cz</span></div>
+							</div>
+							<div class="row monthBlock" id="piatekMonth">
+								<div class="col paddingLR0px weekDayNumberMonth"><span class="monthDaysSpan">Pt</span></div>
+							</div>
+							<div class="row monthBlock" id="sobotaMonth">
+								<div class="col paddingLR0px weekendNumberMonth"><span class="monthDaysSpan">Sb</span></div>
+							</div>
+							<div class="row monthBlock" id="niedzielaMonth">
+								<div class="col paddingLR0px weekendNumberMonth"><span class="monthDaysSpan">Nd</span></div>
+							</div>
+							<script>
+								var x = 0;
+								function matrix( rows, cols, defaultValue){
+									var arr = [];
 
-								// Creates all lines:
-								for(var i=0; i < rows; i++){
+									// Creates all lines:
+									for(var i=0; i < rows; i++){
 
-									// Creates an empty line
-									arr.push([]);
+										// Creates an empty line
+										arr.push([]);
 
-									// Adds cols to the empty line:
-									arr[i].push( new Array(cols));
+										// Adds cols to the empty line:
+										arr[i].push( new Array(cols));
 
-									for(var j=0; j < cols; j++){
-									// Initializes:
-									arr[i][j] = defaultValue;
+										for(var j=0; j < cols; j++){
+										// Initializes:
+										arr[i][j] = defaultValue;
+										}
+									}
+
+									return arr;
+								}
+
+								var monthDayData = matrix(6,7,0);
+								function getWeekNumberFromDate(year, month,day){
+									Date.prototype.getWeek = function() {
+										var dt = new Date(this.getFullYear(),0,1);
+										return Math.ceil((((this - dt) / 86400000) + dt.getDay()+1)/7);
+									};
+
+									var myDate = new Date(year, month, day); // 2013, 25 April
+
+									return myDate.getWeek()
+								}
+								const getZeroBasedIsoWeekDay = date => (date.getDay() + 6) % 7
+								const getIsoWeekDay = date => getZeroBasedIsoWeekDay(date) + 1
+
+								function weekDateToDate(year, week, weekDay) {
+									const zeroBasedWeek = week - 1
+									const zeroBasedWeekDay = weekDay - 1
+									let days = (zeroBasedWeek * 7) + zeroBasedWeekDay
+
+									// Dates start at 2017-01-01 and not 2017-01-00
+									days += 1
+
+									const firstDayOfYear = new Date(year, 0, 1)
+									const firstIsoWeekDay = getIsoWeekDay(firstDayOfYear)
+									const zeroBasedFirstIsoWeekDay = getZeroBasedIsoWeekDay(firstDayOfYear)
+
+									// If year begins with W52 or W53
+									if (firstIsoWeekDay > 4) days += 8 - firstIsoWeekDay
+									// Else begins with W01
+									else days -= zeroBasedFirstIsoWeekDay
+
+									return new Date(year, 0, days)
+								}
+
+								function display_activity_month_init(){
+									var days = document.querySelector(".weekSchedule");
+									var new_span = document.createElement("span");
+									
+									//przygotowanie daych o miesiącu
+									var today = new Date()
+									var firstDayOfMonth = new Date(today.getFullYear(),today.getMonth(), 1)
+									var lastDayOfMonth = new Date(today.getFullYear(),today.getMonth(), new Date(today.getFullYear(),today.getMonth(), 0).getDate())
+									var monthStartWeek = getWeekNumberFromDate(firstDayOfMonth.getFullYear(),firstDayOfMonth.getMonth(),firstDayOfMonth.getDay())+1
+									var monthEndWeek = getWeekNumberFromDate(lastDayOfMonth.getFullYear(),lastDayOfMonth.getMonth(),lastDayOfMonth.getDay())+1
+
+									//console.log(today)
+									//console.log(firstDayOfMonth)
+									//console.log(lastDayOfMonth)
+									//console.log(monthStartWeek)
+									//console.log(monthEndWeek)
+
+									for(var i = 2; i < 8; i++){
+										for(var j = 0; j < 7; j++){
+
+											var newColumn = document.createElement("div");
+											var days;
+											newColumn.className = "col paddingLR10px";
+											newColumn.style.maxWidth ="240px";
+
+											var new_span = document.createElement("span");
+											new_span.setAttribute('class','weekScheduleActivity')
+											new_span.style.opacity = '0.25';
+											/*new_span.style.gridRowEnd = j+1;
+											new_span.style.gridRowStart = j+1;
+											new_span.style.gridColumnStart = i;*/
+
+											switch(j){
+												case 6:
+													days = document.querySelector("#niedzielaMonth");
+													break;
+												case 5:
+													days = document.querySelector("#sobotaMonth");
+													break;
+												case 4:
+													days = document.querySelector("#piatekMonth");
+													break;
+												case 3:
+													days = document.querySelector("#czwartekMonth");
+													break;
+												case 2:
+													days = document.querySelector("#srodaMonth");
+													break;
+												case 1:
+													days = document.querySelector("#wtorekMonth");
+													break;
+												case 0:
+													days = document.querySelector("#poniedzialekMonth");
+													break;
+											}
+
+											days.appendChild(newColumn);
+											new_span.setAttribute('week',i-1)
+											new_span.setAttribute('day',j)
+											new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
+									
+											//new_span.innerHTML += "[week" + (i-1) + " - day" + j+"]";
+											//new_span.innerHTML += "[week" + (monthEndWeek-(6-i)-1) + " - day" + j+"]";
+											new_span.innerHTML += "<br>"+weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getDate() + "<br><br>"
+											
+											// lekkie ukrycie dni poza aktualnym miesiącem
+											if(weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth()!=today.getMonth()){
+												new_span.style.opacity = '0.1';
+											}
+											// podkreslenie bierzacego tygodnia w podgladzie tygodnia
+											if(today.getWeek()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j).getWeek()){
+												new_span.style.opacity = '0.4';
+											}
+											// podswietlenie dzisiejszego dnia w widoku miesiąc
+											if(today.getDate()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getDate() &&
+											today.getMonth()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth() &&
+											today.getFullYear()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getFullYear()
+											){
+												new_span.style.opacity = '1';
+											}
+											new_span.style.maxWidth ="250px";
+											newColumn.appendChild(new_span);
+										}
 									}
 								}
-
-								return arr;
-							}
-
-							var monthDayData = matrix(6,7,0);
-							function getWeekNumberFromDate(year, month,day){
-								Date.prototype.getWeek = function() {
-									var dt = new Date(this.getFullYear(),0,1);
-									return Math.ceil((((this - dt) / 86400000) + dt.getDay()+1)/7);
-								};
-
-								var myDate = new Date(year, month, day); // 2013, 25 April
-
-								return myDate.getWeek()
-							}
-							const getZeroBasedIsoWeekDay = date => (date.getDay() + 6) % 7
-							const getIsoWeekDay = date => getZeroBasedIsoWeekDay(date) + 1
-
-							function weekDateToDate(year, week, weekDay) {
-								const zeroBasedWeek = week - 1
-								const zeroBasedWeekDay = weekDay - 1
-								let days = (zeroBasedWeek * 7) + zeroBasedWeekDay
-
-								// Dates start at 2017-01-01 and not 2017-01-00
-								days += 1
-
-								const firstDayOfYear = new Date(year, 0, 1)
-								const firstIsoWeekDay = getIsoWeekDay(firstDayOfYear)
-								const zeroBasedFirstIsoWeekDay = getZeroBasedIsoWeekDay(firstDayOfYear)
-
-								// If year begins with W52 or W53
-								if (firstIsoWeekDay > 4) days += 8 - firstIsoWeekDay
-								// Else begins with W01
-								else days -= zeroBasedFirstIsoWeekDay
-
-								return new Date(year, 0, days)
-							}
-
-							function display_activity_month_init(){
-								var days = document.querySelector(".weekSchedule");
-								var new_span = document.createElement("span");
-								
-								//przygotowanie daych o miesiącu
-								var today = new Date()
-								var firstDayOfMonth = new Date(today.getFullYear(),today.getMonth(), 1)
-								var lastDayOfMonth = new Date(today.getFullYear(),today.getMonth(), new Date(today.getFullYear(),today.getMonth(), 0).getDate())
-								var monthStartWeek = getWeekNumberFromDate(firstDayOfMonth.getFullYear(),firstDayOfMonth.getMonth(),firstDayOfMonth.getDay())+1
-								var monthEndWeek = getWeekNumberFromDate(lastDayOfMonth.getFullYear(),lastDayOfMonth.getMonth(),lastDayOfMonth.getDay())+1
-
-								//console.log(today)
-								//console.log(firstDayOfMonth)
-								//console.log(lastDayOfMonth)
-								//console.log(monthStartWeek)
-								//console.log(monthEndWeek)
-
-								for(var i = 2; i < 8; i++){
-									for(var j = 0; j < 7; j++){
-										var new_span = document.createElement("span");
-										new_span.setAttribute('class','weekScheduleActivity')
-										new_span.style.opacity = '0.25';
-										new_span.style.gridRowEnd = j+1;
-										new_span.style.gridRowStart = j+1;
-										new_span.style.gridColumnStart = i;
-										
-										new_span.setAttribute('week',i-1)
-										new_span.setAttribute('day',j)
-										new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
-								
-										//new_span.innerHTML += "[week" + (i-1) + " - day" + j+"]";
-										//new_span.innerHTML += "[week" + (monthEndWeek-(6-i)-1) + " - day" + j+"]";
-										new_span.innerHTML += "<br>"+weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getDate() + "<br><br>"
-										
-										// lekkie ukrycie dni poza aktualnym miesiącem
-										if(weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth()!=today.getMonth()){
-											new_span.style.opacity = '0.1';
-										}
-										// podkreslenie bierzacego tygodnia w podgladzie tygodnia
-										if(today.getWeek()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j).getWeek()){
-											new_span.style.opacity = '0.4';
-										}
-										// podswietlenie dzisiejszego dnia w widoku miesiąc
-										if(today.getDate()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getDate() &&
-										   today.getMonth()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getMonth() &&
-										   today.getFullYear()==weekDateToDate(today.getFullYear(),  monthStartWeek-(5-i), j+1).getFullYear()
-										){
-											new_span.style.opacity = '0.6';
-										}
-										days.appendChild(new_span);
+								function display_activity(id, remind, activity, x, day, weekNumber=0 {% if user.role == 'Employee'%}, attendenceList{% endif %}){
+									var days;
+									ID = id-1;
+									//console.log(weekNumber+'hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+									console.log(document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]").querySelector('span'))
+									days = document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]")
+									checkForDuplicates = document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]").querySelector('span')
+									if(checkForDuplicates!== null){
+										checkForDuplicates.style.display = "none";
 									}
+									
+									//console.log(days)
+									var new_span = document.createElement("span");
+									new_span.setAttribute('class','monthDisplayNumberOfActivities')
+									new_span.setAttribute('id',id)
+									new_span.setAttribute('remind',remind)
+									{% if user.role == 'Employee'%}new_span.setAttribute('attendencelist',attendenceList){% endif %}
+
+									monthDayData[weekNumber][day] += 1;
+									new_span.setAttribute('weekToFind',weekNumber)
+									new_span.setAttribute('dayToFind',day)
+									var hiddenInfo=''
+									new_span.innerHTML = monthDayData[weekNumber][day].toString()
+									for(let info in activity){
+										var myJavaScriptVariable = activity[info];
+										hiddenInfo += myJavaScriptVariable;
+									}
+									new_span.setAttribute('hiddenInfo','<span class="weekScheduleActivityForDay activity" id="'+id+'" remind="'+remind+'" style="grid-row: '+(monthDayData[weekNumber][day]+1)+'/'+(monthDayData[weekNumber][day]+2)+'; opacity: 0.75;">'+hiddenInfo+'</span>')
+									//aktywowanie kliknięcia w dzień
+									var toActivateDayTemp = document.querySelectorAll(`span[week="`+weekNumber+`"]`)
+									toActivateDayTemp[day].setAttribute('class',"weekScheduleActivity activityList")
+
+									days.appendChild(new_span);
+									x++;
 								}
-							}
-							function display_activity(id, remind, activity, x, day, weekNumber=0 {% if user.role == 'Employee'%}, attendenceList{% endif %}){
-								var days = document.querySelector(".weekSchedule");
-								var new_span = document.createElement("span");
-								new_span.style.gridRowStart = day+1;
-								new_span.style.gridRowEnd = day+1;
-								new_span.style.margin='auto'
-								new_span.style.float='right'
-								new_span.style.marginRight='1rem'
-								new_span.style.marginTop = '1rem'
-								new_span.style.right='0'
-								new_span.style.gridColumnStart = weekNumber+1;
-
-								new_span.style.gridColumnEnd = parseInt(new_span.style.gridColumnStart) + 1;
-								new_span.setAttribute('class','weekScheduleActivity')
-								new_span.setAttribute('id',id)
-								new_span.setAttribute('remind',remind)
-								{% if user.role == 'Employee'%}new_span.setAttribute('attendencelist',attendenceList){% endif %}
-
-								monthDayData[weekNumber][day] += 1;
-								new_span.setAttribute('weekToFind',weekNumber)
-								new_span.setAttribute('dayToFind',day)
-								var hiddenInfo=''
-								new_span.innerHTML = monthDayData[weekNumber][day].toString()
-								for(let info in activity){
-									var myJavaScriptVariable = activity[info];
-									hiddenInfo += myJavaScriptVariable;
-								}
-								new_span.setAttribute('hiddenInfo','<span class="weekScheduleActivity activity" id="'+id+'" remind="'+remind+'" style="grid-row: '+(monthDayData[weekNumber][day]+1)+'/'+(monthDayData[weekNumber][day]+2)+'; opacity: 0.75;">'+hiddenInfo+'</span>')
-								//aktywowanie kliknięcia w dzień
-								var toActivateDayTemp = document.querySelectorAll(`span[week="`+weekNumber+`"]`)
-								toActivateDayTemp[day].setAttribute('class',"weekScheduleActivity activityList")
-
-								days.appendChild(new_span);
-								x++;
-							}
-							display_activity_month_init()
-						</script>
-					</div>
-					{%endif%}
+								display_activity_month_init()
+							</script>
+						</div>
+					{% endif %}
 					{% if user.role == "User" or user.role == "Employee" %}
 						{% for activity in activities %}
 							<script type="text/javascript">
@@ -612,9 +628,10 @@
 									{{activity.pk}},
 									{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
 									[
-										"<font size='3'>{{activity.name}}</font><br/><font size='2'><i>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}<br>{%endif%}{% endfor %}</i></font>", 
-										"<span><font size='2'>od</font> {{activity.start_time}}</span>",  
-										"<span> <font size='2'>do</font> {{activity.end_time}}</span>",
+										"<span>{{activity.name}}</span>",
+										"<span>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}{%endif%}{% endfor %}</span>",
+										"</br>",
+										"<span> od {{activity.start_time}} do {{activity.end_time}}</span>",
 									],
 									x,
 									{{activity.day}},
@@ -631,9 +648,11 @@
 									{{activity.pk}},
 									{% if remind %}{% for key, value in remind.items %}{% if key == activity.id%}{% filter force_escape|lower %}{{value}}{% endfilter %}{%endif%}{% endfor %}{%else%}0{%endif%},
 									[
-										"<font size='3'>{{activity.employee_id}}<br/>{{activity.name}}</font><br/><br/><font size='2'><i>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}<br>{%endif%}{% endfor %}</i></font>", 
-										"<span><font size='2'>od</font> {{activity.start_time}}</span>",  
-										"<span> <font size='2'>do</font> {{activity.end_time}}</span>",
+										"<span>{{activity.employee_id}}</span><br/>",
+										"<span>{{activity.name}}</span>",
+										"<span>{% for key, value in children_in_activity.items %}{% if key.0 == activity.id%}{{value}}{%endif%}{% endfor %}</span>",
+										"</br>",
+										"<span> od {{activity.start_time}} do {{activity.end_time}}</span>",
 									],
 									x,
 									{{activity.day}},
