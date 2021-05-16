@@ -585,15 +585,13 @@
 								function display_activity(id, remind, activity, x, day, weekNumber=0 {% if user.role == 'Employee'%}, attendenceList{% endif %}){
 									var days;
 									ID = id-1;
-									//console.log(weekNumber+'hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-									console.log(document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]").querySelector('span'))
 									days = document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]")
-									checkForDuplicates = document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]").querySelector('span')
-									if(checkForDuplicates!== null){
-										checkForDuplicates.style.display = "none";
+
+									let spanLength = document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]").querySelectorAll('span').length
+									for(let i =0;i<spanLength;i++){
+										document.querySelector("[week=" + CSS.escape(weekNumber) + "][day=" + CSS.escape(day) +"]").querySelectorAll('span')[i].style.display = "none";
 									}
 									
-									//console.log(days)
 									var new_span = document.createElement("span");
 									new_span.setAttribute('class','monthDisplayNumberOfActivities')
 									new_span.setAttribute('id',id)
